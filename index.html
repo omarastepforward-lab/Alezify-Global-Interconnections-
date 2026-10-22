@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alezify Y7 — My Global Life: 24 Hours Around the World</title>
+    <title>Alezify Y7 — My Global Life & 3D Factory</title>
     <style>
         /* ============================================
            ALEZIFY KID-FRIENDLY THEME
@@ -44,15 +44,15 @@
 
         /* --- NAV --- */
         nav {
-            position: fixed; top: 0; width: 100%; padding: 1rem 4%;
+            position: fixed; top: 0; width: 100%; padding: 0.8rem 3%;
             display: flex; justify-content: space-between; align-items: center;
             background: rgba(14, 13, 60, 0.97); backdrop-filter: blur(10px);
             z-index: 1000; border-bottom: 3px solid var(--accent);
         }
-        .logo { font-family: var(--font-display); font-size: 1.6rem; color: var(--secondary); text-decoration: none; }
+        .logo { font-family: var(--font-display); font-size: 1.5rem; color: var(--secondary); text-decoration: none; }
         .logo span { color: var(--accent); }
-        nav ul { display: flex; list-style: none; gap: 1rem; flex-wrap: wrap; }
-        nav a { color: var(--secondary); text-decoration: none; font-weight: bold; transition: var(--transition); font-size: 0.85rem; padding: 0.3rem 0.5rem; border-radius: 5px; }
+        nav ul { display: flex; list-style: none; gap: 0.5rem; flex-wrap: wrap; }
+        nav a { color: var(--secondary); text-decoration: none; font-weight: bold; transition: var(--transition); font-size: 0.75rem; padding: 0.25rem 0.4rem; border-radius: 5px; }
         nav a:hover, nav a.active { color: var(--primary); background: var(--yellow); }
 
         /* --- HERO --- */
@@ -62,64 +62,213 @@
             background: radial-gradient(circle at center, rgba(226, 178, 255, 0.25) 0%, transparent 70%);
             position: relative;
         }
-        .hero h1 { font-size: 4.5rem; margin-bottom: 0.5rem; color: var(--yellow); text-shadow: 4px 4px 0px var(--accent); }
-        .hero h2 { font-size: 2.5rem; color: var(--secondary); margin-bottom: 1.5rem; }
-        .hero p { font-size: 1.3rem; max-width: 800px; color: var(--secondary); margin-bottom: 2rem; }
-        .floating-emoji { font-size: 3.5rem; position: absolute; animation: float 4s infinite ease-in-out; z-index: 1; }
+        .hero h1 { font-size: 4rem; margin-bottom: 0.5rem; color: var(--yellow); text-shadow: 4px 4px 0px var(--accent); }
+        .hero h2 { font-size: 2.2rem; color: var(--secondary); margin-bottom: 1.5rem; }
+        .hero p { font-size: 1.2rem; max-width: 800px; color: var(--secondary); margin-bottom: 2rem; }
+        .floating-emoji { font-size: 3rem; position: absolute; animation: float 4s infinite ease-in-out; z-index: 1; }
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-30px) rotate(10deg); } }
 
-        .btn { padding: 1rem 2.5rem; background-color: var(--accent); color: var(--primary); border: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: var(--transition); font-family: var(--font-display); box-shadow: 0 6px 0 var(--primary); }
+        .btn { padding: 1rem 2.5rem; background-color: var(--accent); color: var(--primary); border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: var(--transition); font-family: var(--font-display); box-shadow: 0 6px 0 var(--primary); }
         .btn:hover { transform: translateY(-4px); box-shadow: 0 10px 0 var(--primary); }
         .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary); }
 
         /* --- SECTIONS --- */
-        .section { padding: 6rem 5%; display: flex; flex-direction: column; align-items: center; position: relative; min-height: 80vh; }
+        .section { padding: 5rem 4%; display: flex; flex-direction: column; align-items: center; position: relative; min-height: 70vh; }
         .section-alt { background: rgba(226, 178, 255, 0.05); }
-        .section-title { font-size: 2.8rem; color: var(--secondary); margin-bottom: 0.5rem; text-align: center; }
-        .section-subtitle { text-align: center; color: var(--white); opacity: 0.9; margin-bottom: 3rem; max-width: 800px; font-size: 1.15rem; }
+        .section-title { font-size: 2.5rem; color: var(--secondary); margin-bottom: 0.5rem; text-align: center; }
+        .section-subtitle { text-align: center; color: var(--white); opacity: 0.9; margin-bottom: 2.5rem; max-width: 800px; font-size: 1.1rem; }
         .highlight { color: var(--yellow); font-weight: bold; }
 
-        /* --- 1. SMARTPHONE JOURNEY --- */
-        .journey-container { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; max-width: 1000px; margin-bottom: 3rem; }
+        /* ============================================
+           3D FACTORY SIMULATOR (NAMESPACED WITH fs-)
+           ============================================ */
+        .fs-section {
+            position: relative; width: 100%; height: 80vh; min-height: 600px;
+            background: #000; display: flex; flex-direction: column;
+            overflow: hidden; border-top: 3px solid var(--accent);
+            border-bottom: 3px solid var(--accent);
+        }
+        .fs-ui-top {
+            position: absolute; top: 1rem; left: 50%; transform: translateX(-50%);
+            text-align: center; z-index: 100; background: rgba(14,13,60,0.85);
+            padding: 0.8rem 2rem; border-radius: 50px; border: 1px solid var(--accent);
+            backdrop-filter: blur(10px); width: 90%; max-width: 700px;
+        }
+        .fs-ui-top h2 { color: var(--accent); font-size: 1.3rem; margin-bottom: 0.2rem; }
+        .fs-ui-top p { color: var(--secondary); font-size: 0.85rem; opacity: 0.9; }
+        .fs-ui-bottom {
+            position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
+            z-index: 100; width: 95%; max-width: 900px;
+        }
+        .fs-product-selector {
+            display: flex; gap: 0.5rem; background: rgba(14,13,60,0.9);
+            padding: 0.4rem 0.8rem; border-radius: 50px; border: 1px solid rgba(211,247,253,0.3);
+            flex-wrap: wrap; justify-content: center;
+        }
+        .fs-prod-btn {
+            padding: 0.5rem 1rem; background: transparent; color: var(--secondary);
+            border: none; border-radius: 50px; cursor: pointer; font-weight: bold;
+            transition: var(--transition); font-family: var(--font-main); font-size: 0.85rem;
+        }
+        .fs-prod-btn:hover { background: rgba(211,247,253,0.15); }
+        .fs-prod-btn.active { background: var(--secondary); color: var(--primary); }
+        .fs-controls {
+            display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;
+            background: rgba(14,13,60,0.9); padding: 0.8rem; border-radius: var(--radius);
+            border: 1px solid rgba(211,247,253,0.2); width: 100%;
+        }
+        .fs-btn-control {
+            padding: 0.6rem 1rem; background: var(--primary); color: var(--secondary);
+            border: 2px solid var(--secondary); border-radius: 8px; cursor: pointer;
+            font-weight: bold; transition: var(--transition); font-family: var(--font-main);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-width: 110px; font-size: 0.8rem;
+        }
+        .fs-btn-control span { font-size: 0.65rem; opacity: 0.7; font-weight: normal; margin-top: 0.2rem; }
+        .fs-btn-control:hover:not(:disabled) { background: var(--secondary); color: var(--primary); transform: translateY(-2px); }
+        .fs-btn-control:disabled { opacity: 0.3; cursor: not-allowed; }
+        .fs-btn-control.active-step { border-color: var(--green); color: var(--green); box-shadow: 0 0 15px var(--green); }
+        .fs-status-log {
+            background: rgba(0,0,0,0.85); border: 1px solid var(--accent);
+            padding: 0.6rem 1rem; border-radius: 8px; color: var(--white);
+            font-family: monospace; font-size: 0.85rem; text-align: center;
+            width: 100%; box-shadow: 0 0 10px rgba(226,178,255,0.2);
+        }
+        .fs-status-log span { color: var(--accent); font-weight: bold; }
+        .fs-scene {
+            width: 100%; height: 100%; perspective: 1500px;
+            display: flex; justify-content: center; align-items: center;
+            background: radial-gradient(circle at center, #15143f 0%, #000 75%);
+        }
+        .fs-world {
+            width: 1200px; height: 800px; position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(60deg) rotateZ(-45deg) translateY(-80px);
+            transition: transform 1s ease;
+        }
+        .fs-floor {
+            position: absolute; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(211, 247, 253, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(211, 247, 253, 0.05) 1px, transparent 1px);
+            background-size: 100px 100px;
+            border: 2px solid rgba(211, 247, 253, 0.2);
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+        }
+        .fs-conveyor-track {
+            position: absolute; top: 60%; left: 5%; width: 90%; height: 120px;
+            background: #111; border-radius: 10px; border: 4px solid #333;
+            transform: translateZ(10px); box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+        .fs-conveyor-belt {
+            position: absolute; top: 0; left: 0; width: 200%; height: 100%;
+            background: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.05) 40px, rgba(255,255,255,0.05) 80px);
+            animation: fsMoveBelt 2s linear infinite;
+        }
+        @keyframes fsMoveBelt { 0% { transform: translateX(0); } 100% { transform: translateX(-80px); } }
+        .fs-machine {
+            position: absolute; bottom: 75%; width: 160px; height: 160px;
+            transform-style: preserve-3d; transition: all 0.5s ease;
+        }
+        .fs-m-face {
+            position: absolute; width: 160px; height: 160px;
+            border: 3px solid var(--accent); background: rgba(20, 19, 60, 0.95);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 3.5rem; box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+        }
+        .fs-m-top { transform: rotateX(90deg) translateZ(80px); background: var(--accent); color: var(--primary); }
+        .fs-m-front { transform: translateZ(80px); }
+        .fs-m-side { transform: rotateY(90deg) translateZ(80px); background: rgba(14, 13, 60, 0.8); }
+        .fs-m1 { top: 15%; left: 10%; }
+        .fs-m2 { top: 15%; left: 40%; }
+        .fs-m3 { top: 15%; left: 70%; }
+        .fs-machine.active .fs-m-face { border-color: var(--green); box-shadow: 0 0 40px var(--green); }
+        .fs-machine.active .fs-m-top { background: var(--green); }
+        .fs-worker {
+            position: absolute; width: 50px; height: 50px; border-radius: 50%;
+            background: var(--accent); transform-style: preserve-3d;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.6rem; transition: all 1.2s ease-in-out;
+            box-shadow: 0 20px 10px rgba(0,0,0,0.5); z-index: 10;
+        }
+        .fs-w1 { top: 70%; left: 15%; transform: translateZ(30px); }
+        .fs-w2 { top: 70%; left: 45%; transform: translateZ(30px); }
+        .fs-w3 { top: 70%; left: 75%; transform: translateZ(30px); }
+        .fs-worker.working { animation: fsBob 0.5s infinite alternate; }
+        @keyframes fsBob { from { transform: translateZ(30px) translateY(0); } to { transform: translateZ(30px) translateY(-12px); } }
+        .fs-obj {
+            position: absolute; width: 70px; height: 70px;
+            transform-style: preserve-3d; transition: all 1.2s ease-in-out;
+            opacity: 0; pointer-events: none; z-index: 5;
+        }
+        .fs-o-face {
+            position: absolute; width: 70px; height: 70px;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        .fs-o-top { transform: rotateX(90deg) translateZ(35px); }
+        .fs-o-front { transform: translateZ(35px); }
+        .fs-o-side { transform: rotateY(90deg) translateZ(35px); }
+        .fs-obj.visible { opacity: 1; }
+        .fs-obj[data-type="hardware"] .fs-o-face { background: var(--secondary); }
+        .fs-obj[data-type="software"] .fs-o-face { background: var(--green); }
+        .fs-obj[data-type="normal"] .fs-o-face { background: var(--orange); }
+        .fs-obj.box .fs-o-face { background: #8B4513; border: 2px solid #D2B48C; }
+
+        /* ============================================
+           REAL-WORLD GIANTS SECTION
+           ============================================ */
+        .giants-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1000px; width: 100%; }
+        .giant-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.5rem; border-radius: var(--radius); }
+        .giant-card h3 { color: var(--yellow); margin-bottom: 0.5rem; font-size: 1.4rem; }
+        .giant-card .stat { font-size: 1.8rem; color: var(--secondary); font-weight: bold; display: block; margin-bottom: 0.3rem; }
+        .giant-card ul { list-style: none; padding: 0; }
+        .giant-card li { padding: 0.4rem 0; border-bottom: 1px solid rgba(211, 247, 253, 0.1); font-size: 0.9rem; }
+        .giant-card li:last-child { border-bottom: none; }
+
+        /* ============================================
+           JOURNEY (SMARTPHONE)
+           ============================================ */
+        .journey-container { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; max-width: 1000px; margin-bottom: 2rem; }
         .journey-step {
-            background: var(--primary); border: 4px solid var(--secondary); border-radius: var(--radius);
-            padding: 1.5rem; width: 160px; text-align: center; cursor: pointer;
+            background: var(--primary); border: 3px solid var(--secondary); border-radius: var(--radius);
+            padding: 1.2rem; width: 140px; text-align: center; cursor: pointer;
             transition: var(--transition); position: relative;
         }
-        .journey-step.active { background: var(--accent); border-color: var(--accent); transform: scale(1.1); z-index: 10; box-shadow: 0 0 25px var(--accent); }
-        .journey-step .step-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .journey-step .step-label { font-weight: bold; font-size: 0.9rem; color: var(--secondary); }
+        .journey-step.active { background: var(--accent); border-color: var(--accent); transform: scale(1.08); z-index: 10; box-shadow: 0 0 20px var(--accent); }
+        .journey-step .step-icon { font-size: 2rem; margin-bottom: 0.3rem; }
+        .journey-step .step-label { font-weight: bold; font-size: 0.8rem; color: var(--secondary); }
         .journey-step.active .step-label { color: var(--primary); }
-        
         .detail-box {
             background: rgba(211, 247, 253, 0.1); border: 3px dashed var(--secondary);
-            border-radius: var(--radius); padding: 2rem; width: 100%; max-width: 900px;
-            min-height: 250px; display: flex; flex-direction: column; justify-content: center;
-            text-align: left;
+            border-radius: var(--radius); padding: 1.5rem; width: 100%; max-width: 900px;
+            min-height: 180px; display: flex; flex-direction: column; justify-content: center; text-align: left;
         }
-        .detail-box h3 { color: var(--yellow); font-size: 1.8rem; margin-bottom: 1rem; text-align: center; }
-        .detail-box p { font-size: 1.1rem; margin-bottom: 1rem; }
-
+        .detail-box h3 { color: var(--yellow); font-size: 1.4rem; margin-bottom: 0.8rem; text-align: center; }
+        .detail-box p { font-size: 1rem; margin-bottom: 0.8rem; }
         .arrow-chain {
             display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-            gap: 0.5rem; font-weight: bold; color: var(--yellow); margin: 1rem 0;
-            font-size: 1rem; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 10px;
+            gap: 0.4rem; font-weight: bold; color: var(--yellow); margin: 0.8rem 0;
+            font-size: 0.9rem; background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 10px;
         }
-        .arrow-chain span { color: var(--secondary); background: var(--primary); padding: 5px 10px; border-radius: 5px; border: 1px solid var(--secondary); font-size: 0.9rem; }
+        .arrow-chain span { color: var(--secondary); background: var(--primary); padding: 4px 8px; border-radius: 5px; border: 1px solid var(--secondary); font-size: 0.85rem; }
 
-        /* --- 2. INTERACTIVE MAP --- */
+        /* ============================================
+           MAP
+           ============================================ */
         .map-wrapper {
-            position: relative; width: 100%; max-width: 1000px;
+            position: relative; width: 100%; max-width: 900px;
             background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg') no-repeat center center;
             background-size: contain; aspect-ratio: 16/9;
-            border: 5px solid var(--secondary); border-radius: var(--radius);
+            border: 4px solid var(--secondary); border-radius: var(--radius);
             background-color: rgba(211, 247, 253, 0.05);
         }
         .map-dot {
-            position: absolute; width: 30px; height: 30px; background-color: var(--yellow);
+            position: absolute; width: 28px; height: 28px; background-color: var(--yellow);
             border-radius: 50%; cursor: pointer; transition: var(--transition);
             box-shadow: 0 0 20px var(--yellow); display: flex; justify-content: center; align-items: center;
-            font-size: 0.7rem; font-weight: bold; color: var(--primary); border: 2px solid var(--primary);
+            font-size: 0.65rem; font-weight: bold; color: var(--primary); border: 2px solid var(--primary);
         }
         .map-dot:hover { transform: scale(1.5); background-color: var(--accent); }
         .map-dot::after {
@@ -130,112 +279,136 @@
         }
         .map-dot:hover::after { opacity: 1; top: -50px; }
         .map-info {
-            margin-top: 2rem; padding: 2rem; background: rgba(226, 178, 255, 0.1);
-            border-radius: var(--radius); text-align: center; min-height: 120px; width: 100%; max-width: 900px;
+            margin-top: 1.5rem; padding: 1.5rem; background: rgba(226, 178, 255, 0.1);
+            border-radius: var(--radius); text-align: center; min-height: 100px; width: 100%; max-width: 800px;
             border: 2px solid var(--accent);
         }
-        .map-info h3 { color: var(--accent); font-size: 2rem; margin-bottom: 0.5rem; }
+        .map-info h3 { color: var(--accent); font-size: 1.6rem; margin-bottom: 0.3rem; }
+        .company-paths { display: flex; gap: 0.8rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; }
+        .company-btn {
+            padding: 0.6rem 1.2rem; background: var(--primary); color: var(--secondary);
+            border: 2px solid var(--secondary); border-radius: 50px; cursor: pointer;
+            font-weight: bold; font-family: var(--font-main); transition: var(--transition);
+        }
+        .company-btn:hover, .company-btn.active { background: var(--secondary); color: var(--primary); }
 
-        /* --- 3. FOOD JOURNEY --- */
-        .food-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; width: 100%; max-width: 1000px; margin-bottom: 2rem; }
-        .food-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.5rem; border-radius: var(--radius); text-align: center; cursor: pointer; transition: var(--transition); }
-        .food-card:hover { transform: translateY(-5px); border-color: var(--yellow); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        /* ============================================
+           FOOD JOURNEY
+           ============================================ */
+        .food-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; width: 100%; max-width: 900px; margin-bottom: 1.5rem; }
+        .food-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.2rem; border-radius: var(--radius); text-align: center; cursor: pointer; transition: var(--transition); }
+        .food-card:hover { transform: translateY(-5px); border-color: var(--yellow); }
         .food-card.active { border-color: var(--accent); background: rgba(226, 178, 255, 0.15); }
-        .food-card .food-icon { font-size: 3rem; margin-bottom: 0.5rem; }
-        .food-card h4 { color: var(--secondary); font-size: 1.2rem; }
-        .food-detail { width: 100%; max-width: 900px; background: rgba(0,0,0,0.3); padding: 2rem; border-radius: var(--radius); border: 2px solid var(--accent); min-height: 150px; }
+        .food-card .food-icon { font-size: 2.5rem; margin-bottom: 0.3rem; }
+        .food-card h4 { color: var(--secondary); font-size: 1rem; }
+        .food-detail { width: 100%; max-width: 900px; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: var(--radius); border: 2px solid var(--accent); min-height: 130px; }
 
-        /* --- 4. MEDIA SPREAD --- */
+        /* ============================================
+           MEDIA SPREAD
+           ============================================ */
         .media-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; }
-        .media-network { display: flex; justify-content: space-around; align-items: center; width: 100%; margin: 2rem 0; flex-wrap: wrap; gap: 1rem; }
-        .media-node { width: 100px; height: 100px; border-radius: 50%; background: var(--primary); border: 3px solid var(--secondary); display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.7rem; text-align: center; transition: var(--transition); }
+        .media-network { display: flex; justify-content: space-around; align-items: center; width: 100%; margin: 1.5rem 0; flex-wrap: wrap; gap: 1rem; }
+        .media-node { width: 90px; height: 90px; border-radius: 50%; background: var(--primary); border: 3px solid var(--secondary); display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.7rem; text-align: center; transition: var(--transition); cursor: pointer; }
         .media-node.active { background: var(--accent); color: var(--primary); border-color: var(--accent); transform: scale(1.1); }
-        .media-node .m-icon { font-size: 2rem; }
-        .media-node .m-label { font-weight: bold; font-size: 0.7rem; }
-        .media-arrow { color: var(--yellow); font-size: 1.5rem; }
+        .media-node .m-icon { font-size: 1.8rem; }
+        .media-node .m-label { font-weight: bold; font-size: 0.65rem; }
+        .media-arrow { color: var(--yellow); font-size: 1.3rem; }
 
-        /* --- 5. CULTURE & IDENTITY LAYERS --- */
-        .identity-layers { position: relative; width: 100%; max-width: 600px; height: 400px; margin: 2rem auto; display: flex; justify-content: center; align-items: center; }
+        /* ============================================
+           IDENTITY LAYERS
+           ============================================ */
+        .identity-layers { position: relative; width: 100%; max-width: 500px; height: 350px; margin: 1.5rem auto; display: flex; justify-content: center; align-items: center; }
         .layer-circle { position: absolute; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-align: center; transition: var(--transition); cursor: pointer; border: 2px solid var(--secondary); }
         .layer-circle:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--yellow); }
-        .layer-personal { width: 120px; height: 120px; background: var(--accent); color: var(--primary); font-weight: bold; font-size: 0.9rem; z-index: 4; }
-        .layer-local { width: 200px; height: 200px; background: rgba(226, 178, 255, 0.3); border: 2px dashed var(--secondary); z-index: 3; }
-        .layer-national { width: 300px; height: 300px; background: rgba(211, 247, 253, 0.15); border: 2px dashed var(--secondary); z-index: 2; }
-        .layer-global { width: 400px; height: 400px; background: rgba(6, 214, 160, 0.1); border: 2px solid var(--green); z-index: 1; }
-        .layer-label { position: absolute; font-size: 0.8rem; font-weight: bold; color: var(--secondary); }
-        .layer-label-personal { bottom: 40%; }
-        .layer-label-global { top: 5%; }
+        .layer-personal { width: 100px; height: 100px; background: var(--accent); color: var(--primary); font-weight: bold; font-size: 0.8rem; z-index: 4; }
+        .layer-local { width: 170px; height: 170px; background: rgba(226, 178, 255, 0.3); border: 2px dashed var(--secondary); z-index: 3; }
+        .layer-national { width: 250px; height: 250px; background: rgba(211, 247, 253, 0.15); border: 2px dashed var(--secondary); z-index: 2; }
+        .layer-global { width: 340px; height: 340px; background: rgba(6, 214, 160, 0.1); border: 2px solid var(--green); z-index: 1; }
+        .layer-label { position: absolute; font-size: 0.7rem; font-weight: bold; color: var(--secondary); }
 
-        /* --- 6. DOMINO EFFECT --- */
+        /* ============================================
+           DOMINO EFFECT
+           ============================================ */
         .domino-container { width: 100%; max-width: 1000px; display: flex; flex-direction: column; align-items: center; }
-        .mood-meter { display: flex; justify-content: space-around; width: 100%; max-width: 600px; background: rgba(0,0,0,0.4); padding: 1.5rem; border-radius: var(--radius); margin-bottom: 2rem; border: 2px solid var(--secondary); }
+        .mood-meter { display: flex; justify-content: space-around; width: 100%; max-width: 600px; background: rgba(0,0,0,0.4); padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; border: 2px solid var(--secondary); }
         .mood-card { text-align: center; }
-        .mood-card .mood-emoji { font-size: 4rem; display: block; margin-bottom: 0.5rem; transition: var(--transition); }
-        .mood-card .mood-label { font-weight: bold; font-size: 1rem; color: var(--secondary); }
-        .domino-chain { display: flex; justify-content: center; align-items: center; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-        .domino-box { padding: 1rem 0.8rem; background: var(--primary); border: 3px solid var(--secondary); border-radius: var(--radius); text-align: center; width: 120px; cursor: pointer; transition: var(--transition); }
-        .domino-box .d-icon { font-size: 2rem; }
-        .domino-box .d-label { font-size: 0.8rem; font-weight: bold; margin-top: 0.3rem; }
+        .mood-card .mood-emoji { font-size: 3rem; display: block; margin-bottom: 0.3rem; transition: var(--transition); }
+        .mood-card .mood-label { font-weight: bold; font-size: 0.9rem; color: var(--secondary); }
+        .domino-chain { display: flex; justify-content: center; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .domino-box { padding: 0.8rem 0.6rem; background: var(--primary); border: 3px solid var(--secondary); border-radius: var(--radius); text-align: center; width: 110px; cursor: pointer; transition: var(--transition); }
+        .domino-box .d-icon { font-size: 1.8rem; }
+        .domino-box .d-label { font-size: 0.7rem; font-weight: bold; margin-top: 0.2rem; }
         .domino-box:hover { transform: translateY(-5px); border-color: var(--yellow); }
         .domino-box.broken { background: var(--red); border-color: var(--red); animation: shake 0.5s; }
         .domino-box.delayed { background: var(--orange); border-color: var(--orange); }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-        .game-msg { font-size: 1.1rem; text-align: center; color: var(--yellow); font-weight: bold; min-height: 40px; }
+        .game-msg { font-size: 1rem; text-align: center; color: var(--yellow); font-weight: bold; min-height: 30px; }
 
-        /* --- 7. X-FACTOR --- */
-        .xfactor-visual { display: flex; justify-content: center; align-items: center; gap: 1.5rem; flex-wrap: wrap; margin: 2rem 0; }
-        .xfactor-bubble { background: var(--primary); border: 3px solid var(--secondary); padding: 1rem 1.5rem; border-radius: 50px; font-weight: bold; cursor: pointer; transition: var(--transition); }
-        .xfactor-bubble:hover { background: var(--secondary); color: var(--primary); transform: scale(1.1); }
+        /* ============================================
+           X-FACTOR
+           ============================================ */
+        .xfactor-visual { display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0; }
+        .xfactor-bubble { background: var(--primary); border: 3px solid var(--secondary); padding: 0.8rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; transition: var(--transition); font-size: 0.9rem; }
+        .xfactor-bubble:hover { background: var(--secondary); color: var(--primary); transform: scale(1.05); }
         .xfactor-bubble.active { background: var(--accent); border-color: var(--accent); color: var(--primary); }
-        .xfactor-arrow { font-size: 2rem; color: var(--yellow); }
 
-        /* --- 8. WHAT IF SIMULATOR --- */
-        .whatif-toggle { display: flex; gap: 1rem; margin-bottom: 2rem; }
-        .toggle-btn { padding: 1rem 2rem; background: var(--primary); border: 3px solid var(--secondary); color: var(--secondary); border-radius: 50px; cursor: pointer; font-weight: bold; font-family: var(--font-main); font-size: 1rem; transition: var(--transition); }
+        /* ============================================
+           WHAT IF SIMULATOR
+           ============================================ */
+        .whatif-toggle { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .toggle-btn { padding: 0.8rem 1.5rem; background: var(--primary); border: 3px solid var(--secondary); color: var(--secondary); border-radius: 50px; cursor: pointer; font-weight: bold; font-family: var(--font-main); font-size: 0.9rem; transition: var(--transition); }
         .toggle-btn.active { background: var(--secondary); color: var(--primary); }
-        .whatif-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; width: 100%; max-width: 1000px; }
-        .whatif-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.5rem; border-radius: var(--radius); text-align: center; transition: var(--transition); }
+        .whatif-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; width: 100%; max-width: 900px; }
+        .whatif-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1rem; border-radius: var(--radius); text-align: center; transition: var(--transition); }
         .whatif-card.lost { opacity: 0.3; border-color: var(--red); filter: grayscale(1); }
-        .whatif-card .w-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .whatif-card h4 { color: var(--yellow); font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .whatif-card .w-icon { font-size: 2rem; margin-bottom: 0.3rem; }
+        .whatif-card h4 { color: var(--yellow); font-size: 1rem; margin-bottom: 0.3rem; }
 
-        /* --- 9. QUIZ --- */
-        .quiz-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 1.5rem; }
-        .quiz-question-box { background: rgba(226, 178, 255, 0.1); padding: 1.5rem; border-radius: var(--radius); border: 3px solid var(--accent); }
-        .quiz-question-box h3 { color: var(--yellow); margin-bottom: 1rem; font-size: 1.2rem; }
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 0.8rem; }
-        .option-btn { padding: 0.8rem; background: var(--primary); color: var(--white); border: 3px solid var(--secondary); border-radius: 10px; font-size: 1rem; cursor: pointer; text-align: left; transition: var(--transition); font-family: var(--font-main); }
+        /* ============================================
+           QUIZ
+           ============================================ */
+        .quiz-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 1rem; }
+        .quiz-question-box { background: rgba(226, 178, 255, 0.1); padding: 1.2rem; border-radius: var(--radius); border: 3px solid var(--accent); }
+        .quiz-question-box h3 { color: var(--yellow); margin-bottom: 0.8rem; font-size: 1.1rem; }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
+        .option-btn { padding: 0.7rem; background: var(--primary); color: var(--white); border: 2px solid var(--secondary); border-radius: 10px; font-size: 0.9rem; cursor: pointer; text-align: left; transition: var(--transition); font-family: var(--font-main); }
         .option-btn:hover { background: var(--secondary); color: var(--primary); }
         .option-btn.correct { background: var(--green); color: var(--primary); border-color: var(--green); }
         .option-btn.wrong { background: var(--red); color: var(--white); border-color: var(--red); }
-        .quiz-feedback { margin-top: 0.8rem; font-weight: bold; font-size: 1rem; color: var(--yellow); }
+        .quiz-feedback { margin-top: 0.6rem; font-weight: bold; font-size: 0.9rem; color: var(--yellow); }
 
-        /* --- 10. REFLECTION --- */
-        .reflection-box { width: 100%; max-width: 800px; background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 2rem; border-radius: var(--radius); text-align: center; }
-        .reflection-box textarea { width: 100%; height: 150px; padding: 1rem; border-radius: 10px; border: 2px solid var(--accent); background: var(--primary); color: var(--white); font-family: var(--font-main); font-size: 1.1rem; resize: vertical; margin-bottom: 1rem; }
-        .reflection-box button { padding: 1rem 2.5rem; background: var(--accent); color: var(--primary); border: none; border-radius: 50px; font-weight: bold; font-family: var(--font-display); font-size: 1.1rem; cursor: pointer; transition: var(--transition); }
-        .reflection-box button:hover { transform: scale(1.05); }
-        .word-count { font-size: 0.9rem; color: var(--secondary); margin-bottom: 1rem; text-align: right; }
-
-        /* --- 11. CHECKLIST --- */
-        .checklist { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 1rem; }
-        .check-item { display: flex; align-items: center; gap: 1rem; background: rgba(211, 247, 253, 0.05); padding: 1rem; border-radius: 10px; border: 2px solid var(--secondary); cursor: pointer; transition: var(--transition); }
+        /* ============================================
+           CHECKLIST
+           ============================================ */
+        .checklist { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 0.8rem; }
+        .check-item { display: flex; align-items: center; gap: 0.8rem; background: rgba(211, 247, 253, 0.05); padding: 0.8rem; border-radius: 10px; border: 2px solid var(--secondary); cursor: pointer; transition: var(--transition); }
         .check-item:hover { border-color: var(--yellow); }
-        .check-item .box { width: 30px; height: 30px; border: 3px solid var(--secondary); border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: var(--green); font-weight: bold; transition: var(--transition); }
+        .check-item .box { width: 26px; height: 26px; border: 3px solid var(--secondary); border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 1rem; color: var(--green); font-weight: bold; transition: var(--transition); flex-shrink: 0; }
         .check-item.completed .box { background: var(--green); border-color: var(--green); color: var(--primary); }
         .check-item.completed span { text-decoration: line-through; opacity: 0.7; }
-        .check-item span { font-size: 1rem; }
+        .check-item span { font-size: 0.9rem; }
 
-        /* --- 12. GLOSSARY --- */
-        .glossary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; width: 100%; max-width: 1000px; }
-        .glossary-card { background: rgba(211, 247, 253, 0.05); border: 2px solid var(--secondary); padding: 1rem; border-radius: 10px; cursor: help; transition: var(--transition); }
+        /* ============================================
+           REFLECTION
+           ============================================ */
+        .reflection-box { width: 100%; max-width: 800px; background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.5rem; border-radius: var(--radius); text-align: center; }
+        .reflection-box textarea { width: 100%; height: 130px; padding: 0.8rem; border-radius: 10px; border: 2px solid var(--accent); background: var(--primary); color: var(--white); font-family: var(--font-main); font-size: 1rem; resize: vertical; margin-bottom: 0.8rem; }
+        .reflection-box button { padding: 0.8rem 2rem; background: var(--accent); color: var(--primary); border: none; border-radius: 50px; font-weight: bold; font-family: var(--font-display); font-size: 1rem; cursor: pointer; transition: var(--transition); }
+        .reflection-box button:hover { transform: scale(1.05); }
+        .word-count { font-size: 0.8rem; color: var(--secondary); margin-bottom: 0.8rem; text-align: right; }
+
+        /* ============================================
+           GLOSSARY
+           ============================================ */
+        .glossary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.8rem; width: 100%; max-width: 1000px; }
+        .glossary-card { background: rgba(211, 247, 253, 0.05); border: 2px solid var(--secondary); padding: 0.8rem; border-radius: 10px; cursor: help; transition: var(--transition); }
         .glossary-card:hover { border-color: var(--yellow); background: rgba(255, 209, 102, 0.1); }
-        .glossary-card h4 { color: var(--yellow); font-size: 1.1rem; margin-bottom: 0.3rem; }
-        .glossary-card p { font-size: 0.9rem; opacity: 0; max-height: 0; transition: all 0.3s ease; overflow: hidden; }
-        .glossary-card:hover p { opacity: 1; max-height: 100px; margin-top: 0.5rem; }
+        .glossary-card h4 { color: var(--yellow); font-size: 1rem; margin-bottom: 0.2rem; }
+        .glossary-card p { font-size: 0.8rem; opacity: 0; max-height: 0; transition: all 0.3s ease; overflow: hidden; }
+        .glossary-card:hover p { opacity: 1; max-height: 100px; margin-top: 0.4rem; }
 
         /* --- BACK TO TOP --- */
-        #back-to-top { position: fixed; bottom: 2rem; right: 2rem; width: 50px; height: 50px; background: var(--accent); color: var(--primary); border: none; border-radius: 50%; font-size: 1.5rem; cursor: pointer; display: none; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: var(--transition); }
+        #back-to-top { position: fixed; bottom: 1.5rem; right: 1.5rem; width: 45px; height: 45px; background: var(--accent); color: var(--primary); border: none; border-radius: 50%; font-size: 1.3rem; cursor: pointer; display: none; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: var(--transition); }
         #back-to-top:hover { transform: scale(1.1); }
         #back-to-top.show { display: block; }
 
@@ -250,6 +423,9 @@
             .journey-step { width: 100%; }
             .domino-box { width: 45%; }
             .mood-meter { flex-direction: column; gap: 1rem; }
+            .giants-grid { grid-template-columns: 1fr; }
+            .fs-world { transform: rotateX(60deg) rotateZ(-45deg) scale(0.45) translateY(-80px); }
+            .fs-section { height: 70vh; min-height: 500px; }
             .layer-circle { width: 100% !important; height: auto !important; aspect-ratio: 1; }
             .identity-layers { height: auto; }
         }
@@ -264,8 +440,10 @@
     <nav>
         <a href="#" class="logo">Alezify<span>.</span></a>
         <ul>
+            <li><a href="#factory">3D Factory</a></li>
+            <li><a href="#giants">Real-World Giants</a></li>
             <li><a href="#journey">Journey</a></li>
-            <li><a href="#map">World Map</a></li>
+            <li><a href="#map">Map</a></li>
             <li><a href="#food">Food</a></li>
             <li><a href="#media">Media</a></li>
             <li><a href="#identity">Identity</a></li>
@@ -273,6 +451,7 @@
             <li><a href="#xfactor">X-Factor</a></li>
             <li><a href="#whatif">What If?</a></li>
             <li><a href="#quiz">Quiz</a></li>
+            <li><a href="#checklist">Checklist</a></li>
             <li><a href="#reflection">Reflection</a></li>
             <li><a href="#glossary">Glossary</a></li>
         </ul>
@@ -286,15 +465,114 @@
         <div class="floating-emoji" style="bottom: 25%; right: 8%; animation-delay: 1.5s;">🌍</div>
         <div class="floating-emoji" style="top: 50%; left: 5%; animation-delay: 0.5s;">📦</div>
         <div class="floating-emoji" style="top: 60%; right: 5%; animation-delay: 2.5s;">🚚</div>
-        <div class="floating-emoji" style="top: 10%; right: 30%; animation-delay: 3s;">✈️</div>
         <h1>My Global Life:</h1>
         <h2>24 Hours Around the World</h2>
-        <p>Choose one normal day and explore how 5 moments connect you with other countries, people, and cultures. Let's see how global our lives really are!</p>
-        <button class="btn" onclick="document.getElementById('journey').scrollIntoView({behavior: 'smooth'});">Start the Adventure! 🚀</button>
+        <p>Run the 3D factory, explore real-world giants like Amazon and Apple, and discover how 5 moments in your day connect you with the whole world!</p>
+        <button class="btn" onclick="document.getElementById('factory').scrollIntoView({behavior: 'smooth'});">Enter the Factory! 🏭</button>
     </section>
 
-    <!-- 1. SMARTPHONE JOURNEY -->
-    <section id="journey" class="section section-alt">
+    <!-- 1. 3D FACTORY SIMULATOR -->
+    <section id="factory" class="fs-section">
+        <div class="fs-ui-top">
+            <h2>Alezify Fulfillment Center</h2>
+            <p id="fs-current-product">Currently Producing: Amazon Fulfillment (Prime Order)</p>
+        </div>
+
+        <div class="fs-scene">
+            <div class="fs-world" id="fs-world">
+                <div class="fs-floor"></div>
+                <div class="fs-conveyor-track">
+                    <div class="fs-conveyor-belt"></div>
+                </div>
+                <div class="fs-machine fs-m1" id="fs-machine1">
+                    <div class="fs-m-face fs-m-top" id="fs-m1-icon">📦</div>
+                    <div class="fs-m-face fs-m-front"></div>
+                    <div class="fs-m-face fs-m-side"></div>
+                </div>
+                <div class="fs-machine fs-m2" id="fs-machine2">
+                    <div class="fs-m-face fs-m-top" id="fs-m2-icon">🤖</div>
+                    <div class="fs-m-face fs-m-front"></div>
+                    <div class="fs-m-face fs-m-side"></div>
+                </div>
+                <div class="fs-machine fs-m3" id="fs-machine3">
+                    <div class="fs-m-face fs-m-top" id="fs-m3-icon">🚚</div>
+                    <div class="fs-m-face fs-m-front"></div>
+                    <div class="fs-m-face fs-m-side"></div>
+                </div>
+                <div class="fs-worker fs-w1" id="fs-worker1">👷</div>
+                <div class="fs-worker fs-w2" id="fs-worker2">🤖</div>
+                <div class="fs-worker fs-w3" id="fs-worker3">🧑‍🏭</div>
+                <div class="fs-obj" id="fs-obj-raw">
+                    <div class="fs-o-face fs-o-top"></div><div class="fs-o-face fs-o-front"></div><div class="fs-o-face fs-o-side"></div>
+                </div>
+                <div class="fs-obj" id="fs-obj-product">
+                    <div class="fs-o-face fs-o-top"></div><div class="fs-o-face fs-o-front"></div><div class="fs-o-face fs-o-side"></div>
+                </div>
+                <div class="fs-obj box" id="fs-obj-box">
+                    <div class="fs-o-face fs-o-top"></div><div class="fs-o-face fs-o-front"></div><div class="fs-o-face fs-o-side"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fs-ui-bottom">
+            <div class="fs-product-selector" id="fs-product-selector">
+                <button class="fs-prod-btn active" onclick="fsSelectProduct('amazon', this)">📦 Amazon Order</button>
+                <button class="fs-prod-btn" onclick="fsSelectProduct('apple', this)">📱 Apple iPhone</button>
+                <button class="fs-prod-btn" onclick="fsSelectProduct('normal', this)">👕 Normal Product</button>
+            </div>
+            <div class="fs-controls">
+                <button class="fs-btn-control" id="fs-btn-source" onclick="fsGameAction('source')">
+                    Step 1: Source <span id="fs-lbl-source">Inventory</span>
+                </button>
+                <button class="fs-btn-control" id="fs-btn-assemble" onclick="fsGameAction('assemble')" disabled>
+                    Step 2: Assemble <span id="fs-lbl-assemble">Pick & Pack</span>
+                </button>
+                <button class="fs-btn-control" id="fs-btn-pack" onclick="fsGameAction('pack')" disabled>
+                    Step 3: Pack <span id="fs-lbl-pack">Box Order</span>
+                </button>
+                <button class="fs-btn-control" id="fs-btn-ship" onclick="fsGameAction('ship')" disabled>
+                    Step 4: Ship <span id="fs-lbl-ship">Deliver</span>
+                </button>
+            </div>
+            <div class="fs-status-log" id="fs-status-log">
+                <span>[SYSTEM]</span> Waiting for Operations Manager to begin.
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. REAL-WORLD GIANTS -->
+    <section id="giants" class="section section-alt">
+        <h2 class="section-title">Real-World Giants</h2>
+        <p class="section-subtitle">See how the principles you just simulated are used by the world's largest companies.</p>
+        
+        <div class="giants-grid">
+            <div class="giant-card">
+                <h3>📦 Amazon</h3>
+                <span class="stat">1 Million+</span>
+                <p style="color: var(--secondary); margin-bottom: 0.8rem; font-size: 0.85rem;">Robots in fulfillment centers worldwide.</p>
+                <ul>
+                    <li><strong>Network:</strong> 200+ US fulfillment centers, 80,000 trailers, 100 cargo aircraft.</li>
+                    <li><strong>Automation:</strong> Robots like Hercules transport inventory pods to workers.</li>
+                    <li><strong>Speed:</strong> Advanced forecasting allows two-to-five day delivery speeds.</li>
+                    <li><strong>Scale:</strong> Handles over 1 million parcels per day at a single automated facility.</li>
+                </ul>
+            </div>
+            <div class="giant-card">
+                <h3>📱 Apple</h3>
+                <span class="stat">$416 Billion</span>
+                <p style="color: var(--secondary); margin-bottom: 0.8rem; font-size: 0.85rem;">Revenue in fiscal 2025, mostly from design and software.</p>
+                <ul>
+                    <li><strong>Design:</strong> Designs in California but owns almost no factories.</li>
+                    <li><strong>Assembly:</strong> China assembles iPhone Pro models; India now assembles ~25% of all iPhones.</li>
+                    <li><strong>Components:</strong> Processors from TSMC in Taiwan, memory from South Korea and Japan.</li>
+                    <li><strong>Materials:</strong> Investing $500 million in US rare-earth magnet production.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. SMARTPHONE JOURNEY -->
+    <section id="journey" class="section">
         <h2 class="section-title">The Journey of a Smartphone</h2>
         <p class="section-subtitle">Click each step to see how a phone is built around the world. Every object has a passport!</p>
         
@@ -327,8 +605,8 @@
         </div>
     </section>
 
-    <!-- 2. INTERACTIVE MAP -->
-    <section id="map" class="section">
+    <!-- 4. INTERACTIVE MAP -->
+    <section id="map" class="section section-alt">
         <h2 class="section-title">Where Does Our Stuff Come From?</h2>
         <p class="section-subtitle">Click the glowing dots on the map to see what different continents make. <span class="highlight">Asia makes the most (50%)!</span></p>
         
@@ -345,10 +623,18 @@
             <h3>Click a dot!</h3>
             <p>Discover who makes what.</p>
         </div>
+
+        <div class="company-paths">
+            <button class="company-btn" onclick="showCompanyPath('amazon', this)">📦 Amazon Journey</button>
+            <button class="company-btn" onclick="showCompanyPath('apple', this)">📱 Apple Journey</button>
+        </div>
+        <div class="map-info" id="company-path-info" style="margin-top: 1rem;">
+            <p style="opacity: 0.7;">Click a company to see its supply chain journey.</p>
+        </div>
     </section>
 
-    <!-- 3. FOOD JOURNEY -->
-    <section id="food" class="section section-alt">
+    <!-- 5. FOOD JOURNEY -->
+    <section id="food" class="section">
         <h2 class="section-title">Your Breakfast's Global Journey</h2>
         <p class="section-subtitle">Pick a breakfast item to see how it travels from farm to plate!</p>
         
@@ -372,13 +658,13 @@
         </div>
 
         <div class="food-detail" id="food-detail">
-            <h3 style="color: var(--yellow); text-align: center; margin-bottom: 1rem;">👆 Click a breakfast item!</h3>
+            <h3 style="color: var(--yellow); text-align: center; margin-bottom: 0.8rem;">👆 Click a breakfast item!</h3>
             <p style="text-align: center; opacity: 0.7;">See the journey from farm to your plate.</p>
         </div>
     </section>
 
-    <!-- 4. MEDIA SPREAD -->
-    <section id="media" class="section">
+    <!-- 6. MEDIA SPREAD -->
+    <section id="media" class="section section-alt">
         <h2 class="section-title">How Trends Spread Globally</h2>
         <p class="section-subtitle">A song, game, or dance trend can travel around the world in days. Click a node to see how it spreads!</p>
         
@@ -405,39 +691,39 @@
                 </div>
             </div>
             <div class="food-detail" id="media-detail" style="text-align: center;">
-                <h3 style="color: var(--yellow); margin-bottom: 1rem;">👆 Click a node to see how a trend spreads!</h3>
+                <h3 style="color: var(--yellow); margin-bottom: 0.8rem;">👆 Click a node to see how a trend spreads!</h3>
                 <p>From local artists to global fans, media connects us all.</p>
             </div>
         </div>
     </section>
 
-    <!-- 5. CULTURE & IDENTITY LAYERS -->
-    <section id="identity" class="section section-alt">
+    <!-- 7. IDENTITY LAYERS -->
+    <section id="identity" class="section">
         <h2 class="section-title">Overlapping Identities</h2>
         <p class="section-subtitle">We all have different layers of identity. Global connections help shape who we are. Hover over the circles!</p>
         
         <div class="identity-layers">
             <div class="layer-circle layer-global">
-                <span class="layer-label layer-label-global">🌐 Global</span>
+                <span class="layer-label" style="top: 5%;">🌐 Global</span>
             </div>
             <div class="layer-circle layer-national">
-                <span class="layer-label" style="top: 10%;">🌍 National</span>
+                <span class="layer-label" style="top: 8%;">🌍 National</span>
             </div>
             <div class="layer-circle layer-local">
-                <span class="layer-label" style="top: 15%;">📍 Local</span>
+                <span class="layer-label" style="top: 12%;">📍 Local</span>
             </div>
             <div class="layer-circle layer-personal">
                 <span>🏠 Personal</span>
             </div>
         </div>
         
-        <div style="width: 100%; max-width: 700px; background: rgba(211, 247, 253, 0.1); padding: 1.5rem; border-radius: var(--radius); margin-top: 1rem; text-align: center;">
-            <p style="font-size: 1rem;"><strong>Teacher Tip:</strong> One world does not mean one culture. Connection helps us share differences as well as similarities. Think about how a global trend has changed how you express your <em>own</em> identity.</p>
+        <div style="width: 100%; max-width: 700px; background: rgba(211, 247, 253, 0.1); padding: 1rem; border-radius: var(--radius); margin-top: 1rem; text-align: center;">
+            <p style="font-size: 0.9rem;"><strong>Teacher Tip:</strong> One world does not mean one culture. Connection helps us share differences as well as similarities. Think about how a global trend has changed how you express your <em>own</em> identity.</p>
         </div>
     </section>
 
-    <!-- 6. DOMINO EFFECT -->
-    <section id="domino" class="section">
+    <!-- 8. DOMINO EFFECT -->
+    <section id="domino" class="section section-alt">
         <h2 class="section-title">The Domino Effect</h2>
         <p class="section-subtitle">A global system is connected. If one link breaks, it changes lives and moods! <strong>Click any box to break the chain!</strong></p>
         
@@ -477,12 +763,12 @@
             </div>
 
             <div class="game-msg" id="game-msg">Everything is running smoothly! Everyone is happy.</div>
-            <button class="btn" onclick="resetDomino()" style="margin-top: 1rem; font-size: 1rem;">Fix the Chain! 🔄</button>
+            <button class="btn" onclick="resetDomino()" style="margin-top: 0.8rem; font-size: 0.9rem;">Fix the Chain! 🔄</button>
         </div>
     </section>
 
-    <!-- 7. X-FACTOR -->
-    <section id="xfactor" class="section section-alt">
+    <!-- 9. X-FACTOR -->
+    <section id="xfactor" class="section">
         <h2 class="section-title">X-Factor: Small Choices, Big Effects</h2>
         <p class="section-subtitle">The network changes when people make one tiny decision. Click a choice to see its ripple effect!</p>
         
@@ -499,8 +785,8 @@
         </div>
     </section>
 
-    <!-- 8. WHAT IF SIMULATOR -->
-    <section id="whatif" class="section">
+    <!-- 10. WHAT IF SIMULATOR -->
+    <section id="whatif" class="section section-alt">
         <h2 class="section-title">What If Global Connections Disappeared?</h2>
         <p class="section-subtitle">Imagine your day without global links. Toggle the connections on and off to see what would change!</p>
         
@@ -542,22 +828,20 @@
             </div>
         </div>
         
-        <div class="game-msg" id="whatif-msg" style="margin-top: 2rem; font-size: 1.2rem;">With global connections, your day is rich and full of variety.</div>
+        <div class="game-msg" id="whatif-msg" style="margin-top: 1.5rem; font-size: 1rem;">With global connections, your day is rich and full of variety.</div>
     </section>
 
-    <!-- 9. QUIZ -->
-    <section id="quiz" class="section section-alt">
+    <!-- 11. QUIZ -->
+    <section id="quiz" class="section">
         <h2 class="section-title">The Big Global Quiz!</h2>
         <p class="section-subtitle">Let's see if you understand how the global chain works. Answer these 5 questions!</p>
         
-        <div class="quiz-container" id="quiz-container">
-            <!-- Questions injected by JS -->
-        </div>
-        <div class="game-msg" id="quiz-score" style="margin-top: 2rem;"></div>
+        <div class="quiz-container" id="quiz-container"></div>
+        <div class="game-msg" id="quiz-score" style="margin-top: 1.5rem;"></div>
     </section>
 
-    <!-- 10. STUDENT CHECKLIST -->
-    <section id="checklist" class="section">
+    <!-- 12. STUDENT CHECKLIST -->
+    <section id="checklist" class="section section-alt">
         <h2 class="section-title">Student Checklist</h2>
         <p class="section-subtitle">Track your progress! Click each item as you complete it.</p>
         
@@ -594,24 +878,24 @@
                 <div class="box">✓</div>
                 <span>Final reflection: "What would change most, and why?"</span>
             </div>
-6        </div>
-    </section>
-
-    <!-- 11. FINAL REFLECTION -->
-    <section id="reflection" class="section section-alt">
-        <h2 class="section-title">Final Reflection</h2>
-        <div class="reflection-box">
-            <h3>"If global connections disappeared from my day, what would change most, and why?"</h3>
-            <p style="color: var(--secondary); margin-bottom: 1.5rem; font-size: 1rem;">Type your answer below. Think about your shoes, your food, or the media you enjoy.</p>
-            <textarea id="reflection-text" placeholder="If global connections disappeared, I would miss..." oninput="updateWordCount()"></textarea>
-            <div class="word-count" id="word-count">0 words</div>
-            <button onclick="submitReflection()">Submit Answer 🚀</button>
-            <div id="reflection-msg" style="margin-top: 1rem; color: var(--green); font-weight: bold;"></div>
         </div>
     </section>
 
-    <!-- 12. GLOSSARY -->
-    <section id="glossary" class="section">
+    <!-- 13. FINAL REFLECTION -->
+    <section id="reflection" class="section">
+        <h2 class="section-title">Final Reflection</h2>
+        <div class="reflection-box">
+            <h3>"If global connections disappeared from my day, what would change most, and why?"</h3>
+            <p style="color: var(--secondary); margin-bottom: 1rem; font-size: 0.95rem;">Type your answer below. Think about your shoes, your food, or the media you enjoy.</p>
+            <textarea id="reflection-text" placeholder="If global connections disappeared, I would miss..." oninput="updateWordCount()"></textarea>
+            <div class="word-count" id="word-count">0 words</div>
+            <button onclick="submitReflection()">Submit Answer 🚀</button>
+            <div id="reflection-msg" style="margin-top: 0.8rem; color: var(--green); font-weight: bold;"></div>
+        </div>
+    </section>
+
+    <!-- 14. GLOSSARY -->
+    <section id="glossary" class="section section-alt">
         <h2 class="section-title">Glossary of Global Terms</h2>
         <p class="section-subtitle">Hover over a card to reveal its definition!</p>
         
@@ -670,21 +954,18 @@
         const navLinks = document.querySelectorAll('nav a');
 
         window.addEventListener('scroll', () => {
-            // Progress bar
             const scrollTop = document.documentElement.scrollTop;
             const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrollPercent = (scrollTop / scrollHeight) * 100;
             progressBar.style.width = scrollPercent + '%';
 
-            // Back to top button
             if (scrollTop > 500) {
                 backToTop.classList.add('show');
             } else {
                 backToTop.classList.remove('show');
             }
 
-            // Scroll spy
-            const sections = document.querySelectorAll('.section, .hero');
+            const sections = document.querySelectorAll('.section, .hero, .fs-section');
             let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop - 100;
@@ -701,34 +982,204 @@
         });
 
         // ============================================
-        // 1. SMARTPHONE JOURNEY
+        // AUDIO
+        // ============================================
+        let audioCtx;
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playBeep(freq, duration, type = 'sine') {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+        function playSuccess() { initAudio(); playBeep(523.25, 0.1); setTimeout(() => playBeep(659.25, 0.1), 100); setTimeout(() => playBeep(783.99, 0.3), 200); }
+        function playClick() { initAudio(); playBeep(800, 0.05); }
+
+        // ============================================
+        // 3D FACTORY LOGIC
+        // ============================================
+        let fsGameState = 0;
+        let fsCurrentCompany = 'amazon';
+
+        const fsCompanies = {
+            amazon: {
+                name: 'Amazon Fulfillment (Prime Order)',
+                steps: { source: 'Receive Inventory', assemble: 'Pick & Pack', pack: 'Box Order', ship: 'Deliver' },
+                icons: { m1: '📦', m2: '🤖', m3: '🚚' },
+                facts: {
+                    source: "Amazon manages global freight from factories to US ports and uses over 1 million robots in its fulfillment centers.",
+                    assemble: "Robots like Hercules bring inventory pods to workers, who pick items at semi-automated workstations.",
+                    pack: "Automated packaging machines measure items and use the exact amount of wrapping needed.",
+                    ship: "Amazon's network includes 80,000 trailers and 100 aircraft to move packages at scale."
+                }
+            },
+            apple: {
+                name: 'Apple iPhone (Flagship Hardware)',
+                steps: { source: 'Source Components', assemble: 'Final Assembly', pack: 'Box iPhone', ship: 'Global Delivery' },
+                icons: { m1: '⛏️', m2: '🏭', m3: '📦' },
+                facts: {
+                    source: "Apple designs in California but sources components globally: processors from TSMC in Taiwan, memory from South Korea and Japan.",
+                    assemble: "Final assembly is outsourced to partners like Foxconn. China remains the anchor for the iPhone Pro line, while India now assembles about 25% of all iPhones.",
+                    pack: "Apple is investing $500 million in US rare-earth magnet production to diversify its supply chain away from China.",
+                    ship: "iPhones are shipped globally from assembly hubs in China, India, and Vietnam to markets worldwide."
+                }
+            },
+            normal: {
+                name: 'Normal Product (T-Shirt)',
+                steps: { source: 'Harvest Cotton', assemble: 'Sew Fabric', pack: 'Wrap Shirt', ship: 'Retail Store' },
+                icons: { m1: '🌾', m2: '🧵', m3: '📦' },
+                facts: {
+                    source: "Did you know? Cotton is often grown in India or the USA.",
+                    assemble: "Did you know? Many clothes are sewn in Bangladesh or Vietnam.",
+                    pack: "Look! The worker is carefully folding and packing the shirt.",
+                    ship: "Did you know? A single T-shirt might travel 5,000 miles before you wear it."
+                }
+            }
+        };
+
+        function fsSelectProduct(type, btn) {
+            if (fsGameState > 0 && fsGameState < 4) {
+                alert("Please finish the current product before switching!");
+                return;
+            }
+            playClick();
+            fsCurrentCompany = type;
+            document.querySelectorAll('.fs-prod-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const p = fsCompanies[type];
+            document.getElementById('fs-current-product').innerText = `Currently Producing: ${p.name}`;
+            document.getElementById('fs-lbl-source').innerText = p.steps.source;
+            document.getElementById('fs-lbl-assemble').innerText = p.steps.assemble;
+            document.getElementById('fs-lbl-pack').innerText = p.steps.pack;
+            document.getElementById('fs-lbl-ship').innerText = p.steps.ship;
+            document.getElementById('fs-m1-icon').innerText = p.icons.m1;
+            document.getElementById('fs-m2-icon').innerText = p.icons.m2;
+            document.getElementById('fs-m3-icon').innerText = p.icons.m3;
+            document.getElementById('fs-obj-raw').setAttribute('data-type', type);
+            document.getElementById('fs-obj-product').setAttribute('data-type', type);
+            if (fsGameState === 4) fsResetGame();
+        }
+
+        function fsGameAction(action) {
+            playClick();
+            const statusLog = document.getElementById('fs-status-log');
+            const m1 = document.getElementById('fs-machine1');
+            const m2 = document.getElementById('fs-machine2');
+            const m3 = document.getElementById('fs-machine3');
+            const w1 = document.getElementById('fs-worker1');
+            const w2 = document.getElementById('fs-worker2');
+            const w3 = document.getElementById('fs-worker3');
+            const objRaw = document.getElementById('fs-obj-raw');
+            const objProd = document.getElementById('fs-obj-product');
+            const objBox = document.getElementById('fs-obj-box');
+
+            if (action === 'source' && fsGameState === 0) {
+                m1.classList.add('active');
+                w1.classList.add('working');
+                statusLog.innerHTML = `<span>[STEP 1]</span> ${fsCompanies[fsCurrentCompany].steps.source}...<br><small style="color:var(--secondary)">${fsCompanies[fsCurrentCompany].facts.source}</small>`;
+                w1.style.left = '15%';
+                objRaw.style.left = '15%'; objRaw.style.top = '70%';
+                objRaw.classList.add('visible');
+                setTimeout(() => {
+                    m1.classList.remove('active'); w1.classList.remove('working');
+                    document.getElementById('fs-btn-source').disabled = true;
+                    document.getElementById('fs-btn-assemble').disabled = false;
+                    document.getElementById('fs-btn-assemble').classList.add('active-step');
+                    fsGameState = 1;
+                }, 2500);
+            }
+
+            if (action === 'assemble' && fsGameState === 1) {
+                m2.classList.add('active'); w2.classList.add('working');
+                statusLog.innerHTML = `<span>[STEP 2]</span> ${fsCompanies[fsCurrentCompany].steps.assemble}...<br><small style="color:var(--secondary)">${fsCompanies[fsCurrentCompany].facts.assemble}</small>`;
+                objRaw.style.left = '45%'; w2.style.left = '45%';
+                setTimeout(() => {
+                    objRaw.classList.remove('visible');
+                    objProd.style.left = '45%'; objProd.style.top = '70%';
+                    objProd.classList.add('visible');
+                }, 1000);
+                setTimeout(() => {
+                    m2.classList.remove('active'); w2.classList.remove('working');
+                    document.getElementById('fs-btn-assemble').disabled = true;
+                    document.getElementById('fs-btn-assemble').classList.remove('active-step');
+                    document.getElementById('fs-btn-pack').disabled = false;
+                    document.getElementById('fs-btn-pack').classList.add('active-step');
+                    fsGameState = 2;
+                }, 2500);
+            }
+
+            if (action === 'pack' && fsGameState === 2) {
+                m3.classList.add('active'); w3.classList.add('working');
+                statusLog.innerHTML = `<span>[STEP 3]</span> ${fsCompanies[fsCurrentCompany].steps.pack}...<br><small style="color:var(--secondary)">${fsCompanies[fsCurrentCompany].facts.pack}</small>`;
+                objProd.style.left = '75%'; w3.style.left = '75%';
+                setTimeout(() => {
+                    objProd.classList.remove('visible');
+                    objBox.style.left = '75%'; objBox.style.top = '70%';
+                    objBox.classList.add('visible');
+                }, 1000);
+                setTimeout(() => {
+                    m3.classList.remove('active'); w3.classList.remove('working');
+                    document.getElementById('fs-btn-pack').disabled = true;
+                    document.getElementById('fs-btn-pack').classList.remove('active-step');
+                    document.getElementById('fs-btn-ship').disabled = false;
+                    document.getElementById('fs-btn-ship').classList.add('active-step');
+                    fsGameState = 3;
+                }, 2500);
+            }
+
+            if (action === 'ship' && fsGameState === 3) {
+                statusLog.innerHTML = `<span>[STEP 4]</span> ${fsCompanies[fsCurrentCompany].steps.ship}...<br><small style="color:var(--secondary)">${fsCompanies[fsCurrentCompany].facts.ship}</small>`;
+                objBox.style.left = '100%'; objBox.style.top = '40%';
+                objBox.style.transform = 'scale(0.1) rotateZ(45deg) translateZ(400px)';
+                objBox.style.opacity = '0';
+                setTimeout(() => {
+                    playSuccess();
+                    document.getElementById('fs-btn-ship').disabled = true;
+                    document.getElementById('fs-btn-ship').classList.remove('active-step');
+                    fsGameState = 4;
+                    statusLog.innerHTML = `<span>[SUCCESS]</span> Product shipped! The global supply chain is complete. Select a new company.`;
+                }, 2000);
+            }
+        }
+
+        function fsResetGame() {
+            playClick();
+            fsGameState = 0;
+            document.getElementById('fs-status-log').innerHTML = `<span>[SYSTEM]</span> Resetting factory...`;
+            document.getElementById('fs-btn-source').disabled = false;
+            document.getElementById('fs-btn-source').classList.remove('active-step');
+            document.getElementById('fs-btn-assemble').disabled = true;
+            document.getElementById('fs-btn-assemble').classList.remove('active-step');
+            document.getElementById('fs-btn-pack').disabled = true;
+            document.getElementById('fs-btn-pack').classList.remove('active-step');
+            document.getElementById('fs-btn-ship').disabled = true;
+            document.getElementById('fs-btn-ship').classList.remove('active-step');
+            const objs = [document.getElementById('fs-obj-raw'), document.getElementById('fs-obj-product'), document.getElementById('fs-obj-box')];
+            objs.forEach(obj => {
+                obj.classList.remove('visible'); obj.style.left = '5%'; obj.style.top = '70%';
+                obj.style.transform = 'none'; obj.style.opacity = '1';
+            });
+            document.querySelectorAll('.fs-machine').forEach(m => m.classList.remove('active'));
+            document.getElementById('fs-worker1').style.left = '15%';
+            document.getElementById('fs-worker2').style.left = '45%';
+            document.getElementById('fs-worker3').style.left = '75%';
+            setTimeout(() => {
+                document.getElementById('fs-status-log').innerHTML = `<span>[SYSTEM]</span> Ready. Waiting for Operations Manager.`;
+            }, 1000);
+        }
+
+        // ============================================
+        // SMARTPHONE JOURNEY
         // ============================================
         const journeyData = {
-            materials: {
-                icon: '⛏️', title: '1. Raw Materials',
-                text: 'It starts with digging! We mine metals like lithium and cobalt from the earth in places like Africa and South America. This is the "Resource Stage".',
-                chain: ['Mine in Africa', 'Raw Metal', 'Ship to Factory']
-            },
-            components: {
-                icon: '🔌', title: '2. Components',
-                text: 'The raw materials are turned into tiny parts! The screens come from Japan and the computer chips are made in Taiwan.',
-                chain: ['Japan (Screens)', 'Taiwan (Chips)', 'South Korea (Memory)']
-            },
-            assembly: {
-                icon: '🏭', title: '3. Assembly',
-                text: 'All the parts are brought together in giant factories in Asia (like China and Vietnam) where workers and robots put the phone together. This is "Specialization" - places doing what they do best!',
-                chain: ['China', 'Vietnam', 'India']
-            },
-            transport: {
-                icon: '🚚', title: '4. Transport',
-                text: 'The finished phones are packed into boxes and put on massive cargo ships or airplanes to travel across the ocean! 90% of world trade is carried by sea.',
-                chain: ['Cargo Ship', 'Airplane', 'Delivery Truck']
-            },
-            you: {
-                icon: '🤳', title: '5. You!',
-                text: 'Finally, the phone arrives at a store or your door. You unbox it and start using it, completing the global journey! Now it\'s your turn to reuse and recycle it when you are done.',
-                chain: ['Shop', 'Your Door', 'You!']
-            }
+            materials: { icon: '⛏️', title: '1. Raw Materials', text: 'It starts with digging! We mine metals like lithium and cobalt from the earth in places like Africa and South America. This is the "Resource Stage".', chain: ['Mine in Africa', 'Raw Metal', 'Ship to Factory'] },
+            components: { icon: '🔌', title: '2. Components', text: 'The raw materials are turned into tiny parts! The screens come from Japan and the computer chips are made in Taiwan.', chain: ['Japan (Screens)', 'Taiwan (Chips)', 'South Korea (Memory)'] },
+            assembly: { icon: '🏭', title: '3. Assembly', text: 'All the parts are brought together in giant factories in Asia (like China and Vietnam) where workers and robots put the phone together. This is "Specialization" - places doing what they do best!', chain: ['China', 'Vietnam', 'India'] },
+            transport: { icon: '🚚', title: '4. Transport', text: 'The finished phones are packed into boxes and put on massive cargo ships or airplanes to travel across the ocean! 90% of world trade is carried by sea.', chain: ['Cargo Ship', 'Airplane', 'Delivery Truck'] },
+            you: { icon: '🤳', title: '5. You!', text: 'Finally, the phone arrives at a store or your door. You unbox it and start using it, completing the global journey! Now it\'s your turn to reuse and recycle it when you are done.', chain: ['Shop', 'Your Door', 'You!'] }
         };
 
         function showJourney(step, element) {
@@ -736,27 +1187,32 @@
             element.classList.add('active');
             const data = journeyData[step];
             let chainHTML = '<div class="arrow-chain">';
-            data.chain.forEach((s, i) => {
-                chainHTML += `<span>${s}</span>`;
-                if (i < data.chain.length - 1) chainHTML += `<strong> ➔ </strong>`;
-            });
+            data.chain.forEach((s, i) => { chainHTML += `<span>${s}</span>`; if (i < data.chain.length - 1) chainHTML += `<strong> ➔ </strong>`; });
             chainHTML += '</div>';
-            document.getElementById('journey-detail').innerHTML = `
-                <h3>${data.icon} ${data.title}</h3>
-                <p>${data.text}</p>
-                ${chainHTML}
-            `;
+            document.getElementById('journey-detail').innerHTML = `<h3>${data.icon} ${data.title}</h3><p>${data.text}</p>${chainHTML}`;
         }
 
         // ============================================
-        // 2. MAP
+        // MAP
         // ============================================
         function updateMapInfo(region, percent, text) {
             document.getElementById('map-info').innerHTML = `<h3>${region} — ${percent}</h3><p>${text}</p>`;
         }
 
+        function showCompanyPath(company, btn) {
+            playClick();
+            document.querySelectorAll('.company-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const infoBox = document.getElementById('company-path-info');
+            if (company === 'amazon') {
+                infoBox.innerHTML = `<h3 style="color: var(--accent);">📦 Amazon Supply Chain</h3><p style="font-size: 0.9rem; margin-top: 0.5rem;">Inventory from Asia → US Fulfillment Centers → Robots pick items → Packed → Delivered to You by truck or plane.</p>`;
+            } else {
+                infoBox.innerHTML = `<h3 style="color: var(--accent);">📱 Apple iPhone Supply Chain</h3><p style="font-size: 0.9rem; margin-top: 0.5rem;">Designed in California → Components from Taiwan/South Korea/Japan → Assembled in China & India → Shipped globally to You.</p>`;
+            }
+        }
+
         // ============================================
-        // 3. FOOD JOURNEY
+        // FOOD JOURNEY
         // ============================================
         const foodData = {
             banana: { icon: '🍌', title: 'The Banana Journey', text: 'Bananas grow in tropical climates like Ecuador and Costa Rica. Workers pick them green, they travel in refrigerated ships, and they ripen on the way to your supermarket!', chain: ['Ecuador', 'Refrigerated Ship', 'Supermarket', 'You'] },
@@ -770,20 +1226,13 @@
             element.classList.add('active');
             const data = foodData[type];
             let chainHTML = '<div class="arrow-chain">';
-            data.chain.forEach((s, i) => {
-                chainHTML += `<span>${s}</span>`;
-                if (i < data.chain.length - 1) chainHTML += `<strong> ➔ </strong>`;
-            });
+            data.chain.forEach((s, i) => { chainHTML += `<span>${s}</span>`; if (i < data.chain.length - 1) chainHTML += `<strong> ➔ </strong>`; });
             chainHTML += '</div>';
-            document.getElementById('food-detail').innerHTML = `
-                <h3>${data.icon} ${data.title}</h3>
-                <p>${data.text}</p>
-                ${chainHTML}
-            `;
+            document.getElementById('food-detail').innerHTML = `<h3>${data.icon} ${data.title}</h3><p>${data.text}</p>${chainHTML}`;
         }
 
         // ============================================
-        // 4. MEDIA SPREAD
+        // MEDIA SPREAD
         // ============================================
         const mediaData = {
             1: { title: 'Where It Starts', text: 'An artist or creator in South Korea makes a song, game, or video. This is the creative origin point.' },
@@ -793,51 +1242,37 @@
         };
 
         function activateMediaNode(id) {
+            playClick();
             document.querySelectorAll('.media-node').forEach(n => n.classList.remove('active'));
             document.getElementById(`mn-${id}`).classList.add('active');
             const data = mediaData[id];
-            document.getElementById('media-detail').innerHTML = `
-                <h3 style="color: var(--yellow); margin-bottom: 1rem;">${data.title}</h3>
-                <p>${data.text}</p>
-            `;
+            document.getElementById('media-detail').innerHTML = `<h3 style="color: var(--yellow); margin-bottom: 0.8rem;">${data.title}</h3><p>${data.text}</p>`;
         }
 
         // ============================================
-        // 5. CULTURE & IDENTITY
-        // ============================================
-        // (Hover effects handled by CSS)
-
-        // ============================================
-        // 6. DOMINO EFFECT
+        // DOMINO EFFECT
         // ============================================
         function triggerDomino(index) {
+            playClick();
             const chain = ['d1', 'd2', 'd3', 'd4', 'd5'];
             const msg = document.getElementById('game-msg');
             const shopMood = document.querySelector('#mood-shop .mood-emoji');
             const youMood = document.querySelector('#mood-you .mood-emoji');
-
             chain.forEach(id => document.getElementById(id).classList.remove('broken', 'delayed'));
-            shopMood.innerText = '😃';
-            youMood.innerText = '😃';
+            shopMood.innerText = '😃'; youMood.innerText = '😃';
             msg.innerText = "Uh oh! You broke a link in the chain!";
             msg.style.color = 'var(--yellow)';
-
             document.getElementById(chain[index]).classList.add('broken');
-
             let delay = 600;
             for (let i = index + 1; i < chain.length; i++) {
-                setTimeout(() => {
-                    document.getElementById(chain[i]).classList.add('delayed');
-                }, delay);
+                setTimeout(() => { document.getElementById(chain[i]).classList.add('delayed'); }, delay);
                 delay += 600;
             }
-
             setTimeout(() => {
                 shopMood.innerText = '😟';
                 msg.innerText = "The Shop has no products to sell! The Shop Owner is sad.";
                 msg.style.color = 'var(--red)';
             }, delay);
-
             setTimeout(() => {
                 youMood.innerText = '😡';
                 msg.innerText = "The Shop has no products, so YOU can't buy what you want! Everyone is upset! This is why we need redundancy (backup paths).";
@@ -846,9 +1281,8 @@
         }
 
         function resetDomino() {
-            ['d1', 'd2', 'd3', 'd4', 'd5'].forEach(id => {
-                document.getElementById(id).classList.remove('broken', 'delayed');
-            });
+            playClick();
+            ['d1', 'd2', 'd3', 'd4', 'd5'].forEach(id => document.getElementById(id).classList.remove('broken', 'delayed'));
             document.querySelector('#mood-shop .mood-emoji').innerText = '😃';
             document.querySelector('#mood-you .mood-emoji').innerText = '😃';
             document.getElementById('game-msg').innerText = "Everything is running smoothly! Everyone is happy.";
@@ -856,7 +1290,7 @@
         }
 
         // ============================================
-        // 7. X-FACTOR
+        // X-FACTOR
         // ============================================
         const xfactorData = {
             repair: { title: '🔧 Repair Instead of Replace', text: 'If you repair a broken phone, you reduce demand for new materials. This means less mining, less shipping, and less waste. Small choice → Big effect!' },
@@ -866,32 +1300,23 @@
         };
 
         function showXFactor(type, element) {
+            playClick();
             document.querySelectorAll('.xfactor-bubble').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
             const data = xfactorData[type];
-            document.getElementById('xfactor-detail').innerHTML = `
-                <h3>${data.title}</h3>
-                <p>${data.text}</p>
-            `;
+            document.getElementById('xfactor-detail').innerHTML = `<h3>${data.title}</h3><p>${data.text}</p>`;
         }
 
         // ============================================
-        // 8. WHAT IF SIMULATOR
+        // WHAT IF SIMULATOR
         // ============================================
         function setGlobalStatus(isOn) {
+            playClick();
             document.getElementById('btn-global-on').classList.toggle('active', isOn);
             document.getElementById('btn-global-off').classList.toggle('active', !isOn);
             const cards = document.querySelectorAll('.whatif-card');
             const msg = document.getElementById('whatif-msg');
-            
-            cards.forEach(card => {
-                if (isOn) {
-                    card.classList.remove('lost');
-                } else {
-                    card.classList.add('lost');
-                }
-            });
-
+            cards.forEach(card => { if (isOn) card.classList.remove('lost'); else card.classList.add('lost'); });
             if (isOn) {
                 msg.innerText = "With global connections, your day is rich and full of variety.";
                 msg.style.color = "var(--green)";
@@ -902,7 +1327,7 @@
         }
 
         // ============================================
-        // 9. QUIZ
+        // QUIZ
         // ============================================
         const quizData = [
             { q: 'What is the "Secret Weapon" that makes a supply chain strong?', options: ['Having only one path', 'Having more than one path (Redundancy)', 'Using only airplanes'], correct: 1 },
@@ -912,16 +1337,12 @@
             { q: 'What does "X-Factor" mean in the global network?', options: ['The biggest factory in the world', 'Small choices that have big effects', 'The fastest ship'], correct: 1 }
         ];
 
-        let quizScore = 0;
-        let quizAnswered = 0;
+        let quizScore = 0; let quizAnswered = 0;
 
         function renderQuiz() {
             const container = document.getElementById('quiz-container');
-            container.innerHTML = '';
-            quizScore = 0;
-            quizAnswered = 0;
+            container.innerHTML = ''; quizScore = 0; quizAnswered = 0;
             document.getElementById('quiz-score').innerText = '';
-
             quizData.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'quiz-question-box';
@@ -930,8 +1351,7 @@
                 optDiv.className = 'options-grid';
                 item.options.forEach((opt, optIndex) => {
                     const btn = document.createElement('button');
-                    btn.className = 'option-btn';
-                    btn.innerText = opt;
+                    btn.className = 'option-btn'; btn.innerText = opt;
                     btn.onclick = () => answerQuiz(index, optIndex, btn, div);
                     optDiv.appendChild(btn);
                 });
@@ -948,21 +1368,16 @@
             parentDiv.dataset.answered = 'true';
             const item = quizData[qIndex];
             const feedback = parentDiv.querySelector('.quiz-feedback');
-
             if (optIndex === item.correct) {
-                btn.classList.add('correct');
-                feedback.innerText = '✅ Correct!';
-                feedback.style.color = 'var(--green)';
+                playSuccess(); btn.classList.add('correct');
+                feedback.innerText = '✅ Correct!'; feedback.style.color = 'var(--green)';
                 quizScore++;
             } else {
-                btn.classList.add('wrong');
+                playBeep(200, 0.3, 'sawtooth'); btn.classList.add('wrong');
                 feedback.innerText = '❌ Not quite. The correct answer was: ' + item.options[item.correct];
                 feedback.style.color = 'var(--red)';
-                parentDiv.querySelectorAll('.option-btn').forEach((b, i) => {
-                    if (i === item.correct) b.classList.add('correct');
-                });
+                parentDiv.querySelectorAll('.option-btn').forEach((b, i) => { if (i === item.correct) b.classList.add('correct'); });
             }
-
             quizAnswered++;
             if (quizAnswered === quizData.length) {
                 document.getElementById('quiz-score').innerText = `You scored ${quizScore} out of ${quizData.length}! ${quizScore === 5 ? '🏆 Perfect!' : 'Keep exploring!'}`;
@@ -971,14 +1386,12 @@
         }
 
         // ============================================
-        // 10. CHECKLIST
+        // CHECKLIST
         // ============================================
-        function toggleCheck(element) {
-            element.classList.toggle('completed');
-        }
+        function toggleCheck(element) { playClick(); element.classList.toggle('completed'); }
 
         // ============================================
-        // 11. REFLECTION
+        // REFLECTION
         // ============================================
         function updateWordCount() {
             const text = document.getElementById('reflection-text').value;
@@ -987,13 +1400,14 @@
         }
 
         function submitReflection() {
+            playClick();
             const text = document.getElementById('reflection-text').value;
             const msg = document.getElementById('reflection-msg');
-            
             if (text.length < 30) {
                 msg.style.color = 'var(--red)';
                 msg.innerText = "Please write a bit more! Try to explain what would change most and why.";
             } else {
+                playSuccess();
                 msg.style.color = 'var(--green)';
                 msg.innerText = "✅ Excellent reflection! You have successfully explained how your day depends on global connections.";
                 document.getElementById('reflection-text').disabled = true;
@@ -1008,6 +1422,7 @@
         // ============================================
         document.addEventListener('DOMContentLoaded', () => {
             renderQuiz();
+            document.body.addEventListener('click', initAudio, { once: true });
         });
     </script>
 </body>
