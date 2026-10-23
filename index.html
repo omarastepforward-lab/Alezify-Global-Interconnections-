@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alezify Y7 — My Global Life & 3D Factory</title>
+    <meta name="description" content="Alezify OS — My Global Life & 3D Factory. An interactive Year 7 global interconnection experience.">
+    <meta name="theme-color" content="#0E0D3C">
+    <title>Alezify OS — My Global Life & 3D Factory</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
         /* ============================================
-           ALEZIFY KID-FRIENDLY THEME
+           ALEZIFY OS — ULTRA EDITION
            ============================================ */
         :root {
             --primary: #0E0D3C;
+            --primary-2: #15143f;
             --secondary: #D3F7FD;
             --accent: #E2B2FF;
             --white: #FFFFFF;
@@ -21,6 +26,7 @@
             --font-display: 'Arial Rounded MT Bold', 'Helvetica Rounded', sans-serif;
             --radius: 20px;
             --transition: all 0.3s ease;
+            --glow-accent: 0 0 25px rgba(226,178,255,0.45);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,8 +38,28 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
+        ::selection { background: var(--yellow); color: var(--primary); }
+        :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; border-radius: 6px; }
 
         h1, h2, h3, h4 { font-family: var(--font-display); font-weight: bold; }
+
+        /* --- BACKGROUND PARTICLES --- */
+        #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.55; }
+        .hero, .section, .fs-section, footer, nav { position: relative; z-index: 1; }
+
+        /* --- BOOT SCREEN --- */
+        #boot {
+            position: fixed; inset: 0; z-index: 5000; background: radial-gradient(circle at 50% 40%, #1a1854 0%, #05051a 70%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.2rem;
+            transition: opacity 0.7s ease, visibility 0.7s; cursor: pointer;
+        }
+        #boot.done { opacity: 0; visibility: hidden; }
+        #boot .boot-logo { font-family: var(--font-display); font-size: 3rem; color: var(--secondary); letter-spacing: 2px; }
+        #boot .boot-logo span { color: var(--accent); }
+        #boot .boot-bar-wrap { width: min(420px, 80vw); height: 14px; background: rgba(211,247,253,0.12); border-radius: 20px; border: 2px solid var(--accent); overflow: hidden; }
+        #boot .boot-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--yellow), var(--accent), var(--green)); border-radius: 20px; transition: width 0.25s ease; }
+        #boot .boot-msg { font-family: monospace; font-size: 0.85rem; color: var(--secondary); opacity: 0.85; min-height: 1.4em; }
+        #boot .boot-hint { font-size: 0.75rem; color: var(--accent); opacity: 0.7; }
 
         /* --- PROGRESS BAR --- */
         #progress-bar {
@@ -54,23 +80,55 @@
         nav ul { display: flex; list-style: none; gap: 0.5rem; flex-wrap: wrap; }
         nav a { color: var(--secondary); text-decoration: none; font-weight: bold; transition: var(--transition); font-size: 0.75rem; padding: 0.25rem 0.4rem; border-radius: 5px; }
         nav a:hover, nav a.active { color: var(--primary); background: var(--yellow); }
+        .nav-tools { display: flex; gap: 0.5rem; align-items: center; }
+        .tool-btn {
+            background: transparent; border: 2px solid var(--secondary); color: var(--secondary);
+            border-radius: 10px; padding: 0.3rem 0.6rem; cursor: pointer; font-size: 1rem;
+            transition: var(--transition); line-height: 1;
+        }
+        .tool-btn:hover { background: var(--secondary); color: var(--primary); }
+        #hamburger { display: none; }
+        #mobile-menu {
+            position: fixed; top: 58px; left: 0; right: 0; z-index: 999;
+            background: rgba(14,13,60,0.98); border-bottom: 3px solid var(--accent);
+            display: none; flex-direction: column; padding: 1rem; gap: 0.3rem;
+            max-height: 70vh; overflow-y: auto;
+        }
+        #mobile-menu.open { display: flex; }
+        #mobile-menu a { color: var(--secondary); text-decoration: none; font-weight: bold; padding: 0.5rem; border-radius: 8px; }
+        #mobile-menu a:hover { background: var(--yellow); color: var(--primary); }
 
         /* --- HERO --- */
         .hero {
-            height: 100vh; display: flex; flex-direction: column; justify-content: center;
-            align-items: center; text-align: center; padding: 0 5%; margin-top: 60px;
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; padding: 90px 5% 40px;
             background: radial-gradient(circle at center, rgba(226, 178, 255, 0.25) 0%, transparent 70%);
             position: relative;
         }
         .hero h1 { font-size: 4rem; margin-bottom: 0.5rem; color: var(--yellow); text-shadow: 4px 4px 0px var(--accent); }
         .hero h2 { font-size: 2.2rem; color: var(--secondary); margin-bottom: 1.5rem; }
         .hero p { font-size: 1.2rem; max-width: 800px; color: var(--secondary); margin-bottom: 2rem; }
-        .floating-emoji { font-size: 3rem; position: absolute; animation: float 4s infinite ease-in-out; z-index: 1; }
+        .floating-emoji { font-size: 3rem; position: absolute; animation: float 4s infinite ease-in-out; z-index: 1; user-select: none; }
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-30px) rotate(10deg); } }
+
+        .hero-stats { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; }
+        .stat-chip {
+            background: rgba(14,13,60,0.85); border: 2px solid var(--accent); border-radius: 50px;
+            padding: 0.5rem 1.1rem; font-weight: bold; font-size: 0.85rem; color: var(--secondary);
+            box-shadow: var(--glow-accent); backdrop-filter: blur(6px);
+        }
+        .stat-chip b { color: var(--yellow); }
 
         .btn { padding: 1rem 2.5rem; background-color: var(--accent); color: var(--primary); border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: var(--transition); font-family: var(--font-display); box-shadow: 0 6px 0 var(--primary); }
         .btn:hover { transform: translateY(-4px); box-shadow: 0 10px 0 var(--primary); }
         .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .btn-secondary { background: transparent; border: 3px solid var(--secondary); color: var(--secondary); box-shadow: none; }
+        .btn-secondary:hover { background: var(--secondary); color: var(--primary); box-shadow: none; }
+
+        /* --- SCROLL REVEAL --- */
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
 
         /* --- SECTIONS --- */
         .section { padding: 5rem 4%; display: flex; flex-direction: column; align-items: center; position: relative; min-height: 70vh; }
@@ -80,10 +138,10 @@
         .highlight { color: var(--yellow); font-weight: bold; }
 
         /* ============================================
-           3D FACTORY SIMULATOR (NAMESPACED WITH fs-)
+           3D FACTORY SIMULATOR
            ============================================ */
         .fs-section {
-            position: relative; width: 100%; height: 80vh; min-height: 600px;
+            position: relative; width: 100%; height: 85vh; min-height: 620px;
             background: #000; display: flex; flex-direction: column;
             overflow: hidden; border-top: 3px solid var(--accent);
             border-bottom: 3px solid var(--accent);
@@ -96,6 +154,7 @@
         }
         .fs-ui-top h2 { color: var(--accent); font-size: 1.3rem; margin-bottom: 0.2rem; }
         .fs-ui-top p { color: var(--secondary); font-size: 0.85rem; opacity: 0.9; }
+        .fs-hint { position: absolute; top: 6.2rem; left: 50%; transform: translateX(-50%); z-index: 100; font-size: 0.75rem; color: var(--yellow); background: rgba(0,0,0,0.5); padding: 0.3rem 0.9rem; border-radius: 50px; border: 1px dashed var(--yellow); }
         .fs-ui-bottom {
             position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%);
             display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
@@ -133,23 +192,26 @@
             background: rgba(0,0,0,0.85); border: 1px solid var(--accent);
             padding: 0.6rem 1rem; border-radius: 8px; color: var(--white);
             font-family: monospace; font-size: 0.85rem; text-align: center;
-            width: 100%; box-shadow: 0 0 10px rgba(226,178,255,0.2);
+            width: 100%; box-shadow: 0 0 10px rgba(226,178,255,0.2); min-height: 3.2em;
         }
         .fs-status-log span { color: var(--accent); font-weight: bold; }
-        .fs-scene {
-            width: 100%; height: 100%; perspective: 1500px;
-            display: flex; justify-content: center; align-items: center;
-            background: radial-gradient(circle at center, #15143f 0%, #000 75%);
-        }
+        .fs-scene { width: 100%; height: 100%; }
+        #fs3d { width: 100%; height: 100%; display: block; }
+        #fs3d canvas { display: block; }
+
+        /* CSS 3D FALLBACK WORLD */
         .fs-world {
             width: 1200px; height: 800px; position: relative;
             transform-style: preserve-3d;
             transform: rotateX(60deg) rotateZ(-45deg) translateY(-80px);
             transition: transform 1s ease;
+            display: none;
         }
+        .fs-css-mode .fs-world { display: block; }
+        .fs-css-mode #fs3d, .fs-css-mode .fs-hint { display: none; }
         .fs-floor {
             position: absolute; width: 100%; height: 100%;
-            background-image: 
+            background-image:
                 linear-gradient(rgba(211, 247, 253, 0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(211, 247, 253, 0.05) 1px, transparent 1px);
             background-size: 100px 100px;
@@ -203,24 +265,22 @@
             transform-style: preserve-3d; transition: all 1.2s ease-in-out;
             opacity: 0; pointer-events: none; z-index: 5;
         }
-        .fs-o-face {
-            position: absolute; width: 70px; height: 70px;
-            border: 2px solid rgba(255,255,255,0.5);
-        }
+        .fs-o-face { position: absolute; width: 70px; height: 70px; border: 2px solid rgba(255,255,255,0.5); }
         .fs-o-top { transform: rotateX(90deg) translateZ(35px); }
         .fs-o-front { transform: translateZ(35px); }
         .fs-o-side { transform: rotateY(90deg) translateZ(35px); }
         .fs-obj.visible { opacity: 1; }
-        .fs-obj[data-type="hardware"] .fs-o-face { background: var(--secondary); }
-        .fs-obj[data-type="software"] .fs-o-face { background: var(--green); }
+        .fs-obj[data-type="amazon"] .fs-o-face { background: var(--orange); }
+        .fs-obj[data-type="apple"] .fs-o-face { background: var(--green); }
         .fs-obj[data-type="normal"] .fs-o-face { background: var(--orange); }
         .fs-obj.box .fs-o-face { background: #8B4513; border: 2px solid #D2B48C; }
 
         /* ============================================
-           REAL-WORLD GIANTS SECTION
+           REAL-WORLD GIANTS
            ============================================ */
         .giants-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1000px; width: 100%; }
-        .giant-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.5rem; border-radius: var(--radius); }
+        .giant-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.5rem; border-radius: var(--radius); transition: var(--transition); }
+        .giant-card:hover { transform: translateY(-6px); border-color: var(--yellow); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
         .giant-card h3 { color: var(--yellow); margin-bottom: 0.5rem; font-size: 1.4rem; }
         .giant-card .stat { font-size: 1.8rem; color: var(--secondary); font-weight: bold; display: block; margin-bottom: 0.3rem; }
         .giant-card ul { list-style: none; padding: 0; }
@@ -236,6 +296,7 @@
             padding: 1.2rem; width: 140px; text-align: center; cursor: pointer;
             transition: var(--transition); position: relative;
         }
+        .journey-step:hover { transform: translateY(-4px); }
         .journey-step.active { background: var(--accent); border-color: var(--accent); transform: scale(1.08); z-index: 10; box-shadow: 0 0 20px var(--accent); }
         .journey-step .step-icon { font-size: 2rem; margin-bottom: 0.3rem; }
         .journey-step .step-label { font-weight: bold; font-size: 0.8rem; color: var(--secondary); }
@@ -252,7 +313,11 @@
             gap: 0.4rem; font-weight: bold; color: var(--yellow); margin: 0.8rem 0;
             font-size: 0.9rem; background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 10px;
         }
-        .arrow-chain span { color: var(--secondary); background: var(--primary); padding: 4px 8px; border-radius: 5px; border: 1px solid var(--secondary); font-size: 0.85rem; }
+        .arrow-chain span { color: var(--secondary); background: var(--primary); padding: 4px 8px; border-radius: 5px; border: 1px solid var(--secondary); font-size: 0.85rem; animation: chainPop 0.4s ease backwards; }
+        .arrow-chain span:nth-child(1) { animation-delay: 0.05s; }
+        .arrow-chain span:nth-child(3) { animation-delay: 0.15s; }
+        .arrow-chain span:nth-child(5) { animation-delay: 0.25s; }
+        @keyframes chainPop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         /* ============================================
            MAP
@@ -264,18 +329,25 @@
             border: 4px solid var(--secondary); border-radius: var(--radius);
             background-color: rgba(211, 247, 253, 0.05);
         }
+        .map-arcs { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+        .map-arcs path { fill: none; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 12 10; animation: arcFlow 1.2s linear infinite; opacity: 0; transition: opacity 0.5s; }
+        .map-arcs path.show { opacity: 1; }
+        .map-arcs .arc-amazon { stroke: var(--yellow); filter: drop-shadow(0 0 6px var(--yellow)); }
+        .map-arcs .arc-apple { stroke: var(--accent); filter: drop-shadow(0 0 6px var(--accent)); }
+        @keyframes arcFlow { to { stroke-dashoffset: -22; } }
         .map-dot {
             position: absolute; width: 28px; height: 28px; background-color: var(--yellow);
             border-radius: 50%; cursor: pointer; transition: var(--transition);
             box-shadow: 0 0 20px var(--yellow); display: flex; justify-content: center; align-items: center;
             font-size: 0.65rem; font-weight: bold; color: var(--primary); border: 2px solid var(--primary);
+            z-index: 2;
         }
         .map-dot:hover { transform: scale(1.5); background-color: var(--accent); }
         .map-dot::after {
             content: attr(data-label); position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
             background: var(--primary); color: var(--secondary); padding: 5px 10px; border-radius: 8px;
             font-size: 0.8rem; white-space: nowrap; opacity: 0; pointer-events: none;
-            transition: var(--transition); border: 2px solid var(--secondary);
+            transition: var(--transition); border: 2px solid var(--secondary); z-index: 5;
         }
         .map-dot:hover::after { opacity: 1; top: -50px; }
         .map-info {
@@ -298,7 +370,7 @@
         .food-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; width: 100%; max-width: 900px; margin-bottom: 1.5rem; }
         .food-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.2rem; border-radius: var(--radius); text-align: center; cursor: pointer; transition: var(--transition); }
         .food-card:hover { transform: translateY(-5px); border-color: var(--yellow); }
-        .food-card.active { border-color: var(--accent); background: rgba(226, 178, 255, 0.15); }
+        .food-card.active { border-color: var(--accent); background: rgba(226, 178, 255, 0.15); box-shadow: var(--glow-accent); }
         .food-card .food-icon { font-size: 2.5rem; margin-bottom: 0.3rem; }
         .food-card h4 { color: var(--secondary); font-size: 1rem; }
         .food-detail { width: 100%; max-width: 900px; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: var(--radius); border: 2px solid var(--accent); min-height: 130px; }
@@ -309,7 +381,8 @@
         .media-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; }
         .media-network { display: flex; justify-content: space-around; align-items: center; width: 100%; margin: 1.5rem 0; flex-wrap: wrap; gap: 1rem; }
         .media-node { width: 90px; height: 90px; border-radius: 50%; background: var(--primary); border: 3px solid var(--secondary); display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.7rem; text-align: center; transition: var(--transition); cursor: pointer; }
-        .media-node.active { background: var(--accent); color: var(--primary); border-color: var(--accent); transform: scale(1.1); }
+        .media-node:hover { transform: scale(1.08); border-color: var(--yellow); }
+        .media-node.active { background: var(--accent); color: var(--primary); border-color: var(--accent); transform: scale(1.1); box-shadow: var(--glow-accent); }
         .media-node .m-icon { font-size: 1.8rem; }
         .media-node .m-label { font-weight: bold; font-size: 0.65rem; }
         .media-arrow { color: var(--yellow); font-size: 1.3rem; }
@@ -340,7 +413,7 @@
         .domino-box .d-label { font-size: 0.7rem; font-weight: bold; margin-top: 0.2rem; }
         .domino-box:hover { transform: translateY(-5px); border-color: var(--yellow); }
         .domino-box.broken { background: var(--red); border-color: var(--red); animation: shake 0.5s; }
-        .domino-box.delayed { background: var(--orange); border-color: var(--orange); }
+        .domino-box.delayed { background: var(--orange); border-color: var(--orange); animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
         .game-msg { font-size: 1rem; text-align: center; color: var(--yellow); font-weight: bold; min-height: 30px; }
 
@@ -355,24 +428,29 @@
         /* ============================================
            WHAT IF SIMULATOR
            ============================================ */
-        .whatif-toggle { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .whatif-toggle { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; }
         .toggle-btn { padding: 0.8rem 1.5rem; background: var(--primary); border: 3px solid var(--secondary); color: var(--secondary); border-radius: 50px; cursor: pointer; font-weight: bold; font-family: var(--font-main); font-size: 0.9rem; transition: var(--transition); }
         .toggle-btn.active { background: var(--secondary); color: var(--primary); }
         .whatif-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; width: 100%; max-width: 900px; }
-        .whatif-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1rem; border-radius: var(--radius); text-align: center; transition: var(--transition); }
-        .whatif-card.lost { opacity: 0.3; border-color: var(--red); filter: grayscale(1); }
+        .whatif-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1rem; border-radius: var(--radius); text-align: center; transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.6s, filter 0.6s; }
+        .whatif-card.lost { opacity: 0.3; border-color: var(--red); filter: grayscale(1); transform: scale(0.96); }
         .whatif-card .w-icon { font-size: 2rem; margin-bottom: 0.3rem; }
         .whatif-card h4 { color: var(--yellow); font-size: 1rem; margin-bottom: 0.3rem; }
 
         /* ============================================
            QUIZ
            ============================================ */
+        .quiz-toolbar { display: flex; gap: 0.8rem; align-items: center; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .xp-badge { background: rgba(255,209,102,0.15); border: 2px solid var(--yellow); color: var(--yellow); border-radius: 50px; padding: 0.4rem 1rem; font-weight: bold; font-size: 0.85rem; }
         .quiz-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 1rem; }
         .quiz-question-box { background: rgba(226, 178, 255, 0.1); padding: 1.2rem; border-radius: var(--radius); border: 3px solid var(--accent); }
         .quiz-question-box h3 { color: var(--yellow); margin-bottom: 0.8rem; font-size: 1.1rem; }
+        .quiz-timer { height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-bottom: 0.8rem; }
+        .quiz-timer .fill { height: 100%; width: 100%; background: var(--green); border-radius: 10px; transition: width 1s linear, background 0.3s; }
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
         .option-btn { padding: 0.7rem; background: var(--primary); color: var(--white); border: 2px solid var(--secondary); border-radius: 10px; font-size: 0.9rem; cursor: pointer; text-align: left; transition: var(--transition); font-family: var(--font-main); }
-        .option-btn:hover { background: var(--secondary); color: var(--primary); }
+        .option-btn:hover:not(:disabled) { background: var(--secondary); color: var(--primary); }
+        .option-btn:disabled { cursor: default; opacity: 0.85; }
         .option-btn.correct { background: var(--green); color: var(--primary); border-color: var(--green); }
         .option-btn.wrong { background: var(--red); color: var(--white); border-color: var(--red); }
         .quiz-feedback { margin-top: 0.6rem; font-weight: bold; font-size: 0.9rem; color: var(--yellow); }
@@ -380,13 +458,32 @@
         /* ============================================
            CHECKLIST
            ============================================ */
+        .checklist-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; width: 100%; }
+        .ring-wrap { position: relative; width: 150px; height: 150px; }
+        .ring-wrap svg { transform: rotate(-90deg); }
+        .ring-wrap .ring-bg { fill: none; stroke: rgba(211,247,253,0.15); stroke-width: 12; }
+        .ring-wrap .ring-fg { fill: none; stroke: var(--green); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; filter: drop-shadow(0 0 6px var(--green)); }
+        .ring-wrap .ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: var(--font-display); }
+        .ring-wrap .ring-text b { font-size: 1.8rem; color: var(--yellow); }
+        .ring-wrap .ring-text small { font-size: 0.7rem; color: var(--secondary); }
         .checklist { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 0.8rem; }
         .check-item { display: flex; align-items: center; gap: 0.8rem; background: rgba(211, 247, 253, 0.05); padding: 0.8rem; border-radius: 10px; border: 2px solid var(--secondary); cursor: pointer; transition: var(--transition); }
-        .check-item:hover { border-color: var(--yellow); }
-        .check-item .box { width: 26px; height: 26px; border: 3px solid var(--secondary); border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 1rem; color: var(--green); font-weight: bold; transition: var(--transition); flex-shrink: 0; }
+        .check-item:hover { border-color: var(--yellow); transform: translateX(6px); }
+        .check-item .box { width: 26px; height: 26px; border: 3px solid var(--secondary); border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 1rem; color: transparent; font-weight: bold; transition: var(--transition); flex-shrink: 0; }
         .check-item.completed .box { background: var(--green); border-color: var(--green); color: var(--primary); }
         .check-item.completed span { text-decoration: line-through; opacity: 0.7; }
         .check-item span { font-size: 0.9rem; }
+
+        /* ============================================
+           BADGES
+           ============================================ */
+        .badges-row { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; }
+        .badge { width: 74px; text-align: center; opacity: 0.3; filter: grayscale(1); transition: var(--transition); }
+        .badge.unlocked { opacity: 1; filter: none; }
+        .badge .b-icon { font-size: 2.2rem; display: block; }
+        .badge .b-name { font-size: 0.6rem; font-weight: bold; color: var(--secondary); }
+        .badge.unlocked .b-icon { animation: badgeGlow 2s infinite alternate; }
+        @keyframes badgeGlow { from { transform: scale(1); } to { transform: scale(1.12); } }
 
         /* ============================================
            REFLECTION
@@ -396,16 +493,57 @@
         .reflection-box button { padding: 0.8rem 2rem; background: var(--accent); color: var(--primary); border: none; border-radius: 50px; font-weight: bold; font-family: var(--font-display); font-size: 1rem; cursor: pointer; transition: var(--transition); }
         .reflection-box button:hover { transform: scale(1.05); }
         .word-count { font-size: 0.8rem; color: var(--secondary); margin-bottom: 0.8rem; text-align: right; }
+        .reflection-actions { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
 
         /* ============================================
            GLOSSARY
            ============================================ */
         .glossary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.8rem; width: 100%; max-width: 1000px; }
-        .glossary-card { background: rgba(211, 247, 253, 0.05); border: 2px solid var(--secondary); padding: 0.8rem; border-radius: 10px; cursor: help; transition: var(--transition); }
-        .glossary-card:hover { border-color: var(--yellow); background: rgba(255, 209, 102, 0.1); }
+        .glossary-card { background: rgba(211, 247, 253, 0.05); border: 2px solid var(--secondary); padding: 0.8rem; border-radius: 10px; cursor: pointer; transition: var(--transition); }
+        .glossary-card:hover, .glossary-card.open { border-color: var(--yellow); background: rgba(255, 209, 102, 0.1); }
         .glossary-card h4 { color: var(--yellow); font-size: 1rem; margin-bottom: 0.2rem; }
         .glossary-card p { font-size: 0.8rem; opacity: 0; max-height: 0; transition: all 0.3s ease; overflow: hidden; }
-        .glossary-card:hover p { opacity: 1; max-height: 100px; margin-top: 0.4rem; }
+        .glossary-card:hover p, .glossary-card.open p { opacity: 1; max-height: 100px; margin-top: 0.4rem; }
+
+        /* --- COMMAND PALETTE --- */
+        .palette-overlay {
+            position: fixed; inset: 0; z-index: 4000; background: rgba(5,5,26,0.7);
+            backdrop-filter: blur(4px); display: none; justify-content: center; padding-top: 12vh;
+        }
+        .palette-overlay.open { display: flex; }
+        .palette {
+            width: min(560px, 92vw); height: fit-content; max-height: 60vh; overflow: hidden;
+            background: rgba(14,13,60,0.98); border: 3px solid var(--accent); border-radius: var(--radius);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6), var(--glow-accent);
+            display: flex; flex-direction: column;
+        }
+        .palette input {
+            background: transparent; border: none; border-bottom: 2px solid rgba(211,247,253,0.2);
+            color: var(--white); font-family: var(--font-main); font-size: 1.1rem; padding: 1rem 1.2rem; outline: none;
+        }
+        .palette ul { list-style: none; overflow-y: auto; padding: 0.5rem; }
+        .palette li {
+            padding: 0.65rem 1rem; border-radius: 10px; cursor: pointer; display: flex; gap: 0.7rem; align-items: center;
+            color: var(--secondary); font-size: 0.95rem;
+        }
+        .palette li:hover, .palette li.selected { background: rgba(226,178,255,0.2); color: var(--white); }
+        .palette li .p-icon { font-size: 1.1rem; }
+        .palette .p-hint { padding: 0.5rem 1.2rem; font-size: 0.7rem; color: var(--secondary); opacity: 0.6; border-top: 1px solid rgba(211,247,253,0.15); }
+
+        /* --- TOASTS --- */
+        #toasts { position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 4500; display: flex; flex-direction: column; gap: 0.6rem; max-width: 320px; }
+        .toast {
+            background: rgba(14,13,60,0.97); border: 2px solid var(--accent); border-left: 6px solid var(--yellow);
+            border-radius: 12px; padding: 0.7rem 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: toastIn 0.4s ease; font-size: 0.85rem;
+        }
+        .toast b { color: var(--yellow); display: block; }
+        .toast.gone { animation: toastOut 0.4s ease forwards; }
+        @keyframes toastIn { from { transform: translateX(-120%); opacity: 0; } to { transform: none; opacity: 1; } }
+        @keyframes toastOut { to { transform: translateX(-120%); opacity: 0; } }
+
+        /* --- CONFETTI CANVAS --- */
+        #confetti-canvas { position: fixed; inset: 0; z-index: 4600; pointer-events: none; }
 
         /* --- BACK TO TOP --- */
         #back-to-top { position: fixed; bottom: 1.5rem; right: 1.5rem; width: 45px; height: 45px; background: var(--accent); color: var(--primary); border: none; border-radius: 50%; font-size: 1.3rem; cursor: pointer; display: none; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: var(--transition); }
@@ -413,35 +551,57 @@
         #back-to-top.show { display: block; }
 
         /* --- FOOTER --- */
-        footer { padding: 2rem; background: var(--black); text-align: center; border-top: 4px solid var(--accent); }
+        footer { padding: 2rem; text-align: center; border-top: 4px solid var(--accent); background: rgba(0,0,0,0.35); }
         footer p { color: var(--secondary); opacity: 0.7; font-size: 0.9rem; }
+        .footer-actions { display: flex; gap: 0.8rem; justify-content: center; margin: 1rem 0; flex-wrap: wrap; }
+        .footer-actions .btn { font-size: 0.8rem; padding: 0.6rem 1.3rem; }
 
         /* --- RESPONSIVE --- */
+        @media (max-width: 900px) { nav ul { display: none; } #hamburger { display: block; } }
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.5rem; }
-            nav ul { display: none; }
             .journey-step { width: 100%; }
             .domino-box { width: 45%; }
             .mood-meter { flex-direction: column; gap: 1rem; }
             .giants-grid { grid-template-columns: 1fr; }
-            .fs-world { transform: rotateX(60deg) rotateZ(-45deg) scale(0.45) translateY(-80px); }
-            .fs-section { height: 70vh; min-height: 500px; }
+            .fs-css-mode .fs-world { transform: rotateX(60deg) rotateZ(-45deg) scale(0.45) translateY(-80px); }
+            .fs-section { height: 70vh; min-height: 560px; }
             .layer-circle { width: 100% !important; height: auto !important; aspect-ratio: 1; }
-            .identity-layers { height: auto; }
+            .identity-layers { height: auto; min-height: 320px; }
+            .fs-hint { display: none; }
+        }
+
+        /* --- REDUCED MOTION --- */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+            html { scroll-behavior: auto; }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
+
+    <!-- BOOT SCREEN -->
+    <div id="boot" role="status" aria-label="Loading Alezify OS">
+        <div class="boot-logo">Alezify<span>OS</span></div>
+        <div class="boot-bar-wrap"><div class="boot-bar" id="boot-bar"></div></div>
+        <div class="boot-msg" id="boot-msg">Initializing kernel...</div>
+        <div class="boot-hint">click anywhere to skip</div>
+    </div>
+
+    <!-- BACKGROUND PARTICLES -->
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
     <!-- PROGRESS BAR -->
     <div id="progress-bar"></div>
 
     <!-- NAVIGATION -->
     <nav>
-        <a href="#" class="logo">Alezify<span>.</span></a>
+        <a href="#home" class="logo">Alezify<span>OS</span></a>
         <ul>
             <li><a href="#factory">3D Factory</a></li>
-            <li><a href="#giants">Real-World Giants</a></li>
+            <li><a href="#giants">Giants</a></li>
             <li><a href="#journey">Journey</a></li>
             <li><a href="#map">Map</a></li>
             <li><a href="#food">Food</a></li>
@@ -455,7 +615,28 @@
             <li><a href="#reflection">Reflection</a></li>
             <li><a href="#glossary">Glossary</a></li>
         </ul>
+        <div class="nav-tools">
+            <button class="tool-btn" id="sound-toggle" title="Toggle sound" aria-label="Toggle sound">🔊</button>
+            <button class="tool-btn" id="palette-open" title="Command palette (Ctrl+K)" aria-label="Open command palette">⌘K</button>
+            <button class="tool-btn" id="hamburger" title="Menu" aria-label="Open menu">☰</button>
+        </div>
     </nav>
+    <div id="mobile-menu">
+        <a href="#factory">🏭 3D Factory</a>
+        <a href="#giants">🌐 Real-World Giants</a>
+        <a href="#journey">📱 Smartphone Journey</a>
+        <a href="#map">🗺️ Global Map</a>
+        <a href="#food">🍌 Food Journey</a>
+        <a href="#media">📡 Media Spread</a>
+        <a href="#identity">🧭 Identity</a>
+        <a href="#domino">🁡 Domino Effect</a>
+        <a href="#xfactor">⚡ X-Factor</a>
+        <a href="#whatif">🌐 What If?</a>
+        <a href="#quiz">🧠 Quiz</a>
+        <a href="#checklist">✅ Checklist</a>
+        <a href="#reflection">✍️ Reflection</a>
+        <a href="#glossary">📖 Glossary</a>
+    </div>
 
     <!-- HERO -->
     <section class="hero" id="home">
@@ -468,7 +649,13 @@
         <h1>My Global Life:</h1>
         <h2>24 Hours Around the World</h2>
         <p>Run the 3D factory, explore real-world giants like Amazon and Apple, and discover how 5 moments in your day connect you with the whole world!</p>
-        <button class="btn" onclick="document.getElementById('factory').scrollIntoView({behavior: 'smooth'});">Enter the Factory! 🏭</button>
+        <div class="hero-stats" aria-label="Your progress">
+            <div class="stat-chip">⚡ <b id="xp-val">0</b> XP</div>
+            <div class="stat-chip">🏅 <b id="badge-val">0</b>/6 Badges</div>
+            <div class="stat-chip">✅ <b id="ck-val">0</b>% Checklist</div>
+            <div class="stat-chip">🧠 Best Quiz: <b id="quiz-val">–</b></div>
+        </div>
+        <button class="btn" onclick="scrollToId('factory')">Enter the Factory! 🏭</button>
     </section>
 
     <!-- 1. 3D FACTORY SIMULATOR -->
@@ -477,8 +664,10 @@
             <h2>Alezify Fulfillment Center</h2>
             <p id="fs-current-product">Currently Producing: Amazon Fulfillment (Prime Order)</p>
         </div>
+        <div class="fs-hint">🖱️ Drag to orbit • Scroll to zoom • Real-time 3D engine</div>
 
         <div class="fs-scene">
+            <div id="fs3d"></div>
             <div class="fs-world" id="fs-world">
                 <div class="fs-floor"></div>
                 <div class="fs-conveyor-track">
@@ -541,14 +730,14 @@
     </section>
 
     <!-- 2. REAL-WORLD GIANTS -->
-    <section id="giants" class="section section-alt">
+    <section id="giants" class="section section-alt reveal">
         <h2 class="section-title">Real-World Giants</h2>
         <p class="section-subtitle">See how the principles you just simulated are used by the world's largest companies.</p>
-        
+
         <div class="giants-grid">
             <div class="giant-card">
                 <h3>📦 Amazon</h3>
-                <span class="stat">1 Million+</span>
+                <span class="stat"><span class="count-up" data-count="1000000">0</span>+</span>
                 <p style="color: var(--secondary); margin-bottom: 0.8rem; font-size: 0.85rem;">Robots in fulfillment centers worldwide.</p>
                 <ul>
                     <li><strong>Network:</strong> 200+ US fulfillment centers, 80,000 trailers, 100 cargo aircraft.</li>
@@ -559,7 +748,7 @@
             </div>
             <div class="giant-card">
                 <h3>📱 Apple</h3>
-                <span class="stat">$416 Billion</span>
+                <span class="stat">$<span class="count-up" data-count="416">0</span> Billion</span>
                 <p style="color: var(--secondary); margin-bottom: 0.8rem; font-size: 0.85rem;">Revenue in fiscal 2025, mostly from design and software.</p>
                 <ul>
                     <li><strong>Design:</strong> Designs in California but owns almost no factories.</li>
@@ -572,28 +761,28 @@
     </section>
 
     <!-- 3. SMARTPHONE JOURNEY -->
-    <section id="journey" class="section">
+    <section id="journey" class="section reveal">
         <h2 class="section-title">The Journey of a Smartphone</h2>
         <p class="section-subtitle">Click each step to see how a phone is built around the world. Every object has a passport!</p>
-        
+
         <div class="journey-container">
-            <div class="journey-step" onclick="showJourney('materials', this)">
+            <div class="journey-step" onclick="showJourney('materials', this)" tabindex="0" role="button">
                 <div class="step-icon">⛏️</div>
                 <div class="step-label">1. Materials</div>
             </div>
-            <div class="journey-step" onclick="showJourney('components', this)">
+            <div class="journey-step" onclick="showJourney('components', this)" tabindex="0" role="button">
                 <div class="step-icon">🔌</div>
                 <div class="step-label">2. Components</div>
             </div>
-            <div class="journey-step" onclick="showJourney('assembly', this)">
+            <div class="journey-step" onclick="showJourney('assembly', this)" tabindex="0" role="button">
                 <div class="step-icon">🏭</div>
                 <div class="step-label">3. Assembly</div>
             </div>
-            <div class="journey-step" onclick="showJourney('transport', this)">
+            <div class="journey-step" onclick="showJourney('transport', this)" tabindex="0" role="button">
                 <div class="step-icon">🚚</div>
                 <div class="step-label">4. Transport</div>
             </div>
-            <div class="journey-step" onclick="showJourney('you', this)">
+            <div class="journey-step" onclick="showJourney('you', this)" tabindex="0" role="button">
                 <div class="step-icon">🤳</div>
                 <div class="step-label">5. You!</div>
             </div>
@@ -606,11 +795,15 @@
     </section>
 
     <!-- 4. INTERACTIVE MAP -->
-    <section id="map" class="section section-alt">
+    <section id="map" class="section section-alt reveal">
         <h2 class="section-title">Where Does Our Stuff Come From?</h2>
         <p class="section-subtitle">Click the glowing dots on the map to see what different continents make. <span class="highlight">Asia makes the most (50%)!</span></p>
-        
+
         <div class="map-wrapper">
+            <svg class="map-arcs" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+                <path id="arc-amazon" class="arc-amazon" d="M 1120 405 Q 800 80 400 315" />
+                <path id="arc-apple" class="arc-apple" d="M 1120 405 Q 950 220 768 378" />
+            </svg>
             <div class="map-dot" style="top: 35%; left: 25%;" data-label="North America (22%)" onclick="updateMapInfo('North America', '22%', 'Designs cool software and makes advanced parts for phones, planes, and computers.')">NA</div>
             <div class="map-dot" style="top: 42%; left: 48%;" data-label="Europe (22%)" onclick="updateMapInfo('Europe', '22%', 'Makes high-quality machines, cars, and luxury items like watches.')">EU</div>
             <div class="map-dot" style="top: 45%; left: 70%;" data-label="Asia (50%)" onclick="updateMapInfo('Asia', '50%', 'The biggest factory in the world! Makes phones, clothes, toys, and computer chips.')">AS</div>
@@ -618,7 +811,7 @@
             <div class="map-dot" style="top: 75%; left: 85%;" data-label="Australia (1%)" onclick="updateMapInfo('Australia', '1%', 'Supplies raw materials like iron and wool.')">AU</div>
             <div class="map-dot" style="top: 70%; left: 30%;" data-label="South America (6%)" onclick="updateMapInfo('South America', '6%', 'Grows lots of food like coffee and supplies metals like copper.')">SA</div>
         </div>
-        
+
         <div class="map-info" id="map-info">
             <h3>Click a dot!</h3>
             <p>Discover who makes what.</p>
@@ -634,24 +827,24 @@
     </section>
 
     <!-- 5. FOOD JOURNEY -->
-    <section id="food" class="section">
+    <section id="food" class="section reveal">
         <h2 class="section-title">Your Breakfast's Global Journey</h2>
         <p class="section-subtitle">Pick a breakfast item to see how it travels from farm to plate!</p>
-        
+
         <div class="food-grid">
-            <div class="food-card" onclick="showFood('banana', this)">
+            <div class="food-card" onclick="showFood('banana', this)" tabindex="0" role="button">
                 <div class="food-icon">🍌</div>
                 <h4>Banana</h4>
             </div>
-            <div class="food-card" onclick="showFood('chocolate', this)">
+            <div class="food-card" onclick="showFood('chocolate', this)" tabindex="0" role="button">
                 <div class="food-icon">🍫</div>
                 <h4>Chocolate</h4>
             </div>
-            <div class="food-card" onclick="showFood('cereal', this)">
+            <div class="food-card" onclick="showFood('cereal', this)" tabindex="0" role="button">
                 <div class="food-icon">🥣</div>
                 <h4>Cereal</h4>
             </div>
-            <div class="food-card" onclick="showFood('tea', this)">
+            <div class="food-card" onclick="showFood('tea', this)" tabindex="0" role="button">
                 <div class="food-icon">🍵</div>
                 <h4>Tea</h4>
             </div>
@@ -664,28 +857,28 @@
     </section>
 
     <!-- 6. MEDIA SPREAD -->
-    <section id="media" class="section section-alt">
+    <section id="media" class="section section-alt reveal">
         <h2 class="section-title">How Trends Spread Globally</h2>
         <p class="section-subtitle">A song, game, or dance trend can travel around the world in days. Click a node to see how it spreads!</p>
-        
+
         <div class="media-container">
             <div class="media-network">
-                <div class="media-node" id="mn-1" onclick="activateMediaNode(1)">
+                <div class="media-node" id="mn-1" onclick="activateMediaNode(1)" tabindex="0" role="button">
                     <span class="m-icon">🇰🇷</span>
                     <span class="m-label">South Korea</span>
                 </div>
                 <div class="media-arrow">→</div>
-                <div class="media-node" id="mn-2" onclick="activateMediaNode(2)">
+                <div class="media-node" id="mn-2" onclick="activateMediaNode(2)" tabindex="0" role="button">
                     <span class="m-icon">📱</span>
                     <span class="m-label">Social Media</span>
                 </div>
                 <div class="media-arrow">→</div>
-                <div class="media-node" id="mn-3" onclick="activateMediaNode(3)">
+                <div class="media-node" id="mn-3" onclick="activateMediaNode(3)" tabindex="0" role="button">
                     <span class="m-icon">🌍</span>
                     <span class="m-label">Global Fans</span>
                 </div>
                 <div class="media-arrow">→</div>
-                <div class="media-node" id="mn-4" onclick="activateMediaNode(4)">
+                <div class="media-node" id="mn-4" onclick="activateMediaNode(4)" tabindex="0" role="button">
                     <span class="m-icon">🏠</span>
                     <span class="m-label">Your Home</span>
                 </div>
@@ -698,10 +891,10 @@
     </section>
 
     <!-- 7. IDENTITY LAYERS -->
-    <section id="identity" class="section">
+    <section id="identity" class="section reveal">
         <h2 class="section-title">Overlapping Identities</h2>
         <p class="section-subtitle">We all have different layers of identity. Global connections help shape who we are. Hover over the circles!</p>
-        
+
         <div class="identity-layers">
             <div class="layer-circle layer-global">
                 <span class="layer-label" style="top: 5%;">🌐 Global</span>
@@ -716,17 +909,17 @@
                 <span>🏠 Personal</span>
             </div>
         </div>
-        
+
         <div style="width: 100%; max-width: 700px; background: rgba(211, 247, 253, 0.1); padding: 1rem; border-radius: var(--radius); margin-top: 1rem; text-align: center;">
             <p style="font-size: 0.9rem;"><strong>Teacher Tip:</strong> One world does not mean one culture. Connection helps us share differences as well as similarities. Think about how a global trend has changed how you express your <em>own</em> identity.</p>
         </div>
     </section>
 
     <!-- 8. DOMINO EFFECT -->
-    <section id="domino" class="section section-alt">
+    <section id="domino" class="section section-alt reveal">
         <h2 class="section-title">The Domino Effect</h2>
         <p class="section-subtitle">A global system is connected. If one link breaks, it changes lives and moods! <strong>Click any box to break the chain!</strong></p>
-        
+
         <div class="domino-container">
             <div class="mood-meter">
                 <div class="mood-card" id="mood-shop">
@@ -740,23 +933,23 @@
             </div>
 
             <div class="domino-chain">
-                <div class="domino-box" id="d1" onclick="triggerDomino(0)">
+                <div class="domino-box" id="d1" onclick="triggerDomino(0)" tabindex="0" role="button">
                     <div class="d-icon">⛏️</div>
                     <div class="d-label">Supplier</div>
                 </div>
-                <div class="domino-box" id="d2" onclick="triggerDomino(1)">
+                <div class="domino-box" id="d2" onclick="triggerDomino(1)" tabindex="0" role="button">
                     <div class="d-icon">🏭</div>
                     <div class="d-label">Factory</div>
                 </div>
-                <div class="domino-box" id="d3" onclick="triggerDomino(2)">
+                <div class="domino-box" id="d3" onclick="triggerDomino(2)" tabindex="0" role="button">
                     <div class="d-icon">🚢</div>
                     <div class="d-label">Port</div>
                 </div>
-                <div class="domino-box" id="d4" onclick="triggerDomino(3)">
+                <div class="domino-box" id="d4" onclick="triggerDomino(3)" tabindex="0" role="button">
                     <div class="d-icon">🏪</div>
                     <div class="d-label">Shop</div>
                 </div>
-                <div class="domino-box" id="d5" onclick="triggerDomino(4)">
+                <div class="domino-box" id="d5" onclick="triggerDomino(4)" tabindex="0" role="button">
                     <div class="d-icon">👤</div>
                     <div class="d-label">You</div>
                 </div>
@@ -768,17 +961,17 @@
     </section>
 
     <!-- 9. X-FACTOR -->
-    <section id="xfactor" class="section">
+    <section id="xfactor" class="section reveal">
         <h2 class="section-title">X-Factor: Small Choices, Big Effects</h2>
         <p class="section-subtitle">The network changes when people make one tiny decision. Click a choice to see its ripple effect!</p>
-        
+
         <div class="xfactor-visual" id="xfactor-visual">
-            <div class="xfactor-bubble" onclick="showXFactor('repair', this)">🔧 Repair instead of replace</div>
-            <div class="xfactor-bubble" onclick="showXFactor('recycle', this)">♻️ Recycle old devices</div>
-            <div class="xfactor-bubble" onclick="showXFactor('local', this)">🏪 Buy from local shops</div>
-            <div class="xfactor-bubble" onclick="showXFactor('transport', this)">🚲 Use greener transport</div>
+            <div class="xfactor-bubble" onclick="showXFactor('repair', this)" tabindex="0" role="button">🔧 Repair instead of replace</div>
+            <div class="xfactor-bubble" onclick="showXFactor('recycle', this)" tabindex="0" role="button">♻️ Recycle old devices</div>
+            <div class="xfactor-bubble" onclick="showXFactor('local', this)" tabindex="0" role="button">🏪 Buy from local shops</div>
+            <div class="xfactor-bubble" onclick="showXFactor('transport', this)" tabindex="0" role="button">🚲 Use greener transport</div>
         </div>
-        
+
         <div class="detail-box" id="xfactor-detail">
             <h3>👆 Click a choice above!</h3>
             <p>See how your small decisions ripple through the global network.</p>
@@ -786,15 +979,15 @@
     </section>
 
     <!-- 10. WHAT IF SIMULATOR -->
-    <section id="whatif" class="section section-alt">
+    <section id="whatif" class="section section-alt reveal">
         <h2 class="section-title">What If Global Connections Disappeared?</h2>
         <p class="section-subtitle">Imagine your day without global links. Toggle the connections on and off to see what would change!</p>
-        
+
         <div class="whatif-toggle">
             <button class="toggle-btn active" id="btn-global-on" onclick="setGlobalStatus(true)">🌐 Global ON</button>
             <button class="toggle-btn" id="btn-global-off" onclick="setGlobalStatus(false)">🚫 Global OFF</button>
         </div>
-        
+
         <div class="whatif-grid" id="whatif-grid">
             <div class="whatif-card" data-global="true">
                 <div class="w-icon">🍌</div>
@@ -827,78 +1020,110 @@
                 <p>No internet, no global news, no online learning.</p>
             </div>
         </div>
-        
+
         <div class="game-msg" id="whatif-msg" style="margin-top: 1.5rem; font-size: 1rem;">With global connections, your day is rich and full of variety.</div>
     </section>
 
     <!-- 11. QUIZ -->
-    <section id="quiz" class="section">
+    <section id="quiz" class="section reveal">
         <h2 class="section-title">The Big Global Quiz!</h2>
         <p class="section-subtitle">Let's see if you understand how the global chain works. Answer these 5 questions!</p>
-        
+
+        <div class="quiz-toolbar">
+            <div class="xp-badge">⚡ <span id="quiz-xp">0</span> XP earned</div>
+            <button class="toggle-btn" id="challenge-toggle" onclick="toggleChallenge()">⏱️ Challenge Mode: OFF</button>
+            <button class="toggle-btn" onclick="renderQuiz()">🔄 Restart Quiz</button>
+        </div>
         <div class="quiz-container" id="quiz-container"></div>
         <div class="game-msg" id="quiz-score" style="margin-top: 1.5rem;"></div>
     </section>
 
     <!-- 12. STUDENT CHECKLIST -->
-    <section id="checklist" class="section section-alt">
+    <section id="checklist" class="section section-alt reveal">
         <h2 class="section-title">Student Checklist</h2>
-        <p class="section-subtitle">Track your progress! Click each item as you complete it.</p>
-        
-        <div class="checklist" id="checklist-container">
-            <div class="check-item" onclick="toggleCheck(this)">
-                <div class="box">✓</div>
-                <span>5 distinct moments from one ordinary day</span>
+        <p class="section-subtitle">Track your progress! Click each item as you complete it. Progress is saved automatically.</p>
+
+        <div class="checklist-wrap">
+            <div class="ring-wrap" role="img" aria-label="Checklist completion">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                    <circle class="ring-bg" cx="75" cy="75" r="63"></circle>
+                    <circle class="ring-fg" id="ring-fg" cx="75" cy="75" r="63" stroke-dasharray="396" stroke-dashoffset="396"></circle>
+                </svg>
+                <div class="ring-text"><b id="ring-pct">0%</b><small>COMPLETE</small></div>
             </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-                <div class="box">✓</div>
-                <span>Product / supply chain (e.g., trainers, backpack)</span>
+            <div class="checklist" id="checklist-container">
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="box">✓</div>
+                    <span>5 distinct moments from one ordinary day</span>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="box">✓</div>
+                    <span>Product / supply chain (e.g., trainers, backpack)</span>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="box">✓</div>
+                    <span>Food / global trade (e.g., breakfast ingredient)</span>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="box">✓</div>
+                    <span>Media / global trend (song, game, sport)</span>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="box">✓</div>
+                    <span>Culture, communication or identity</span>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="box">✓</div>
+                    <span>At least two explanations with steps or arrows</span>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="box">✓</div>
+                    <span>Comment on visible / less-visible culture or identity</span>
+                </div>
+                <div class="check-item" onclick="toggleCheck(this)">
+                    <div class="box">✓</div>
+                    <span>Final reflection: "What would change most, and why?"</span>
+                </div>
             </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-                <div class="box">✓</div>
-                <span>Food / global trade (e.g., breakfast ingredient)</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-                <div class="box">✓</div>
-                <span>Media / global trend (song, game, sport)</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-                <div class="box">✓</div>
-                <span>Culture, communication or identity</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-                <div class="box">✓</div>
-                <span>At least two explanations with steps or arrows</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-                <div class="box">✓</div>
-                <span>Comment on visible / less-visible culture or identity</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-                <div class="box">✓</div>
-                <span>Final reflection: "What would change most, and why?"</span>
-            </div>
+            <button class="btn btn-secondary" onclick="resetChecklist()" style="font-size: 0.85rem;">Reset Checklist</button>
         </div>
     </section>
 
-    <!-- 13. FINAL REFLECTION -->
-    <section id="reflection" class="section">
+    <!-- 13. BADGES -->
+    <section id="badges" class="section reveal">
+        <h2 class="section-title">Achievement Badges</h2>
+        <p class="section-subtitle">Unlock all 6 badges by exploring the site!</p>
+        <div class="badges-row" id="badges-row">
+            <div class="badge" id="badge-factory" title="Complete one full factory run"><span class="b-icon">🏭</span><span class="b-name">Factory Operator</span></div>
+            <div class="badge" id="badge-quiz" title="Score 5/5 on the quiz"><span class="b-icon">🧠</span><span class="b-name">Quiz Master</span></div>
+            <div class="badge" id="badge-chain" title="Break the domino chain"><span class="b-icon">🁡</span><span class="b-name">Chain Breaker</span></div>
+            <div class="badge" id="badge-checklist" title="100% checklist complete"><span class="b-icon">✅</span><span class="b-name">Task Master</span></div>
+            <div class="badge" id="badge-reflect" title="Submit your reflection"><span class="b-icon">✍️</span><span class="b-name">Deep Thinker</span></div>
+            <div class="badge" id="badge-explorer" title="Visit every section"><span class="b-icon">🧭</span><span class="b-name">Globe Explorer</span></div>
+        </div>
+    </section>
+
+    <!-- 14. FINAL REFLECTION -->
+    <section id="reflection" class="section section-alt reveal">
         <h2 class="section-title">Final Reflection</h2>
         <div class="reflection-box">
             <h3>"If global connections disappeared from my day, what would change most, and why?"</h3>
-            <p style="color: var(--secondary); margin-bottom: 1rem; font-size: 0.95rem;">Type your answer below. Think about your shoes, your food, or the media you enjoy.</p>
+            <p style="color: var(--secondary); margin-bottom: 1rem; font-size: 0.95rem;">Type your answer below. Think about your shoes, your food, or the media you enjoy. Your draft is saved automatically.</p>
             <textarea id="reflection-text" placeholder="If global connections disappeared, I would miss..." oninput="updateWordCount()"></textarea>
             <div class="word-count" id="word-count">0 words</div>
-            <button onclick="submitReflection()">Submit Answer 🚀</button>
+            <div class="reflection-actions">
+                <button onclick="submitReflection()">Submit Answer 🚀</button>
+                <button class="btn btn-secondary" onclick="exportReport()" style="font-size: 0.85rem;">📄 Export My Report</button>
+            </div>
             <div id="reflection-msg" style="margin-top: 0.8rem; color: var(--green); font-weight: bold;"></div>
         </div>
     </section>
 
-    <!-- 14. GLOSSARY -->
-    <section id="glossary" class="section section-alt">
+    <!-- 15. GLOSSARY -->
+    <section id="glossary" class="section reveal">
         <h2 class="section-title">Glossary of Global Terms</h2>
-        <p class="section-subtitle">Hover over a card to reveal its definition!</p>
-        
+        <p class="section-subtitle">Hover (or tap) a card to reveal its definition!</p>
+
         <div class="glossary-grid">
             <div class="glossary-card">
                 <h4>Supply Chain</h4>
@@ -935,495 +1160,1074 @@
         </div>
     </section>
 
+    <!-- TOASTS -->
+    <div id="toasts" aria-live="polite"></div>
+
+    <!-- COMMAND PALETTE -->
+    <div class="palette-overlay" id="palette-overlay">
+        <div class="palette" role="dialog" aria-label="Command palette">
+            <input id="palette-input" type="text" placeholder="Type a command... (e.g. 'quiz', 'factory', 'sound')" autocomplete="off" spellcheck="false">
+            <ul id="palette-list"></ul>
+            <div class="p-hint">↑↓ navigate · Enter run · Esc close · Ctrl+K anywhere to open</div>
+        </div>
+    </div>
+
     <!-- BACK TO TOP -->
-    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Back to top">↑</button>
 
     <!-- FOOTER -->
     <footer>
-        <p>Alezify — Built To Rise.</p>
+        <div class="footer-actions">
+            <button class="btn" onclick="exportReport()">📄 Export Report</button>
+            <button class="btn btn-secondary" onclick="resetAllProgress()">🗑️ Reset All Progress</button>
+        </div>
+        <p>Alezify OS — Built To Rise.</p>
         <p style="color: var(--yellow); margin-top: 0.5rem;">Designed by Omar Sanad | Year 7 Global Project</p>
         <p style="margin-top: 1rem;">&copy; 2026 Alezify. All rights reserved. Global Interconnection for Kids.</p>
     </footer>
-
     <script>
-        // ============================================
-        // PROGRESS BAR & SCROLL SPY
-        // ============================================
-        const progressBar = document.getElementById('progress-bar');
-        const backToTop = document.getElementById('back-to-top');
-        const navLinks = document.querySelectorAll('nav a');
+    /* ============================================================
+       ALEZIFY OS CORE
+       ============================================================ */
+    'use strict';
+    const $  = (s, r) => (r || document).querySelector(s);
+    const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        window.addEventListener('scroll', () => {
-            const scrollTop = document.documentElement.scrollTop;
-            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrollPercent = (scrollTop / scrollHeight) * 100;
-            progressBar.style.width = scrollPercent + '%';
+    function scrollToId(id) {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
+    }
 
-            if (scrollTop > 500) {
-                backToTop.classList.add('show');
-            } else {
-                backToTop.classList.remove('show');
-            }
+    /* ---------- Persistent store ---------- */
+    const store = {
+        get(k, d) {
+            try { const v = localStorage.getItem('alezify_' + k); return v === null ? d : JSON.parse(v); }
+            catch (e) { return d; }
+        },
+        set(k, v) { try { localStorage.setItem('alezify_' + k, JSON.stringify(v)); } catch (e) {} },
+        del(k) { try { localStorage.removeItem('alezify_' + k); } catch (e) {} }
+    };
 
-            const sections = document.querySelectorAll('.section, .hero, .fs-section');
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 100;
-                if (scrollTop >= sectionTop) {
-                    current = section.getAttribute('id');
-                }
-            });
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // ============================================
-        // AUDIO
-        // ============================================
-        let audioCtx;
-        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-        function playBeep(freq, duration, type = 'sine') {
-            if (!audioCtx) return;
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-            osc.type = type; osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + duration);
+    /* ---------- Audio engine ---------- */
+    const Sound = (() => {
+        let ctx = null;
+        let enabled = store.get('sound', true);
+        function init() { if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } }
+        function beep(freq, dur, type, vol) {
+            if (!enabled || !ctx) return;
+            const osc = ctx.createOscillator(), gain = ctx.createGain();
+            osc.type = type || 'sine'; osc.frequency.value = freq;
+            gain.gain.setValueAtTime(vol || 0.07, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(); osc.stop(ctx.currentTime + dur);
         }
-        function playSuccess() { initAudio(); playBeep(523.25, 0.1); setTimeout(() => playBeep(659.25, 0.1), 100); setTimeout(() => playBeep(783.99, 0.3), 200); }
-        function playClick() { initAudio(); playBeep(800, 0.05); }
-
-        // ============================================
-        // 3D FACTORY LOGIC
-        // ============================================
-        let fsGameState = 0;
-        let fsCurrentCompany = 'amazon';
-
-        const fsCompanies = {
-            amazon: {
-                name: 'Amazon Fulfillment (Prime Order)',
-                steps: { source: 'Receive Inventory', assemble: 'Pick & Pack', pack: 'Box Order', ship: 'Deliver' },
-                icons: { m1: '📦', m2: '🤖', m3: '🚚' },
-                facts: {
-                    source: "Amazon manages global freight from factories to US ports and uses over 1 million robots in its fulfillment centers.",
-                    assemble: "Robots like Hercules bring inventory pods to workers, who pick items at semi-automated workstations.",
-                    pack: "Automated packaging machines measure items and use the exact amount of wrapping needed.",
-                    ship: "Amazon's network includes 80,000 trailers and 100 aircraft to move packages at scale."
-                }
-            },
-            apple: {
-                name: 'Apple iPhone (Flagship Hardware)',
-                steps: { source: 'Source Components', assemble: 'Final Assembly', pack: 'Box iPhone', ship: 'Global Delivery' },
-                icons: { m1: '⛏️', m2: '🏭', m3: '📦' },
-                facts: {
-                    source: "Apple designs in California but sources components globally: processors from TSMC in Taiwan, memory from South Korea and Japan.",
-                    assemble: "Final assembly is outsourced to partners like Foxconn. China remains the anchor for the iPhone Pro line, while India now assembles about 25% of all iPhones.",
-                    pack: "Apple is investing $500 million in US rare-earth magnet production to diversify its supply chain away from China.",
-                    ship: "iPhones are shipped globally from assembly hubs in China, India, and Vietnam to markets worldwide."
-                }
-            },
-            normal: {
-                name: 'Normal Product (T-Shirt)',
-                steps: { source: 'Harvest Cotton', assemble: 'Sew Fabric', pack: 'Wrap Shirt', ship: 'Retail Store' },
-                icons: { m1: '🌾', m2: '🧵', m3: '📦' },
-                facts: {
-                    source: "Did you know? Cotton is often grown in India or the USA.",
-                    assemble: "Did you know? Many clothes are sewn in Bangladesh or Vietnam.",
-                    pack: "Look! The worker is carefully folding and packing the shirt.",
-                    ship: "Did you know? A single T-shirt might travel 5,000 miles before you wear it."
-                }
-            }
+        return {
+            init,
+            click()  { init(); beep(800, 0.05); },
+            pop()    { init(); beep(520, 0.07, 'triangle'); },
+            success(){ init(); beep(523.25, 0.1); setTimeout(() => beep(659.25, 0.1), 100); setTimeout(() => beep(783.99, 0.28), 200); },
+            fanfare(){ init(); [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.18,'triangle',0.09), i*110)); },
+            fail()   { init(); beep(200, 0.3, 'sawtooth'); },
+            toggle() { enabled = !enabled; store.set('sound', enabled); return enabled; },
+            get enabled() { return enabled; }
         };
+    })();
 
-        function fsSelectProduct(type, btn) {
-            if (fsGameState > 0 && fsGameState < 4) {
-                alert("Please finish the current product before switching!");
-                return;
+    function syncSoundBtn() {
+        $('#sound-toggle').textContent = Sound.enabled ? '🔊' : '🔇';
+    }
+
+    /* ---------- Toasts ---------- */
+    function toast(title, msg, icon) {
+        const box = $('#toasts');
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.innerHTML = `<b>${icon || '🔔'} ${title}</b>${msg}`;
+        box.appendChild(el);
+        setTimeout(() => { el.classList.add('gone'); setTimeout(() => el.remove(), 450); }, 4200);
+    }
+
+    /* ---------- Confetti ---------- */
+    const Confetti = (() => {
+        const canvas = $('#confetti-canvas');
+        const ctx2 = canvas.getContext('2d');
+        let parts = [], running = false;
+        function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        function burst(n) {
+            if (reducedMotion) return;
+            const colors = ['#FFD166', '#E2B2FF', '#06D6A0', '#EF476F', '#D3F7FD', '#F78C6B'];
+            for (let i = 0; i < (n || 140); i++) {
+                parts.push({
+                    x: innerWidth / 2 + (Math.random() - 0.5) * 240,
+                    y: innerHeight * 0.35,
+                    vx: (Math.random() - 0.5) * 13,
+                    vy: -Math.random() * 13 - 4,
+                    s: Math.random() * 7 + 4,
+                    c: colors[(Math.random() * colors.length) | 0],
+                    r: Math.random() * Math.PI,
+                    vr: (Math.random() - 0.5) * 0.3,
+                    life: 1
+                });
             }
-            playClick();
-            fsCurrentCompany = type;
-            document.querySelectorAll('.fs-prod-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const p = fsCompanies[type];
-            document.getElementById('fs-current-product').innerText = `Currently Producing: ${p.name}`;
-            document.getElementById('fs-lbl-source').innerText = p.steps.source;
-            document.getElementById('fs-lbl-assemble').innerText = p.steps.assemble;
-            document.getElementById('fs-lbl-pack').innerText = p.steps.pack;
-            document.getElementById('fs-lbl-ship').innerText = p.steps.ship;
-            document.getElementById('fs-m1-icon').innerText = p.icons.m1;
-            document.getElementById('fs-m2-icon').innerText = p.icons.m2;
-            document.getElementById('fs-m3-icon').innerText = p.icons.m3;
-            document.getElementById('fs-obj-raw').setAttribute('data-type', type);
-            document.getElementById('fs-obj-product').setAttribute('data-type', type);
-            if (fsGameState === 4) fsResetGame();
+            if (!running) { running = true; requestAnimationFrame(loop); }
+        }
+        function loop() {
+            ctx2.clearRect(0, 0, canvas.width, canvas.height);
+            parts = parts.filter(p => p.life > 0);
+            for (const p of parts) {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.32; p.r += p.vr; p.life -= 0.006;
+                ctx2.save(); ctx2.translate(p.x, p.y); ctx2.rotate(p.r);
+                ctx2.globalAlpha = Math.max(p.life, 0);
+                ctx2.fillStyle = p.c; ctx2.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * 0.6);
+                ctx2.restore();
+            }
+            if (parts.length) requestAnimationFrame(loop);
+            else { running = false; ctx2.clearRect(0, 0, canvas.width, canvas.height); }
+        }
+        return { burst };
+    })();
+
+    /* ---------- XP system ---------- */
+    let XP = store.get('xp', 0);
+    function addXP(n, why) {
+        XP += n; store.set('xp', XP);
+        const el = $('#xp-val');
+        el.textContent = XP;
+        el.parentElement.style.transform = 'scale(1.15)';
+        setTimeout(() => el.parentElement.style.transform = '', 200);
+        if (why) toast('+' + n + ' XP', why, '⚡');
+    }
+
+    /* ---------- Badges ---------- */
+    const BADGE_META = {
+        factory:  ['🏭', 'Factory Operator'],
+        quiz:     ['🧠', 'Quiz Master'],
+        chain:    ['🁡', 'Chain Breaker'],
+        checklist:['✅', 'Task Master'],
+        reflect:  ['✍️', 'Deep Thinker'],
+        explorer: ['🧭', 'Globe Explorer']
+    };
+    let badges = store.get('badges', {});
+    function award(id) {
+        if (badges[id]) return;
+        badges[id] = Date.now(); store.set('badges', badges);
+        const el = $('#badge-' + id);
+        if (el) el.classList.add('unlocked');
+        const meta = BADGE_META[id];
+        toast('Badge unlocked!', meta[0] + ' ' + meta[1], '🏅');
+        Sound.fanfare(); Confetti.burst(90);
+        $('#badge-val').textContent = Object.keys(badges).length;
+    }
+    function syncBadges() {
+        Object.keys(badges).forEach(id => { const el = $('#badge-' + id); if (el) el.classList.add('unlocked'); });
+        $('#badge-val').textContent = Object.keys(badges).length;
+    }
+
+    /* ---------- Boot sequence ---------- */
+    (function boot() {
+        const msgs = [
+            'Initializing kernel...', 'Loading 3D engine...', 'Calibrating conveyor belts...',
+            'Waking up the robots...', 'Mapping supply chains...', 'Brewing hot chocolate...',
+            'Alezify OS ready!'
+        ];
+        const bar = $('#boot-bar'), msg = $('#boot-msg'), screen = $('#boot');
+        let i = 0, done = false;
+        const iv = setInterval(() => {
+            if (done) return;
+            i++;
+            bar.style.width = Math.min(i / msgs.length * 100, 100) + '%';
+            msg.textContent = msgs[Math.min(i, msgs.length - 1)];
+            if (i >= msgs.length) finish();
+        }, reducedMotion ? 60 : 340);
+        function finish() {
+            if (done) return; done = true;
+            clearInterval(iv);
+            bar.style.width = '100%';
+            screen.classList.add('done');
+            setTimeout(() => screen.remove(), 800);
+        }
+        screen.addEventListener('click', finish);
+    })();
+
+    /* ---------- Background particles ---------- */
+    (function particles() {
+        if (reducedMotion) return;
+        const canvas = $('#bg-canvas'), ctx = canvas.getContext('2d');
+        let W, H, dots = [];
+        function resize() {
+            W = canvas.width = innerWidth; H = canvas.height = innerHeight;
+            const n = Math.min(90, Math.floor(W * H / 22000));
+            dots = Array.from({ length: n }, () => ({
+                x: Math.random() * W, y: Math.random() * H,
+                vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+                r: Math.random() * 2 + 0.6
+            }));
+        }
+        window.addEventListener('resize', resize); resize();
+        (function loop() {
+            ctx.clearRect(0, 0, W, H);
+            for (const d of dots) {
+                d.x += d.vx; d.y += d.vy;
+                if (d.x < 0 || d.x > W) d.vx *= -1;
+                if (d.y < 0 || d.y > H) d.vy *= -1;
+                ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(211,247,253,0.5)'; ctx.fill();
+            }
+            for (let i = 0; i < dots.length; i++) {
+                for (let j = i + 1; j < dots.length; j++) {
+                    const a = dots[i], b = dots[j];
+                    const dx = a.x - b.x, dy = a.y - b.y, dist = dx * dx + dy * dy;
+                    if (dist < 13000) {
+                        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+                        ctx.strokeStyle = `rgba(226,178,255,${0.14 * (1 - dist / 13000)})`;
+                        ctx.lineWidth = 1; ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(loop);
+        })();
+    })();
+
+    /* ---------- Scroll: progress bar, back-to-top, scroll spy ---------- */
+    const visited = new Set(store.get('visited', []));
+    const SECTION_IDS = ['factory','giants','journey','map','food','media','identity','domino','xfactor','whatif','quiz','checklist','badges','reflection','glossary'];
+    function checkExplorer() {
+        if (SECTION_IDS.every(id => visited.has(id))) award('explorer');
+    }
+    window.addEventListener('scroll', () => {
+        const st = document.documentElement.scrollTop;
+        const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        $('#progress-bar').style.width = (st / sh * 100) + '%';
+        $('#back-to-top').classList.toggle('show', st > 500);
+
+        let current = 'home';
+        SECTION_IDS.concat(['home']).forEach(id => {
+            const el = document.getElementById(id);
+            if (el && st >= el.offsetTop - 120) current = id;
+        });
+        if (SECTION_IDS.includes(current) && !visited.has(current)) {
+            visited.add(current); store.set('visited', [...visited]); checkExplorer();
+        }
+        $$('nav a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+    }, { passive: true });
+
+    /* ---------- Hamburger / mobile menu ---------- */
+    $('#hamburger').addEventListener('click', () => { Sound.click(); $('#mobile-menu').classList.toggle('open'); });
+    $$('#mobile-menu a').forEach(a => a.addEventListener('click', () => $('#mobile-menu').classList.remove('open')));
+
+    /* ---------- Reveal on scroll ---------- */
+    const revealIO = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealIO.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    $$('.reveal').forEach(el => revealIO.observe(el));
+
+    /* ---------- Count-up stats ---------- */
+    const countIO = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (!e.isIntersecting) return;
+            countIO.unobserve(e.target);
+            const target = +e.target.dataset.count, t0 = performance.now(), dur = 1600;
+            (function tick(t) {
+                const k = Math.min((t - t0) / dur, 1);
+                const eased = 1 - Math.pow(1 - k, 3);
+                e.target.textContent = Math.floor(target * eased).toLocaleString('en-US');
+                if (k < 1) requestAnimationFrame(tick);
+            })(t0);
+        });
+    }, { threshold: 0.5 });
+    $$('.count-up').forEach(el => countIO.observe(el));
+
+    /* ---------- Command palette ---------- */
+    const Palette = (() => {
+        const overlay = $('#palette-overlay'), input = $('#palette-input'), list = $('#palette-list');
+        let sel = 0, filtered = [];
+        const actions = SECTION_IDS.map(id => ({
+            icon: { factory:'🏭', giants:'🌐', journey:'📱', map:'🗺️', food:'🍌', media:'📡', identity:'🧭', domino:'🁡', xfactor:'⚡', whatif:'🌐', quiz:'🧠', checklist:'✅', badges:'🏅', reflection:'✍️', glossary:'📖' }[id],
+            label: 'Go to: ' + id.charAt(0).toUpperCase() + id.slice(1),
+            run: () => scrollToId(id)
+        })).concat([
+            { icon: '▶️', label: 'Factory: run next step', run: () => { scrollToId('factory'); setTimeout(() => fsGameAction(['source','assemble','pack','ship'][fsGameState]), 700); } },
+            { icon: '🔊', label: 'Toggle sound', run: () => { Sound.toggle(); syncSoundBtn(); } },
+            { icon: '📄', label: 'Export my report', run: exportReport },
+            { icon: '🗑️', label: 'Reset all progress', run: resetAllProgress },
+            { icon: '🏠', label: 'Back to top', run: () => window.scrollTo({ top: 0, behavior: 'smooth' }) }
+        ]);
+
+        function render() {
+            const q = input.value.trim().toLowerCase();
+            filtered = actions.filter(a => a.label.toLowerCase().includes(q));
+            sel = Math.min(sel, Math.max(filtered.length - 1, 0));
+            list.innerHTML = filtered.map((a, i) =>
+                `<li class="${i === sel ? 'selected' : ''}" data-i="${i}"><span class="p-icon">${a.icon}</span>${a.label}</li>`
+            ).join('') || '<li><em>No matches...</em></li>';
+            $$('li', list).forEach(li => li.addEventListener('click', () => pick(+li.dataset.i)));
+        }
+        function pick(i) { const a = filtered[i]; if (!a) return; close(); a.run(); Sound.click(); }
+        function open() { overlay.classList.add('open'); input.value = ''; sel = 0; render(); setTimeout(() => input.focus(), 50); }
+        function close() { overlay.classList.remove('open'); }
+        input.addEventListener('input', () => { sel = 0; render(); });
+        input.addEventListener('keydown', e => {
+            if (e.key === 'ArrowDown') { e.preventDefault(); sel = Math.min(sel + 1, filtered.length - 1); render(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(sel - 1, 0); render(); }
+            else if (e.key === 'Enter') { e.preventDefault(); pick(sel); }
+        });
+        overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+        document.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); overlay.classList.contains('open') ? close() : open(); }
+            else if (e.key === 'Escape') close();
+        });
+        $('#palette-open').addEventListener('click', () => { Sound.click(); open(); });
+        return { open };
+    })();
+
+    /* ---------- Generic keyboard support for role=button ---------- */
+    document.addEventListener('keydown', e => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target.getAttribute && e.target.getAttribute('role') === 'button') {
+            e.preventDefault(); e.target.click();
+        }
+    });
+
+    /* ---------- Glossary tap toggle ---------- */
+    $$('.glossary-card').forEach(c => c.addEventListener('click', () => { Sound.pop(); c.classList.toggle('open'); }));
+
+    /* ---------- Sound toggle ---------- */
+    $('#sound-toggle').addEventListener('click', () => {
+        const on = Sound.toggle(); syncSoundBtn();
+        if (on) Sound.click();
+        toast('Sound ' + (on ? 'ON 🔊' : 'OFF 🔇'), on ? 'Audio engine active.' : 'Running silent.', '🔊');
+    });
+    syncSoundBtn();
+
+    /* ============================================================
+       3D FACTORY — WebGL engine with CSS fallback
+       ============================================================ */
+    const Factory3D = (() => {
+        let ok = false, scene, camera, renderer, controls, clock;
+        let item, itemMat, machines = [], tweens = [];
+        const BELT_Z = 1.2, ITEM_Y = 1.05, SX = [-4.5, 0, 4.5];
+
+        function emojiTexture(emoji) {
+            const c = document.createElement('canvas'); c.width = c.height = 128;
+            const x = c.getContext('2d');
+            x.font = '96px "Apple Color Emoji","Segoe UI Emoji",sans-serif';
+            x.textAlign = 'center'; x.textBaseline = 'middle';
+            x.fillText(emoji, 64, 72);
+            return new THREE.CanvasTexture(c);
+        }
+        function ease(k) { return k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
+        function tween(obj, to, dur) {
+            const from = {};
+            for (const k in to) from[k] = obj[k];
+            return new Promise(res => tweens.push({ obj, to, from, t: 0, dur, res }));
+        }
+        function stepTweens(dt) {
+            for (let i = tweens.length - 1; i >= 0; i--) {
+                const tw = tweens[i]; tw.t += dt;
+                const k = ease(Math.min(tw.t / tw.dur, 1));
+                for (const key in tw.to) tw.obj[key] = tw.from[key] + (tw.to[key] - tw.from[key]) * k;
+                if (tw.t >= tw.dur) { tweens.splice(i, 1); tw.res(); }
+            }
+        }
+        function glow(i, on) {
+            const m = machines[i];
+            m.mat.emissive.setHex(on ? 0x06D6A0 : 0x000000);
+            m.mat.emissiveIntensity = on ? 0.9 : 1;
+            m.top.material.emissiveIntensity = on ? 1 : 0.25;
+        }
+        function setSprite(i, emoji) {
+            const spr = machines[i].spr;
+            if (spr.material.map) spr.material.map.dispose();
+            spr.material.dispose();
+            spr.material = new THREE.SpriteMaterial({ map: emojiTexture(emoji) });
         }
 
-        function fsGameAction(action) {
-            playClick();
-            const statusLog = document.getElementById('fs-status-log');
-            const m1 = document.getElementById('fs-machine1');
-            const m2 = document.getElementById('fs-machine2');
-            const m3 = document.getElementById('fs-machine3');
-            const w1 = document.getElementById('fs-worker1');
-            const w2 = document.getElementById('fs-worker2');
-            const w3 = document.getElementById('fs-worker3');
-            const objRaw = document.getElementById('fs-obj-raw');
-            const objProd = document.getElementById('fs-obj-product');
-            const objBox = document.getElementById('fs-obj-box');
+        function init() {
+            if (!window.THREE) return false;
+            try {
+                const container = $('#fs3d');
+                scene = new THREE.Scene();
+                scene.fog = new THREE.Fog(0x05051a, 20, 48);
+                camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 100);
+                camera.position.set(10, 8, 13);
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                container.appendChild(renderer.domElement);
 
-            if (action === 'source' && fsGameState === 0) {
-                m1.classList.add('active');
-                w1.classList.add('working');
-                statusLog.innerHTML = `<span>[STEP 1]</span> ${fsCompanies[fsCurrentCompany].steps.source}...<br><small style="color:var(--secondary)">${fsCompanies[fsCurrentCompany].facts.source}</small>`;
-                w1.style.left = '15%';
-                objRaw.style.left = '15%'; objRaw.style.top = '70%';
-                objRaw.classList.add('visible');
-                setTimeout(() => {
-                    m1.classList.remove('active'); w1.classList.remove('working');
-                    document.getElementById('fs-btn-source').disabled = true;
-                    document.getElementById('fs-btn-assemble').disabled = false;
-                    document.getElementById('fs-btn-assemble').classList.add('active-step');
-                    fsGameState = 1;
-                }, 2500);
+                if (THREE.OrbitControls) {
+                    controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    controls.target.set(0, 1, 0);
+                    controls.enableDamping = true; controls.dampingFactor = 0.08;
+                    controls.maxPolarAngle = Math.PI / 2.05;
+                    controls.minDistance = 6; controls.maxDistance = 32;
+                    controls.autoRotate = !reducedMotion; controls.autoRotateSpeed = 0.5;
+                    renderer.domElement.addEventListener('pointerdown', () => { controls.autoRotate = false; });
+                }
+
+                scene.add(new THREE.AmbientLight(0x8888ff, 0.55));
+                const dir = new THREE.DirectionalLight(0xffffff, 0.85);
+                dir.position.set(5, 12, 7); scene.add(dir);
+                const pl1 = new THREE.PointLight(0xE2B2FF, 1.1, 26); pl1.position.set(-6, 5, 3); scene.add(pl1);
+                const pl2 = new THREE.PointLight(0x06D6A0, 0.7, 26); pl2.position.set(6, 4, -4); scene.add(pl2);
+
+                const floor = new THREE.Mesh(
+                    new THREE.PlaneGeometry(36, 26),
+                    new THREE.MeshStandardMaterial({ color: 0x0b0a2e, roughness: 0.95 })
+                );
+                floor.rotation.x = -Math.PI / 2; scene.add(floor);
+                const grid = new THREE.GridHelper(36, 36, 0xE2B2FF, 0x28245e);
+                grid.position.y = 0.02; scene.add(grid);
+
+                const belt = new THREE.Mesh(
+                    new THREE.BoxGeometry(17, 0.5, 2.3),
+                    new THREE.MeshStandardMaterial({ color: 0x1c1c3e, roughness: 0.5, metalness: 0.5 })
+                );
+                belt.position.set(0, 0.55, BELT_Z); scene.add(belt);
+                const stripeMat = new THREE.MeshStandardMaterial({ color: 0x3d3d6e, roughness: 0.4 });
+                for (let x = -7.5; x <= 7.5; x += 1.5) {
+                    const s = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.54, 2.32), stripeMat);
+                    s.position.set(x, 0.56, BELT_Z); scene.add(s);
+                }
+
+                const legMat = new THREE.MeshStandardMaterial({ color: 0x33334f, roughness: 0.7 });
+                [-7.5, 0, 7.5].forEach(x => {
+                    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.55, 2), legMat);
+                    leg.position.set(x, 0.27, BELT_Z); scene.add(leg);
+                });
+
+                SX.forEach((x, i) => {
+                    const mat = new THREE.MeshStandardMaterial({ color: 0x14143c, roughness: 0.35, metalness: 0.55 });
+                    const body = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.2, 2.2), mat);
+                    body.position.set(x, 1.1, -2.3); scene.add(body);
+                    const top = new THREE.Mesh(
+                        new THREE.BoxGeometry(2.32, 0.18, 2.32),
+                        new THREE.MeshStandardMaterial({ color: 0xE2B2FF, emissive: 0xE2B2FF, emissiveIntensity: 0.25 })
+                    );
+                    top.position.set(x, 2.29, -2.3); scene.add(top);
+                    const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: emojiTexture(['📦', '🤖', '🚚'][i]) }));
+                    spr.scale.set(1.7, 1.7, 1); spr.position.set(x, 3.7, -2.3); scene.add(spr);
+                    machines.push({ body, mat, top, spr });
+                });
+
+                // decorative crate stacks
+                const crateMat = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 0.85 });
+                [[-8, -4.5], [-7.2, -4.2], [7.6, -4.6], [8.2, 2.8], [-8.4, 3.2]].forEach(([x, z], i) => {
+                    const c = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), crateMat);
+                    c.position.set(x, 0.45 + (i % 2) * 0.9, z);
+                    c.rotation.y = i; scene.add(c);
+                });
+
+                itemMat = new THREE.MeshStandardMaterial({ color: 0xFFD166, roughness: 0.4 });
+                item = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), itemMat);
+                item.position.set(-7.6, ITEM_Y, BELT_Z);
+                item.visible = false; scene.add(item);
+
+                clock = new THREE.Clock();
+                (function animate() {
+                    requestAnimationFrame(animate);
+                    if (controls) controls.update();
+                    stepTweens(Math.min(clock.getDelta(), 0.05));
+                    if (item.visible) { item.rotation.y += 0.02; }
+                    renderer.render(scene, camera);
+                })();
+
+                window.addEventListener('resize', () => {
+                    camera.aspect = container.clientWidth / container.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                });
+                ok = true;
+                return true;
+            } catch (e) { return false; }
+        }
+
+        function setCompany(c) {
+            if (!ok) return;
+            const map = {
+                amazon: { raw: 0xFFD166, product: 0xF78C6B, box: 0x8B4513, sprites: ['📦', '🤖', '🚚'] },
+                apple:  { raw: 0x555577, product: 0xDDDDDD, box: 0xFFFFFF, sprites: ['⛏️', '🏭', '📦'] },
+                normal: { raw: 0x06D6A0, product: 0xEF476F, box: 0x8B4513, sprites: ['🌾', '🧵', '📦'] }
+            };
+            const d = map[c];
+            setSprite(0, d.sprites[0]); setSprite(1, d.sprites[1]); setSprite(2, d.sprites[2]);
+            itemMat.color.setHex(d.raw); itemMat.opacity = 1; itemMat.transparent = false;
+            item.scale.set(1, 1, 1);
+            item.position.set(-7.6, ITEM_Y, BELT_Z);
+            item.visible = false;
+        }
+
+        async function run(action) {
+            if (!ok) return;
+            item.visible = true;
+            if (action === 'source') {
+                glow(0, true);
+                itemMat.color.setHex(0xFFD166);
+                await tween(item.position, { x: SX[0] }, 1.5);
+                glow(0, false);
+            } else if (action === 'assemble') {
+                glow(1, true);
+                const p = tween(item.position, { x: SX[1] }, 1.5);
+                setTimeout(() => itemMat.color.setHex(0x06D6A0), 600);
+                await p; glow(1, false);
+            } else if (action === 'pack') {
+                glow(2, true);
+                const p = tween(item.position, { x: SX[2] }, 1.5);
+                setTimeout(() => { itemMat.color.setHex(0x8B4513); tween(item.scale, { x: 1.25, y: 0.8, z: 1.25 }, 0.6); }, 600);
+                await p; glow(2, false);
+            } else if (action === 'ship') {
+                await tween(item.position, { x: 8.4 }, 1.4);
+                itemMat.transparent = true;
+                const up = tween(item.position, { y: 5.5 }, 1.1);
+                tween(itemMat, { opacity: 0 }, 1.1);
+                await up;
+                item.visible = false;
             }
+        }
+        return { init, setCompany, run, get ok() { return ok; } };
+    })();
 
-            if (action === 'assemble' && fsGameState === 1) {
+    /* ---------- CSS 3D fallback driver ---------- */
+    const FactoryCSS = (() => {
+        const wait = ms => new Promise(r => setTimeout(r, ms));
+        async function run(action) {
+            const m1 = $('#fs-machine1'), m2 = $('#fs-machine2'), m3 = $('#fs-machine3');
+            const w1 = $('#fs-worker1'), w2 = $('#fs-worker2'), w3 = $('#fs-worker3');
+            const objRaw = $('#fs-obj-raw'), objProd = $('#fs-obj-product'), objBox = $('#fs-obj-box');
+            if (action === 'source') {
+                m1.classList.add('active'); w1.classList.add('working');
+                objRaw.style.left = '15%'; objRaw.style.top = '70%'; objRaw.classList.add('visible');
+                await wait(2200);
+                m1.classList.remove('active'); w1.classList.remove('working');
+            } else if (action === 'assemble') {
                 m2.classList.add('active'); w2.classList.add('working');
-                statusLog.innerHTML = `<span>[STEP 2]</span> ${fsCompanies[fsCurrentCompany].steps.assemble}...<br><small style="color:var(--secondary)">${fsCompanies[fsCurrentCompany].facts.assemble}</small>`;
                 objRaw.style.left = '45%'; w2.style.left = '45%';
-                setTimeout(() => {
-                    objRaw.classList.remove('visible');
-                    objProd.style.left = '45%'; objProd.style.top = '70%';
-                    objProd.classList.add('visible');
-                }, 1000);
-                setTimeout(() => {
-                    m2.classList.remove('active'); w2.classList.remove('working');
-                    document.getElementById('fs-btn-assemble').disabled = true;
-                    document.getElementById('fs-btn-assemble').classList.remove('active-step');
-                    document.getElementById('fs-btn-pack').disabled = false;
-                    document.getElementById('fs-btn-pack').classList.add('active-step');
-                    fsGameState = 2;
-                }, 2500);
-            }
-
-            if (action === 'pack' && fsGameState === 2) {
+                await wait(1000);
+                objRaw.classList.remove('visible');
+                objProd.style.left = '45%'; objProd.style.top = '70%'; objProd.classList.add('visible');
+                await wait(1200);
+                m2.classList.remove('active'); w2.classList.remove('working');
+            } else if (action === 'pack') {
                 m3.classList.add('active'); w3.classList.add('working');
-                statusLog.innerHTML = `<span>[STEP 3]</span> ${fsCompanies[fsCurrentCompany].steps.pack}...<br><small style="color:var(--secondary)">${fsCompanies[fsCurrentCompany].facts.pack}</small>`;
                 objProd.style.left = '75%'; w3.style.left = '75%';
-                setTimeout(() => {
-                    objProd.classList.remove('visible');
-                    objBox.style.left = '75%'; objBox.style.top = '70%';
-                    objBox.classList.add('visible');
-                }, 1000);
-                setTimeout(() => {
-                    m3.classList.remove('active'); w3.classList.remove('working');
-                    document.getElementById('fs-btn-pack').disabled = true;
-                    document.getElementById('fs-btn-pack').classList.remove('active-step');
-                    document.getElementById('fs-btn-ship').disabled = false;
-                    document.getElementById('fs-btn-ship').classList.add('active-step');
-                    fsGameState = 3;
-                }, 2500);
-            }
-
-            if (action === 'ship' && fsGameState === 3) {
-                statusLog.innerHTML = `<span>[STEP 4]</span> ${fsCompanies[fsCurrentCompany].steps.ship}...<br><small style="color:var(--secondary)">${fsCompanies[fsCurrentCompany].facts.ship}</small>`;
+                await wait(1000);
+                objProd.classList.remove('visible');
+                objBox.style.left = '75%'; objBox.style.top = '70%'; objBox.classList.add('visible');
+                await wait(1200);
+                m3.classList.remove('active'); w3.classList.remove('working');
+            } else if (action === 'ship') {
                 objBox.style.left = '100%'; objBox.style.top = '40%';
                 objBox.style.transform = 'scale(0.1) rotateZ(45deg) translateZ(400px)';
                 objBox.style.opacity = '0';
-                setTimeout(() => {
-                    playSuccess();
-                    document.getElementById('fs-btn-ship').disabled = true;
-                    document.getElementById('fs-btn-ship').classList.remove('active-step');
-                    fsGameState = 4;
-                    statusLog.innerHTML = `<span>[SUCCESS]</span> Product shipped! The global supply chain is complete. Select a new company.`;
-                }, 2000);
+                await wait(1800);
             }
         }
+        return { run };
+    })();
 
-        function fsResetGame() {
-            playClick();
-            fsGameState = 0;
-            document.getElementById('fs-status-log').innerHTML = `<span>[SYSTEM]</span> Resetting factory...`;
-            document.getElementById('fs-btn-source').disabled = false;
-            document.getElementById('fs-btn-source').classList.remove('active-step');
-            document.getElementById('fs-btn-assemble').disabled = true;
-            document.getElementById('fs-btn-assemble').classList.remove('active-step');
-            document.getElementById('fs-btn-pack').disabled = true;
-            document.getElementById('fs-btn-pack').classList.remove('active-step');
-            document.getElementById('fs-btn-ship').disabled = true;
-            document.getElementById('fs-btn-ship').classList.remove('active-step');
-            const objs = [document.getElementById('fs-obj-raw'), document.getElementById('fs-obj-product'), document.getElementById('fs-obj-box')];
-            objs.forEach(obj => {
-                obj.classList.remove('visible'); obj.style.left = '5%'; obj.style.top = '70%';
-                obj.style.transform = 'none'; obj.style.opacity = '1';
-            });
-            document.querySelectorAll('.fs-machine').forEach(m => m.classList.remove('active'));
-            document.getElementById('fs-worker1').style.left = '15%';
-            document.getElementById('fs-worker2').style.left = '45%';
-            document.getElementById('fs-worker3').style.left = '75%';
-            setTimeout(() => {
-                document.getElementById('fs-status-log').innerHTML = `<span>[SYSTEM]</span> Ready. Waiting for Operations Manager.`;
-            }, 1000);
-        }
+    /* ---------- Factory game state ---------- */
+    let fsGameState = 0, fsCurrentCompany = 'amazon', fsBusy = false;
 
-        // ============================================
-        // SMARTPHONE JOURNEY
-        // ============================================
-        const journeyData = {
-            materials: { icon: '⛏️', title: '1. Raw Materials', text: 'It starts with digging! We mine metals like lithium and cobalt from the earth in places like Africa and South America. This is the "Resource Stage".', chain: ['Mine in Africa', 'Raw Metal', 'Ship to Factory'] },
-            components: { icon: '🔌', title: '2. Components', text: 'The raw materials are turned into tiny parts! The screens come from Japan and the computer chips are made in Taiwan.', chain: ['Japan (Screens)', 'Taiwan (Chips)', 'South Korea (Memory)'] },
-            assembly: { icon: '🏭', title: '3. Assembly', text: 'All the parts are brought together in giant factories in Asia (like China and Vietnam) where workers and robots put the phone together. This is "Specialization" - places doing what they do best!', chain: ['China', 'Vietnam', 'India'] },
-            transport: { icon: '🚚', title: '4. Transport', text: 'The finished phones are packed into boxes and put on massive cargo ships or airplanes to travel across the ocean! 90% of world trade is carried by sea.', chain: ['Cargo Ship', 'Airplane', 'Delivery Truck'] },
-            you: { icon: '🤳', title: '5. You!', text: 'Finally, the phone arrives at a store or your door. You unbox it and start using it, completing the global journey! Now it\'s your turn to reuse and recycle it when you are done.', chain: ['Shop', 'Your Door', 'You!'] }
-        };
-
-        function showJourney(step, element) {
-            document.querySelectorAll('.journey-step').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-            const data = journeyData[step];
-            let chainHTML = '<div class="arrow-chain">';
-            data.chain.forEach((s, i) => { chainHTML += `<span>${s}</span>`; if (i < data.chain.length - 1) chainHTML += `<strong> ➔ </strong>`; });
-            chainHTML += '</div>';
-            document.getElementById('journey-detail').innerHTML = `<h3>${data.icon} ${data.title}</h3><p>${data.text}</p>${chainHTML}`;
-        }
-
-        // ============================================
-        // MAP
-        // ============================================
-        function updateMapInfo(region, percent, text) {
-            document.getElementById('map-info').innerHTML = `<h3>${region} — ${percent}</h3><p>${text}</p>`;
-        }
-
-        function showCompanyPath(company, btn) {
-            playClick();
-            document.querySelectorAll('.company-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const infoBox = document.getElementById('company-path-info');
-            if (company === 'amazon') {
-                infoBox.innerHTML = `<h3 style="color: var(--accent);">📦 Amazon Supply Chain</h3><p style="font-size: 0.9rem; margin-top: 0.5rem;">Inventory from Asia → US Fulfillment Centers → Robots pick items → Packed → Delivered to You by truck or plane.</p>`;
-            } else {
-                infoBox.innerHTML = `<h3 style="color: var(--accent);">📱 Apple iPhone Supply Chain</h3><p style="font-size: 0.9rem; margin-top: 0.5rem;">Designed in California → Components from Taiwan/South Korea/Japan → Assembled in China & India → Shipped globally to You.</p>`;
+    const fsCompanies = {
+        amazon: {
+            name: 'Amazon Fulfillment (Prime Order)',
+            steps: { source: 'Receive Inventory', assemble: 'Pick & Pack', pack: 'Box Order', ship: 'Deliver' },
+            icons: { m1: '📦', m2: '🤖', m3: '🚚' },
+            facts: {
+                source: "Amazon manages global freight from factories to US ports and uses over 1 million robots in its fulfillment centers.",
+                assemble: "Robots like Hercules bring inventory pods to workers, who pick items at semi-automated workstations.",
+                pack: "Automated packaging machines measure items and use the exact amount of wrapping needed.",
+                ship: "Amazon's network includes 80,000 trailers and 100 aircraft to move packages at scale."
+            }
+        },
+        apple: {
+            name: 'Apple iPhone (Flagship Hardware)',
+            steps: { source: 'Source Components', assemble: 'Final Assembly', pack: 'Box iPhone', ship: 'Global Delivery' },
+            icons: { m1: '⛏️', m2: '🏭', m3: '📦' },
+            facts: {
+                source: "Apple designs in California but sources components globally: processors from TSMC in Taiwan, memory from South Korea and Japan.",
+                assemble: "Final assembly is outsourced to partners like Foxconn. China remains the anchor for the iPhone Pro line, while India now assembles about 25% of all iPhones.",
+                pack: "Apple is investing $500 million in US rare-earth magnet production to diversify its supply chain away from China.",
+                ship: "iPhones are shipped globally from assembly hubs in China, India, and Vietnam to markets worldwide."
+            }
+        },
+        normal: {
+            name: 'Normal Product (T-Shirt)',
+            steps: { source: 'Harvest Cotton', assemble: 'Sew Fabric', pack: 'Wrap Shirt', ship: 'Retail Store' },
+            icons: { m1: '🌾', m2: '🧵', m3: '📦' },
+            facts: {
+                source: "Did you know? Cotton is often grown in India or the USA.",
+                assemble: "Did you know? Many clothes are sewn in Bangladesh or Vietnam.",
+                pack: "Look! The worker is carefully folding and packing the shirt.",
+                ship: "Did you know? A single T-shirt might travel 5,000 miles before you wear it."
             }
         }
+    };
 
-        // ============================================
-        // FOOD JOURNEY
-        // ============================================
-        const foodData = {
-            banana: { icon: '🍌', title: 'The Banana Journey', text: 'Bananas grow in tropical climates like Ecuador and Costa Rica. Workers pick them green, they travel in refrigerated ships, and they ripen on the way to your supermarket!', chain: ['Ecuador', 'Refrigerated Ship', 'Supermarket', 'You'] },
-            chocolate: { icon: '🍫', title: 'The Chocolate Journey', text: 'Cocoa beans come from Ghana and Ivory Coast. They are dried, shipped to Europe or Asia, roasted, and turned into chocolate. Sugar comes from Brazil!', chain: ['Ghana (Cocoa)', 'Europe (Roasting)', 'Factory', 'You'] },
-            cereal: { icon: '🥣', title: 'The Cereal Journey', text: 'Wheat is grown in the USA, Canada, or Europe. It is processed into flakes, vitamins are added, and the box is printed with materials from forests!', chain: ['Farm', 'Processing Plant', 'Box Factory', 'You'] },
-            tea: { icon: '🍵', title: 'The Tea Journey', text: 'Tea leaves come from Kenya, India, or Sri Lanka. They are dried, blended, and shipped around the world. Every cup has a global story!', chain: ['Kenya (Leaves)', 'Sri Lanka', 'Blending', 'You'] }
-        };
+    const fsButtons = ['fs-btn-source', 'fs-btn-assemble', 'fs-btn-pack', 'fs-btn-ship'];
 
-        function showFood(type, element) {
-            document.querySelectorAll('.food-card').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-            const data = foodData[type];
-            let chainHTML = '<div class="arrow-chain">';
-            data.chain.forEach((s, i) => { chainHTML += `<span>${s}</span>`; if (i < data.chain.length - 1) chainHTML += `<strong> ➔ </strong>`; });
-            chainHTML += '</div>';
-            document.getElementById('food-detail').innerHTML = `<h3>${data.icon} ${data.title}</h3><p>${data.text}</p>${chainHTML}`;
+    function fsSetStatus(html) { $('#fs-status-log').innerHTML = html; }
+
+    function fsSelectProduct(type, btn) {
+        if (fsBusy) return;
+        if (fsGameState > 0 && fsGameState < 4) { Sound.fail(); toast('Factory busy!', 'Finish the current product first.', '🏭'); return; }
+        Sound.click();
+        fsCurrentCompany = type;
+        $$('.fs-prod-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const p = fsCompanies[type];
+        $('#fs-current-product').innerText = 'Currently Producing: ' + p.name;
+        $('#fs-lbl-source').innerText = p.steps.source;
+        $('#fs-lbl-assemble').innerText = p.steps.assemble;
+        $('#fs-lbl-pack').innerText = p.steps.pack;
+        $('#fs-lbl-ship').innerText = p.steps.ship;
+        $('#fs-m1-icon').innerText = p.icons.m1;
+        $('#fs-m2-icon').innerText = p.icons.m2;
+        $('#fs-m3-icon').innerText = p.icons.m3;
+        $('#fs-obj-raw').setAttribute('data-type', type);
+        $('#fs-obj-product').setAttribute('data-type', type);
+        Factory3D.setCompany(type);
+        if (fsGameState === 4) fsResetGame(true);
+    }
+
+    async function fsGameAction(action) {
+        if (fsBusy) return;
+        const order = ['source', 'assemble', 'pack', 'ship'];
+        if (order.indexOf(action) !== fsGameState || fsGameState >= 4) return;
+        fsBusy = true; Sound.click();
+        const p = fsCompanies[fsCurrentCompany];
+        fsSetStatus(`<span>[STEP ${fsGameState + 1}]</span> ${p.steps[action]}...<br><small style="color:var(--secondary)">${p.facts[action]}</small>`);
+
+        if (Factory3D.ok) await Factory3D.run(action);
+        else await FactoryCSS.run(action);
+
+        const doneBtn = $('#' + fsButtons[fsGameState]);
+        doneBtn.disabled = true;
+        doneBtn.classList.remove('active-step');
+        fsGameState++;
+        if (fsGameState < 4) {
+            const nextBtn = $('#' + fsButtons[fsGameState]);
+            nextBtn.disabled = false;
+            nextBtn.classList.add('active-step');
+        } else {
+            Sound.success(); Confetti.burst(120);
+            fsSetStatus('<span>[SUCCESS]</span> Product shipped! The global supply chain is complete. +30 XP — select a new company.');
+            addXP(30, 'Supply chain completed!');
+            award('factory');
         }
+        fsBusy = false;
+    }
 
-        // ============================================
-        // MEDIA SPREAD
-        // ============================================
-        const mediaData = {
-            1: { title: 'Where It Starts', text: 'An artist or creator in South Korea makes a song, game, or video. This is the creative origin point.' },
-            2: { title: 'Spreading Online', text: 'Social media algorithms push the content to global audiences. Fans share, remix, and make their own versions.' },
-            3: { title: 'Global Fans', text: 'People in the USA, Brazil, Europe, and Africa become fans. They create fan art, dance covers, and translations.' },
-            4: { title: 'Your Home', text: 'The trend reaches you through streaming, TikTok, YouTube, or games. You become part of a global community of fans!' }
-        };
-
-        function activateMediaNode(id) {
-            playClick();
-            document.querySelectorAll('.media-node').forEach(n => n.classList.remove('active'));
-            document.getElementById(`mn-${id}`).classList.add('active');
-            const data = mediaData[id];
-            document.getElementById('media-detail').innerHTML = `<h3 style="color: var(--yellow); margin-bottom: 0.8rem;">${data.title}</h3><p>${data.text}</p>`;
-        }
-
-        // ============================================
-        // DOMINO EFFECT
-        // ============================================
-        function triggerDomino(index) {
-            playClick();
-            const chain = ['d1', 'd2', 'd3', 'd4', 'd5'];
-            const msg = document.getElementById('game-msg');
-            const shopMood = document.querySelector('#mood-shop .mood-emoji');
-            const youMood = document.querySelector('#mood-you .mood-emoji');
-            chain.forEach(id => document.getElementById(id).classList.remove('broken', 'delayed'));
-            shopMood.innerText = '😃'; youMood.innerText = '😃';
-            msg.innerText = "Uh oh! You broke a link in the chain!";
-            msg.style.color = 'var(--yellow)';
-            document.getElementById(chain[index]).classList.add('broken');
-            let delay = 600;
-            for (let i = index + 1; i < chain.length; i++) {
-                setTimeout(() => { document.getElementById(chain[i]).classList.add('delayed'); }, delay);
-                delay += 600;
-            }
-            setTimeout(() => {
-                shopMood.innerText = '😟';
-                msg.innerText = "The Shop has no products to sell! The Shop Owner is sad.";
-                msg.style.color = 'var(--red)';
-            }, delay);
-            setTimeout(() => {
-                youMood.innerText = '😡';
-                msg.innerText = "The Shop has no products, so YOU can't buy what you want! Everyone is upset! This is why we need redundancy (backup paths).";
-                msg.style.color = 'var(--red)';
-            }, delay + 800);
-        }
-
-        function resetDomino() {
-            playClick();
-            ['d1', 'd2', 'd3', 'd4', 'd5'].forEach(id => document.getElementById(id).classList.remove('broken', 'delayed'));
-            document.querySelector('#mood-shop .mood-emoji').innerText = '😃';
-            document.querySelector('#mood-you .mood-emoji').innerText = '😃';
-            document.getElementById('game-msg').innerText = "Everything is running smoothly! Everyone is happy.";
-            document.getElementById('game-msg').style.color = 'var(--yellow)';
-        }
-
-        // ============================================
-        // X-FACTOR
-        // ============================================
-        const xfactorData = {
-            repair: { title: '🔧 Repair Instead of Replace', text: 'If you repair a broken phone, you reduce demand for new materials. This means less mining, less shipping, and less waste. Small choice → Big effect!' },
-            recycle: { title: '♻️ Recycle Old Devices', text: 'Recycling metals like gold and copper from old phones means fewer new mines are needed. Communities in Ghana and Chile benefit from less pollution.' },
-            local: { title: '🏪 Buy From Local Shops', text: 'Buying locally can reduce the shipping distance. It supports local jobs and cuts down on transport emissions.' },
-            transport: { title: '🚲 Use Greener Transport', text: 'Walking, cycling, or taking public transport reduces the carbon footprint of your daily commute. This helps global climate goals!' }
-        };
-
-        function showXFactor(type, element) {
-            playClick();
-            document.querySelectorAll('.xfactor-bubble').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-            const data = xfactorData[type];
-            document.getElementById('xfactor-detail').innerHTML = `<h3>${data.title}</h3><p>${data.text}</p>`;
-        }
-
-        // ============================================
-        // WHAT IF SIMULATOR
-        // ============================================
-        function setGlobalStatus(isOn) {
-            playClick();
-            document.getElementById('btn-global-on').classList.toggle('active', isOn);
-            document.getElementById('btn-global-off').classList.toggle('active', !isOn);
-            const cards = document.querySelectorAll('.whatif-card');
-            const msg = document.getElementById('whatif-msg');
-            cards.forEach(card => { if (isOn) card.classList.remove('lost'); else card.classList.add('lost'); });
-            if (isOn) {
-                msg.innerText = "With global connections, your day is rich and full of variety.";
-                msg.style.color = "var(--green)";
-            } else {
-                msg.innerText = "Without global connections, your day would be VERY different. Most things you use come from far away!";
-                msg.style.color = "var(--red)";
-            }
-        }
-
-        // ============================================
-        // QUIZ
-        // ============================================
-        const quizData = [
-            { q: 'What is the "Secret Weapon" that makes a supply chain strong?', options: ['Having only one path', 'Having more than one path (Redundancy)', 'Using only airplanes'], correct: 1 },
-            { q: 'If a port closes, what happens to the shop and the customer?', options: ['Nothing changes', 'The shop gets more products', 'The shop gets fewer products and the customer notices'], correct: 2 },
-            { q: 'Which continent has the biggest share of the global supply chain (about 50%)?', options: ['North America', 'Asia', 'Europe'], correct: 1 },
-            { q: 'Where do cocoa beans (for chocolate) often come from?', options: ['Ghana and Ivory Coast', 'Canada and Norway', 'Japan and Australia'], correct: 0 },
-            { q: 'What does "X-Factor" mean in the global network?', options: ['The biggest factory in the world', 'Small choices that have big effects', 'The fastest ship'], correct: 1 }
-        ];
-
-        let quizScore = 0; let quizAnswered = 0;
-
-        function renderQuiz() {
-            const container = document.getElementById('quiz-container');
-            container.innerHTML = ''; quizScore = 0; quizAnswered = 0;
-            document.getElementById('quiz-score').innerText = '';
-            quizData.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'quiz-question-box';
-                div.innerHTML = `<h3>Q${index + 1}: ${item.q}</h3>`;
-                const optDiv = document.createElement('div');
-                optDiv.className = 'options-grid';
-                item.options.forEach((opt, optIndex) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'option-btn'; btn.innerText = opt;
-                    btn.onclick = () => answerQuiz(index, optIndex, btn, div);
-                    optDiv.appendChild(btn);
-                });
-                div.appendChild(optDiv);
-                const feedback = document.createElement('div');
-                feedback.className = 'quiz-feedback';
-                div.appendChild(feedback);
-                container.appendChild(div);
-            });
-        }
-
-        function answerQuiz(qIndex, optIndex, btn, parentDiv) {
-            if (parentDiv.dataset.answered) return;
-            parentDiv.dataset.answered = 'true';
-            const item = quizData[qIndex];
-            const feedback = parentDiv.querySelector('.quiz-feedback');
-            if (optIndex === item.correct) {
-                playSuccess(); btn.classList.add('correct');
-                feedback.innerText = '✅ Correct!'; feedback.style.color = 'var(--green)';
-                quizScore++;
-            } else {
-                playBeep(200, 0.3, 'sawtooth'); btn.classList.add('wrong');
-                feedback.innerText = '❌ Not quite. The correct answer was: ' + item.options[item.correct];
-                feedback.style.color = 'var(--red)';
-                parentDiv.querySelectorAll('.option-btn').forEach((b, i) => { if (i === item.correct) b.classList.add('correct'); });
-            }
-            quizAnswered++;
-            if (quizAnswered === quizData.length) {
-                document.getElementById('quiz-score').innerText = `You scored ${quizScore} out of ${quizData.length}! ${quizScore === 5 ? '🏆 Perfect!' : 'Keep exploring!'}`;
-                document.getElementById('quiz-score').style.color = 'var(--yellow)';
-            }
-        }
-
-        // ============================================
-        // CHECKLIST
-        // ============================================
-        function toggleCheck(element) { playClick(); element.classList.toggle('completed'); }
-
-        // ============================================
-        // REFLECTION
-        // ============================================
-        function updateWordCount() {
-            const text = document.getElementById('reflection-text').value;
-            const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
-            document.getElementById('word-count').innerText = words + ' words';
-        }
-
-        function submitReflection() {
-            playClick();
-            const text = document.getElementById('reflection-text').value;
-            const msg = document.getElementById('reflection-msg');
-            if (text.length < 30) {
-                msg.style.color = 'var(--red)';
-                msg.innerText = "Please write a bit more! Try to explain what would change most and why.";
-            } else {
-                playSuccess();
-                msg.style.color = 'var(--green)';
-                msg.innerText = "✅ Excellent reflection! You have successfully explained how your day depends on global connections.";
-                document.getElementById('reflection-text').disabled = true;
-                document.querySelector('#reflection button').disabled = true;
-                document.querySelector('#reflection button').innerText = "Submitted!";
-                document.querySelector('#reflection button').style.background = "var(--green)";
-            }
-        }
-
-        // ============================================
-        // INIT
-        // ============================================
-        document.addEventListener('DOMContentLoaded', () => {
-            renderQuiz();
-            document.body.addEventListener('click', initAudio, { once: true });
+    function fsResetGame(silent) {
+        fsGameState = 0;
+        fsSetStatus('<span>[SYSTEM]</span> Resetting factory...');
+        fsButtons.forEach((id, i) => {
+            const b = $('#' + id);
+            b.disabled = i !== 0;
+            b.classList.remove('active-step');
         });
+        ['fs-obj-raw', 'fs-obj-product', 'fs-obj-box'].forEach(id => {
+            const o = $('#' + id);
+            o.classList.remove('visible'); o.style.left = '5%'; o.style.top = '70%';
+            o.style.transform = 'none'; o.style.opacity = '1';
+        });
+        $$('.fs-machine').forEach(m => m.classList.remove('active'));
+        $('#fs-worker1').style.left = '15%';
+        $('#fs-worker2').style.left = '45%';
+        $('#fs-worker3').style.left = '75%';
+        Factory3D.setCompany(fsCurrentCompany);
+        if (!silent) Sound.click();
+        setTimeout(() => fsSetStatus('<span>[SYSTEM]</span> Ready. Waiting for Operations Manager.'), 800);
+    }
+
+    /* ============================================================
+       CONTENT SECTIONS
+       ============================================================ */
+    const journeyData = {
+        materials: { icon: '⛏️', title: '1. Raw Materials', text: 'It starts with digging! We mine metals like lithium and cobalt from the earth in places like Africa and South America. This is the "Resource Stage".', chain: ['Mine in Africa', 'Raw Metal', 'Ship to Factory'] },
+        components: { icon: '🔌', title: '2. Components', text: 'The raw materials are turned into tiny parts! The screens come from Japan and the computer chips are made in Taiwan.', chain: ['Japan (Screens)', 'Taiwan (Chips)', 'South Korea (Memory)'] },
+        assembly: { icon: '🏭', title: '3. Assembly', text: 'All the parts are brought together in giant factories in Asia (like China and Vietnam) where workers and robots put the phone together. This is "Specialization" - places doing what they do best!', chain: ['China', 'Vietnam', 'India'] },
+        transport: { icon: '🚚', title: '4. Transport', text: 'The finished phones are packed into boxes and put on massive cargo ships or airplanes to travel across the ocean! 90% of world trade is carried by sea.', chain: ['Cargo Ship', 'Airplane', 'Delivery Truck'] },
+        you: { icon: '🤳', title: '5. You!', text: "Finally, the phone arrives at a store or your door. You unbox it and start using it, completing the global journey! Now it's your turn to reuse and recycle it when you're done.", chain: ['Shop', 'Your Door', 'You!'] }
+    };
+    function chainHTML(chain) {
+        let h = '<div class="arrow-chain">';
+        chain.forEach((s, i) => { h += `<span>${s}</span>`; if (i < chain.length - 1) h += '<strong> ➔ </strong>'; });
+        return h + '</div>';
+    }
+    function showJourney(step, element) {
+        Sound.pop();
+        $$('.journey-step').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        const d = journeyData[step];
+        $('#journey-detail').innerHTML = `<h3>${d.icon} ${d.title}</h3><p>${d.text}</p>${chainHTML(d.chain)}`;
+    }
+
+    function updateMapInfo(region, percent, text) {
+        Sound.pop();
+        $('#map-info').innerHTML = `<h3>${region} — ${percent}</h3><p>${text}</p>`;
+    }
+    function showCompanyPath(company, btn) {
+        Sound.click();
+        $$('.company-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        $('#arc-amazon').classList.toggle('show', company === 'amazon');
+        $('#arc-apple').classList.toggle('show', company === 'apple');
+        $('#company-path-info').innerHTML = company === 'amazon'
+            ? '<h3 style="color: var(--accent);">📦 Amazon Supply Chain</h3><p style="font-size: 0.9rem; margin-top: 0.5rem;">Inventory from Asia → US Fulfillment Centers → Robots pick items → Packed → Delivered to You by truck or plane. Watch the glowing arc cross the map!</p>'
+            : '<h3 style="color: var(--accent);">📱 Apple iPhone Supply Chain</h3><p style="font-size: 0.9rem; margin-top: 0.5rem;">Designed in California → Components from Taiwan/South Korea/Japan → Assembled in China & India → Shipped globally to You. Watch the glowing arc cross the map!</p>';
+    }
+
+    const foodData = {
+        banana: { icon: '🍌', title: 'The Banana Journey', text: 'Bananas grow in tropical climates like Ecuador and Costa Rica. Workers pick them green, they travel in refrigerated ships, and they ripen on the way to your supermarket!', chain: ['Ecuador', 'Refrigerated Ship', 'Supermarket', 'You'] },
+        chocolate: { icon: '🍫', title: 'The Chocolate Journey', text: 'Cocoa beans come from Ghana and Ivory Coast. They are dried, shipped to Europe or Asia, roasted, and turned into chocolate. Sugar comes from Brazil!', chain: ['Ghana (Cocoa)', 'Europe (Roasting)', 'Factory', 'You'] },
+        cereal: { icon: '🥣', title: 'The Cereal Journey', text: 'Wheat is grown in the USA, Canada, or Europe. It is processed into flakes, vitamins are added, and the box is printed with materials from forests!', chain: ['Farm', 'Processing Plant', 'Box Factory', 'You'] },
+        tea: { icon: '🍵', title: 'The Tea Journey', text: 'Tea leaves come from Kenya, India, or Sri Lanka. They are dried, blended, and shipped around the world. Every cup has a global story!', chain: ['Kenya (Leaves)', 'Sri Lanka', 'Blending', 'You'] }
+    };
+    function showFood(type, element) {
+        Sound.pop();
+        $$('.food-card').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        const d = foodData[type];
+        $('#food-detail').innerHTML = `<h3>${d.icon} ${d.title}</h3><p>${d.text}</p>${chainHTML(d.chain)}`;
+    }
+
+    const mediaData = {
+        1: { title: 'Where It Starts', text: 'An artist or creator in South Korea makes a song, game, or video. This is the creative origin point.' },
+        2: { title: 'Spreading Online', text: 'Social media algorithms push the content to global audiences. Fans share, remix, and make their own versions.' },
+        3: { title: 'Global Fans', text: 'People in the USA, Brazil, Europe, and Africa become fans. They create fan art, dance covers, and translations.' },
+        4: { title: 'Your Home', text: 'The trend reaches you through streaming, TikTok, YouTube, or games. You become part of a global community of fans!' }
+    };
+    function activateMediaNode(id) {
+        Sound.pop();
+        $$('.media-node').forEach(n => n.classList.remove('active'));
+        $('#mn-' + id).classList.add('active');
+        const d = mediaData[id];
+        $('#media-detail').innerHTML = `<h3 style="color: var(--yellow); margin-bottom: 0.8rem;">${d.title}</h3><p>${d.text}</p>`;
+    }
+
+    function triggerDomino(index) {
+        Sound.fail();
+        award('chain');
+        const chain = ['d1', 'd2', 'd3', 'd4', 'd5'];
+        const msg = $('#game-msg');
+        const shopMood = $('#mood-shop .mood-emoji');
+        const youMood = $('#mood-you .mood-emoji');
+        chain.forEach(id => $('#' + id).classList.remove('broken', 'delayed'));
+        shopMood.innerText = '😃'; youMood.innerText = '😃';
+        msg.innerText = 'Uh oh! You broke a link in the chain!';
+        msg.style.color = 'var(--yellow)';
+        $('#' + chain[index]).classList.add('broken');
+        let delay = 600;
+        for (let i = index + 1; i < chain.length; i++) {
+            setTimeout(() => { $('#' + chain[i]).classList.add('delayed'); Sound.pop(); }, delay);
+            delay += 600;
+        }
+        setTimeout(() => {
+            shopMood.innerText = '😟';
+            msg.innerText = 'The Shop has no products to sell! The Shop Owner is sad.';
+        }, delay);
+        setTimeout(() => {
+            youMood.innerText = '😡';
+            msg.innerText = "The Shop has no products, so YOU can't buy what you want! Everyone is upset! This is why we need redundancy (backup paths).";
+            msg.style.color = 'var(--red)';
+        }, delay + 800);
+    }
+    function resetDomino() {
+        Sound.click();
+        ['d1','d2','d3','d4','d5'].forEach(id => $('#' + id).classList.remove('broken', 'delayed'));
+        $('#mood-shop .mood-emoji').innerText = '😃';
+        $('#mood-you .mood-emoji').innerText = '😃';
+        const msg = $('#game-msg');
+        msg.innerText = 'Everything is running smoothly! Everyone is happy.';
+        msg.style.color = 'var(--yellow)';
+    }
+
+    const xfactorData = {
+        repair: { title: '🔧 Repair Instead of Replace', text: 'If you repair a broken phone, you reduce demand for new materials. This means less mining, less shipping, and less waste. Small choice → Big effect!' },
+        recycle: { title: '♻️ Recycle Old Devices', text: 'Recycling metals like gold and copper from old phones means fewer new mines are needed. Communities in Ghana and Chile benefit from less pollution.' },
+        local: { title: '🏪 Buy From Local Shops', text: 'Buying locally can reduce the shipping distance. It supports local jobs and cuts down on transport emissions.' },
+        transport: { title: '🚲 Use Greener Transport', text: 'Walking, cycling, or taking public transport reduces the carbon footprint of your daily commute. This helps global climate goals!' }
+    };
+    function showXFactor(type, element) {
+        Sound.pop();
+        $$('.xfactor-bubble').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        const d = xfactorData[type];
+        $('#xfactor-detail').innerHTML = `<h3>${d.title}</h3><p>${d.text}</p>`;
+    }
+
+    function setGlobalStatus(isOn) {
+        Sound.click();
+        $('#btn-global-on').classList.toggle('active', isOn);
+        $('#btn-global-off').classList.toggle('active', !isOn);
+        $$('.whatif-card').forEach(c => c.classList.toggle('lost', !isOn));
+        const msg = $('#whatif-msg');
+        if (isOn) {
+            msg.innerText = 'With global connections, your day is rich and full of variety.';
+            msg.style.color = 'var(--green)';
+        } else {
+            msg.innerText = 'Without global connections, your day would be VERY different. Most things you use come from far away!';
+            msg.style.color = 'var(--red)';
+        }
+    }
+
+    /* ============================================================
+       QUIZ — XP engine + optional challenge timer
+       ============================================================ */
+    const quizData = [
+        { q: 'What is the "Secret Weapon" that makes a supply chain strong?', options: ['Having only one path', 'Having more than one path (Redundancy)', 'Using only airplanes'], correct: 1 },
+        { q: 'If a port closes, what happens to the shop and the customer?', options: ['Nothing changes', 'The shop gets more products', 'The shop gets fewer products and the customer notices'], correct: 2 },
+        { q: 'Which continent has the biggest share of the global supply chain (about 50%)?', options: ['North America', 'Asia', 'Europe'], correct: 1 },
+        { q: 'Where do cocoa beans (for chocolate) often come from?', options: ['Ghana and Ivory Coast', 'Canada and Norway', 'Japan and Australia'], correct: 0 },
+        { q: 'What does "X-Factor" mean in the global network?', options: ['The biggest factory in the world', 'Small choices that have big effects', 'The fastest ship'], correct: 1 }
+    ];
+    let quizScore = 0, quizAnswered = 0, streak = 0, quizXPRun = 0, challengeMode = false;
+
+    function toggleChallenge() {
+        Sound.click();
+        challengeMode = !challengeMode;
+        $('#challenge-toggle').textContent = '⏱️ Challenge Mode: ' + (challengeMode ? 'ON' : 'OFF');
+        $('#challenge-toggle').classList.toggle('active', challengeMode);
+        renderQuiz();
+    }
+
+    function startTimer(box, qIndex) {
+        if (!challengeMode) return;
+        const fill = $('.fill', box);
+        let left = 15;
+        fill.style.width = '100%'; fill.style.background = 'var(--green)';
+        const iv = setInterval(() => {
+            left--;
+            const pct = Math.max(left / 15 * 100, 0);
+            fill.style.width = pct + '%';
+            fill.style.background = left <= 5 ? 'var(--red)' : left <= 9 ? 'var(--yellow)' : 'var(--green)';
+            if (left <= 0) {
+                clearInterval(iv);
+                answerQuiz(qIndex, -1, null, box);
+            }
+        }, 1000);
+        box._timer = iv;
+    }
+
+    function renderQuiz() {
+        const container = $('#quiz-container');
+        container.innerHTML = '';
+        quizScore = 0; quizAnswered = 0; streak = 0;
+        $('#quiz-score').innerText = '';
+        quizData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'quiz-question-box';
+            div.innerHTML = `<h3>Q${index + 1}: ${item.q}</h3>${challengeMode ? '<div class="quiz-timer"><div class="fill"></div></div>' : ''}`;
+            const optDiv = document.createElement('div');
+            optDiv.className = 'options-grid';
+            item.options.forEach((opt, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn'; btn.innerText = opt;
+                btn.onclick = () => answerQuiz(index, optIndex, btn, div);
+                optDiv.appendChild(btn);
+            });
+            div.appendChild(optDiv);
+            const feedback = document.createElement('div');
+            feedback.className = 'quiz-feedback';
+            div.appendChild(feedback);
+            container.appendChild(div);
+            startTimer(div, index);
+        });
+    }
+
+    function answerQuiz(qIndex, optIndex, btn, parentDiv) {
+        if (parentDiv.dataset.answered) return;
+        parentDiv.dataset.answered = 'true';
+        if (parentDiv._timer) clearInterval(parentDiv._timer);
+        const item = quizData[qIndex];
+        const feedback = parentDiv.querySelector('.quiz-feedback');
+        const allBtns = $$('.option-btn', parentDiv);
+        allBtns.forEach(b => b.disabled = true);
+        if (optIndex === item.correct) {
+            Sound.success();
+            btn.classList.add('correct');
+            streak++;
+            const gained = 20 + (streak - 1) * 5;
+            quizXPRun += gained; quizScore++;
+            addXP(gained, streak > 1 ? `Correct! Streak x${streak}` : 'Correct answer!');
+            feedback.innerText = `✅ Correct! +${gained} XP${streak > 1 ? ' (streak bonus!)' : ''}`;
+            feedback.style.color = 'var(--green)';
+        } else {
+            Sound.fail();
+            streak = 0;
+            if (btn) btn.classList.add('wrong');
+            feedback.innerText = optIndex === -1
+                ? '⏰ Time is up! The correct answer was: ' + item.options[item.correct]
+                : '❌ Not quite. The correct answer was: ' + item.options[item.correct];
+            feedback.style.color = 'var(--red)';
+            allBtns.forEach((b, i) => { if (i === item.correct) b.classList.add('correct'); });
+        }
+        $('#quiz-xp').textContent = quizXPRun;
+        quizAnswered++;
+        if (quizAnswered === quizData.length) {
+            const best = store.get('quiz_best', 0);
+            const scoreMsg = `You scored ${quizScore} out of ${quizData.length}! ${quizScore === 5 ? '🏆 Perfect!' : quizScore >= 3 ? 'Nice work!' : 'Keep exploring!'}`;
+            $('#quiz-score').innerText = scoreMsg + (quizScore > best ? ` 🎉 New personal best!` : '');
+            $('#quiz-score').style.color = 'var(--yellow)';
+            $('#quiz-val').textContent = Math.max(quizScore, best);
+            store.set('quiz_best', Math.max(quizScore, best));
+            if (quizScore === 5) {
+                Confetti.burst(200);
+                award('quiz');
+                addXP(50, 'Quiz Master: perfect score!');
+            }
+        }
+    }
+
+    /* ============================================================
+       CHECKLIST — persisted with progress ring
+       ============================================================ */
+    const checkItems = $$('#checklist-container .check-item');
+    let checkState = store.get('checklist', checkItems.map(() => false));
+
+    function updateChecklistUI() {
+        const done = checkState.filter(Boolean).length;
+        const pct = Math.round(done / checkState.length * 100);
+        const CIRC = 2 * Math.PI * 63;
+        $('#ring-fg').style.strokeDashoffset = CIRC * (1 - pct / 100);
+        $('#ring-pct').textContent = pct + '%';
+        $('#ck-val').textContent = pct;
+        if (pct === 100) award('checklist');
+    }
+    function toggleCheck(element) {
+        Sound.click();
+        const i = checkItems.indexOf(element);
+        checkState[i] = !checkState[i];
+        element.classList.toggle('completed', checkState[i]);
+        store.set('checklist', checkState);
+        updateChecklistUI();
+    }
+    function resetChecklist() {
+        Sound.click();
+        checkState = checkItems.map(() => false);
+        store.set('checklist', checkState);
+        checkItems.forEach(el => el.classList.remove('completed'));
+        updateChecklistUI();
+        toast('Checklist reset', 'Fresh start — you can do it!', '✅');
+    }
+    checkItems.forEach((el, i) => { el.classList.toggle('completed', !!checkState[i]); });
+
+    /* ============================================================
+       REFLECTION + REPORT EXPORT
+       ============================================================ */
+    let saveDraftTimer = null;
+    function updateWordCount() {
+        const text = $('#reflection-text').value;
+        const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+        $('#word-count').innerText = words + ' words';
+        clearTimeout(saveDraftTimer);
+        saveDraftTimer = setTimeout(() => store.set('reflection_draft', text), 400);
+    }
+    function submitReflection() {
+        Sound.click();
+        const text = $('#reflection-text').value;
+        const msg = $('#reflection-msg');
+        if (text.trim().length < 30) {
+            Sound.fail();
+            msg.style.color = 'var(--red)';
+            msg.innerText = 'Please write a bit more! Try to explain what would change most and why.';
+            return;
+        }
+        Sound.success();
+        store.set('reflection_done', text);
+        msg.style.color = 'var(--green)';
+        msg.innerText = '✅ Excellent reflection! You have successfully explained how your day depends on global connections.';
+        const ta = $('#reflection-text'), btn = $('#reflection button');
+        ta.disabled = true; btn.disabled = true;
+        btn.innerText = 'Submitted!'; btn.style.background = 'var(--green)';
+        addXP(20, 'Reflection submitted!');
+        award('reflect');
+    }
+    function lockReflectionIfDone() {
+        const done = store.get('reflection_done', null);
+        if (!done) return;
+        $('#reflection-text').value = done;
+        updateWordCount();
+        const ta = $('#reflection-text'), btn = $('#reflection button');
+        ta.disabled = true; btn.disabled = true;
+        btn.innerText = 'Submitted!'; btn.style.background = 'var(--green)';
+        $('#reflection-msg').style.color = 'var(--green)';
+        $('#reflection-msg').innerText = '✅ Reflection submitted — great work!';
+    }
+
+    function exportReport() {
+        Sound.success();
+        const done = checkState.filter(Boolean).length;
+        const badgeList = Object.keys(badges).map(id => BADGE_META[id][0] + ' ' + BADGE_META[id][1]);
+        const reflection = store.get('reflection_done', store.get('reflection_draft', '(none yet)'));
+        const lines = [
+            '==============================================',
+            '  ALEZIFY OS — GLOBAL INTERCONNECTION REPORT',
+            '  Omar Sanad | Year 7 Global Project',
+            '==============================================',
+            '',
+            '⚡ Total XP: ' + XP,
+            '🧠 Quiz best: ' + store.get('quiz_best', 0) + '/5',
+            '✅ Checklist: ' + done + '/' + checkState.length + ' tasks complete',
+            '🏅 Badges (' + badgeList.length + '/6): ' + (badgeList.join(', ') || 'none yet'),
+            '',
+            '✍️ FINAL REFLECTION',
+            'Q: If global connections disappeared from my day, what would change most, and why?',
+            'A: ' + reflection,
+            '',
+            'Sections visited: ' + [...visited].sort().join(', '),
+            '',
+            'Generated by Alezify OS on ' + new Date().toLocaleString()
+        ];
+        const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'alezify-global-report.txt';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        toast('Report exported!', 'Downloaded as alezify-global-report.txt', '📄');
+    }
+
+    function resetAllProgress() {
+        if (!confirm('Reset ALL progress (XP, badges, checklist, quiz best, reflection)? This cannot be undone!')) return;
+        Object.keys(localStorage)
+            .filter(k => k.startsWith('alezify_'))
+            .forEach(k => localStorage.removeItem(k));
+        location.reload();
+    }
+
+    /* ============================================================
+       INIT
+       ============================================================ */
+    document.addEventListener('DOMContentLoaded', () => {
+        $('#xp-val').textContent = XP;
+        $('#quiz-val').textContent = store.get('quiz_best', 0) || '–';
+
+        const threeOk = Factory3D.init();
+        if (!threeOk) {
+            $('#factory').classList.add('fs-css-mode');
+            toast('Fallback mode', 'WebGL unavailable — using the CSS 3D factory.', '🏭');
+        } else {
+            Factory3D.setCompany('amazon');
+        }
+
+        renderQuiz();
+        syncBadges();
+        updateChecklistUI();
+        lockReflectionIfDone();
+        checkExplorer();
+
+        const draft = store.get('reflection_draft', '');
+        if (draft && !$('#reflection-text').disabled) {
+            $('#reflection-text').value = draft;
+            updateWordCount();
+        }
+
+        document.body.addEventListener('pointerdown', () => Sound.init(), { once: true });
+    });
     </script>
 </body>
 </html>
