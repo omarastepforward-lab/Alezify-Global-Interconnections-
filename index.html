@@ -880,7 +880,7 @@
                 <div class="guide-icon">🏭</div>
                 <div class="guide-body">
                     <h3>3D Factory</h3>
-                    <p><strong>What to do:</strong> Click the 4 step buttons <em>IN ORDER</em>: Source → Assemble → Pack → Ship. Watch the product travel along the belt!</p>
+                    <p><strong>What to do:</strong> Click the 4 step buttons <em>IN ORDER</em>: Source → Assemble → Pack → Ship. Watch the product travel along the belt and fly away on the cargo plane!</p>
                 </div>
             </div>
             <div class="guide-card" data-target="giants">
@@ -2229,6 +2229,7 @@
     const Factory3D = (() => {
         let ok = false, scene, camera, renderer, controls, clock;
         let item, itemMat, machines = [], tweens = [];
+        let planeGroup = null, propellers = [];
         const BELT_Z = 1.2, ITEM_Y = 1.05, SX = [-4.5, 0, 4.5];
 
         function emojiTexture(emoji) {
@@ -2264,6 +2265,90 @@
             if (spr.material.map) spr.material.map.dispose();
             spr.material.dispose();
             spr.material = new THREE.SpriteMaterial({ map: emojiTexture(emoji) });
+        }
+
+        /* ---------- Delivery aircraft ---------- */
+        function buildPlane() {
+            const g = new THREE.Group();
+
+            const hullMat = new THREE.MeshStandardMaterial({ color: 0xD3F7FD, roughness: 0.35, metalness: 0.55 });
+            const wingMat = new THREE.MeshStandardMaterial({ color: 0xE2B2FF, roughness: 0.4, metalness: 0.4, emissive: 0x3a1f5c, emissiveIntensity: 0.55 });
+            const darkMat = new THREE.MeshStandardMaterial({ color: 0x33334f, roughness: 0.6, metalness: 0.5 });
+            const glassMat = new THREE.MeshStandardMaterial({ color: 0x0b0a2e, roughness: 0.15, metalness: 0.85, emissive: 0x06D6A0, emissiveIntensity: 0.5 });
+
+            const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 3.0, 16), hullMat);
+            fuselage.rotation.z = Math.PI / 2;
+            g.add(fuselage);
+
+            const nose = new THREE.Mesh(new THREE.ConeGeometry(0.42, 1.0, 16), hullMat);
+            nose.rotation.z = -Math.PI / 2;
+            nose.position.x = 2.0;
+            g.add(nose);
+
+            const cockpit = new THREE.Mesh(new THREE.SphereGeometry(0.3, 12, 10), glassMat);
+            cockpit.position.set(1.3, 0.22, 0);
+            cockpit.scale.set(1.5, 0.85, 0.95);
+            g.add(cockpit);
+
+            const wing = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.14, 5.2), wingMat);
+            wing.position.set(0.15, -0.05, 0);
+            g.add(wing);
+
+            const fin = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.15, 0.14), wingMat);
+            fin.position.set(-1.35, 0.6, 0);
+            g.add(fin);
+
+            const stab = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.12, 1.9), wingMat);
+            stab.position.set(-1.4, 0.12, 0);
+            g.add(stab);
+
+            [-1.65, 1.65].forEach(z => {
+                const engine = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.9, 12), darkMat);
+                engine.rotation.z = Math.PI / 2;
+                engine.position.set(0.45, -0.18, z);
+                g.add(engine);
+
+                const prop = new THREE.Group();
+                for (let i = 0; i < 2; i++) {
+                    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.78, 0.1), hullMat);
+                    blade.rotation.x = (i * Math.PI) / 2;
+                    prop.add(blade);
+                }
+                prop.position.set(0.95, -0.18, z);
+                g.add(prop);
+                propellers.push(prop);
+            });
+
+            // Soft glow so the plane reads well against the dark floor
+            const glowLight = new THREE.PointLight(0x06D6A0, 0.9, 14);
+            glowLight.position.set(0, 0.4, 0);
+            g.add(glowLight);
+
+            g.visible = false;
+            g.position.set(20, 14, BELT_Z);
+            scene.add(g);
+            return g;
+        }
+
+        function resetPlane() {
+            if (!planeGroup) return;
+            if (item && item.parent === planeGroup) {
+                planeGroup.remove(item);
+                scene.add(item);
+            }
+            if (item) {
+                item.position.set(-7.6, ITEM_Y, BELT_Z);
+                item.rotation.set(0, 0, 0);
+                item.scale.set(1, 1, 1);
+                item.visible = false;
+            }
+            if (itemMat) {
+                itemMat.transparent = false;
+                itemMat.opacity = 1;
+            }
+            planeGroup.visible = false;
+            planeGroup.position.set(20, 14, BELT_Z);
+            planeGroup.rotation.set(0, 0, 0);
         }
 
         function init() {
@@ -2346,12 +2431,18 @@
                 item.position.set(-7.6, ITEM_Y, BELT_Z);
                 item.visible = false; scene.add(item);
 
+                // Build the cargo plane used for the shipping step
+                planeGroup = buildPlane();
+
                 clock = new THREE.Clock();
                 (function animate() {
                     requestAnimationFrame(animate);
                     if (controls) controls.update();
                     stepTweens(Math.min(clock.getDelta(), 0.05));
                     if (item.visible) { item.rotation.y += 0.02; }
+                    if (planeGroup && planeGroup.visible) {
+                        for (let i = 0; i < propellers.length; i++) propellers[i].rotation.x += 0.55;
+                    }
                     renderer.render(scene, camera);
                 })();
 
@@ -2378,6 +2469,7 @@
             item.scale.set(1, 1, 1);
             item.position.set(-7.6, ITEM_Y, BELT_Z);
             item.visible = false;
+            resetPlane();
         }
 
         async function run(action) {
@@ -2399,12 +2491,45 @@
                 setTimeout(() => { itemMat.color.setHex(0x8B4513); tween(item.scale, { x: 1.25, y: 0.8, z: 1.25 }, 0.6); }, 600);
                 await p; glow(2, false);
             } else if (action === 'ship') {
-                await tween(item.position, { x: 8.4 }, 1.4);
-                itemMat.transparent = true;
-                const up = tween(item.position, { y: 5.5 }, 1.1);
-                tween(itemMat, { opacity: 0 }, 1.1);
-                await up;
+                /* ---------- 1. Slide the parcel to the loading bay ---------- */
+                glow(2, true);
+                await tween(item.position, { x: 8.4, y: ITEM_Y }, 1.2);
+
+                /* ---------- 2. The cargo plane descends from the sky ---------- */
+                planeGroup.position.set(9.6, 15, BELT_Z);
+                planeGroup.rotation.set(0, 0, 0);
+                planeGroup.visible = true;
+                await tween(planeGroup.position, { y: 3.3 }, 1.1);
+
+                /* ---------- 3. The parcel lifts up into the cargo bay ---------- */
+                await tween(item.position, { x: 9.6, y: 2.4 }, 0.6);
+
+                /* ---------- 4. Load it onto the plane ---------- */
+                scene.remove(item);
+                planeGroup.add(item);
+                item.position.set(0, -0.9, 0);
+                item.rotation.set(0, 0, 0);
+                item.scale.set(1.1, 0.8, 1.1);
+
+                /* ---------- 5. Bank and fly away! ---------- */
+                const flyPos = tween(planeGroup.position, { x: 34, y: 17 }, 2.0);
+                tween(planeGroup.rotation, { z: -0.5, y: 0.4 }, 2.0);
+                await flyPos;
+
+                /* ---------- 6. Tidy up ---------- */
+                planeGroup.remove(item);
+                scene.add(item);
                 item.visible = false;
+                item.scale.set(1, 1, 1);
+                item.position.set(-7.6, ITEM_Y, BELT_Z);
+                item.rotation.set(0, 0, 0);
+                itemMat.transparent = false;
+                itemMat.opacity = 1;
+
+                planeGroup.visible = false;
+                planeGroup.position.set(20, 14, BELT_Z);
+                planeGroup.rotation.set(0, 0, 0);
+                glow(2, false);
             }
         }
         return { init, setCompany, run, get ok() { return ok; } };
@@ -2460,7 +2585,7 @@
                 source: "Amazon manages global freight from factories to US ports and uses over 1 million robots in its fulfillment centers.",
                 assemble: "Robots like Hercules bring inventory pods to workers, who pick items at semi-automated workstations.",
                 pack: "Automated packaging machines measure items and use the exact amount of wrapping needed.",
-                ship: "Amazon's network includes 80,000 trailers and 100 aircraft to move packages at scale."
+                ship: "Amazon's network includes 80,000 trailers and 100 aircraft to move packages at scale — watch yours fly away!"
             }
         },
         apple: {
@@ -2471,7 +2596,7 @@
                 source: "Apple designs in California but sources components globally: processors from TSMC in Taiwan, memory from South Korea and Japan.",
                 assemble: "Final assembly is outsourced to partners like Foxconn. China remains the anchor for the iPhone Pro line, while India now assembles about 25% of all iPhones.",
                 pack: "Apple is investing $500 million in US rare-earth magnet production to diversify its supply chain away from China.",
-                ship: "iPhones are shipped globally from assembly hubs in China, India, and Vietnam to markets worldwide."
+                ship: "iPhones are shipped globally from assembly hubs in China, India, and Vietnam — loaded onto cargo planes just like this one."
             }
         },
         normal: {
@@ -2482,7 +2607,7 @@
                 source: "Did you know? Cotton is often grown in India or the USA.",
                 assemble: "Did you know? Many clothes are sewn in Bangladesh or Vietnam.",
                 pack: "Look! The worker is carefully folding and packing the shirt.",
-                ship: "Did you know? A single T-shirt might travel 5,000 miles before you wear it."
+                ship: "Did you know? A single T-shirt might travel 5,000 miles before you wear it — most of that by air and sea."
             }
         }
     };
@@ -2534,7 +2659,7 @@
             nextBtn.classList.add('active-step');
         } else {
             Sound.success(); Confetti.burst(120);
-            fsSetStatus('<span>[SUCCESS]</span> Product shipped! The global supply chain is complete. +30 XP — select a new company.');
+            fsSetStatus('<span>[SUCCESS]</span> Product shipped! The cargo plane has taken off. +30 XP — select a new company.');
             addXP(30, 'Supply chain completed!');
             award('factory');
         }
