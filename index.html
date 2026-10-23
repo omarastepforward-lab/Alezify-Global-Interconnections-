@@ -6,6 +6,7 @@
     <meta name="description" content="Alezify OS — My Global Life & 3D Factory. An interactive Year 7 global interconnection experience.">
     <meta name="theme-color" content="#0E0D3C">
     <title>Alezify OS — My Global Life & 3D Factory</title>
+    <link rel="icon" type="image/svg+xml" href="https://app-uploads.krea.ai/public/f44d0e5b-9914-42df-b995-c07cb3732bc8.svg">
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
@@ -87,6 +88,8 @@
             transition: var(--transition); line-height: 1;
         }
         .tool-btn:hover { background: var(--secondary); color: var(--primary); }
+        .tool-btn.speaking { background: var(--yellow); color: var(--primary); animation: pulse-reader 0.6s infinite alternate; }
+        @keyframes pulse-reader { from { transform: scale(1); } to { transform: scale(1.08); } }
         #hamburger { display: none; }
         #mobile-menu {
             position: fixed; top: 58px; left: 0; right: 0; z-index: 999;
@@ -456,29 +459,10 @@
         .quiz-feedback { margin-top: 0.6rem; font-weight: bold; font-size: 0.9rem; color: var(--yellow); }
 
         /* ============================================
-           CHECKLIST
-           ============================================ */
-        .checklist-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; width: 100%; }
-        .ring-wrap { position: relative; width: 150px; height: 150px; }
-        .ring-wrap svg { transform: rotate(-90deg); }
-        .ring-wrap .ring-bg { fill: none; stroke: rgba(211,247,253,0.15); stroke-width: 12; }
-        .ring-wrap .ring-fg { fill: none; stroke: var(--green); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 0.6s ease; filter: drop-shadow(0 0 6px var(--green)); }
-        .ring-wrap .ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: var(--font-display); }
-        .ring-wrap .ring-text b { font-size: 1.8rem; color: var(--yellow); }
-        .ring-wrap .ring-text small { font-size: 0.7rem; color: var(--secondary); }
-        .checklist { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 0.8rem; }
-        .check-item { display: flex; align-items: center; gap: 0.8rem; background: rgba(211, 247, 253, 0.05); padding: 0.8rem; border-radius: 10px; border: 2px solid var(--secondary); cursor: pointer; transition: var(--transition); }
-        .check-item:hover { border-color: var(--yellow); transform: translateX(6px); }
-        .check-item .box { width: 26px; height: 26px; border: 3px solid var(--secondary); border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 1rem; color: transparent; font-weight: bold; transition: var(--transition); flex-shrink: 0; }
-        .check-item.completed .box { background: var(--green); border-color: var(--green); color: var(--primary); }
-        .check-item.completed span { text-decoration: line-through; opacity: 0.7; }
-        .check-item span { font-size: 0.9rem; }
-
-        /* ============================================
            BADGES
            ============================================ */
         .badges-row { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; }
-        .badge { width: 74px; text-align: center; opacity: 0.3; filter: grayscale(1); transition: var(--transition); }
+        .badge { width: 74px; text-align: center; opacity: 0.3; filter: grayscale(1); transition: var(--transition); cursor: pointer; }
         .badge.unlocked { opacity: 1; filter: none; }
         .badge .b-icon { font-size: 2.2rem; display: block; }
         .badge .b-name { font-size: 0.6rem; font-weight: bold; color: var(--secondary); }
@@ -632,12 +616,12 @@
             <li><a href="#xfactor">X-Factor</a></li>
             <li><a href="#whatif">What If?</a></li>
             <li><a href="#quiz">Quiz</a></li>
-            <li><a href="#checklist">Checklist</a></li>
             <li><a href="#reflection">Reflection</a></li>
             <li><a href="#glossary">Glossary</a></li>
         </ul>
         <div class="nav-tools">
             <button class="tool-btn" id="sound-toggle" title="Toggle sound" aria-label="Toggle sound">🔊</button>
+            <button class="tool-btn" id="reader-toggle" title="Voice reader (speak what you click)" aria-label="Toggle voice reader">🗣️</button>
             <button class="tool-btn" id="palette-open" title="Command palette (Ctrl+K)" aria-label="Open command palette">⌘K</button>
             <button class="tool-btn" id="hamburger" title="Menu" aria-label="Open menu">☰</button>
         </div>
@@ -654,7 +638,6 @@
         <a href="#xfactor">⚡ X-Factor</a>
         <a href="#whatif">🌐 What If?</a>
         <a href="#quiz">🧠 Quiz</a>
-        <a href="#checklist">✅ Checklist</a>
         <a href="#reflection">✍️ Reflection</a>
         <a href="#glossary">📖 Glossary</a>
     </div>
@@ -672,8 +655,7 @@
         <p>Run the 3D factory, explore real-world giants like Amazon and Apple, and discover how 5 moments in your day connect you with the whole world!</p>
         <div class="hero-stats" aria-label="Your progress">
             <div class="stat-chip">⚡ <b id="xp-val">0</b> XP</div>
-            <div class="stat-chip">🏅 <b id="badge-val">0</b>/6 Badges</div>
-            <div class="stat-chip">✅ <b id="ck-val">0</b>% Checklist</div>
+            <div class="stat-chip">🏅 <b id="badge-val">0</b>/5 Badges</div>
             <div class="stat-chip">🧠 Best Quiz: <b id="quiz-val">–</b></div>
         </div>
         <button class="btn" onclick="scrollToId('factory')">Enter the Factory! 🏭</button>
@@ -1059,73 +1041,21 @@
         <div class="game-msg" id="quiz-score" style="margin-top: 1.5rem;"></div>
     </section>
 
-    <!-- 12. STUDENT CHECKLIST -->
-    <section id="checklist" class="section section-alt reveal">
-        <h2 class="section-title">Student Checklist</h2>
-        <p class="section-subtitle">Track your progress! Click each item as you complete it. Progress is saved automatically.</p>
-
-        <div class="checklist-wrap">
-            <div class="ring-wrap" role="img" aria-label="Checklist completion">
-                <svg width="150" height="150" viewBox="0 0 150 150">
-                    <circle class="ring-bg" cx="75" cy="75" r="63"></circle>
-                    <circle class="ring-fg" id="ring-fg" cx="75" cy="75" r="63" stroke-dasharray="396" stroke-dashoffset="396"></circle>
-                </svg>
-                <div class="ring-text"><b id="ring-pct">0%</b><small>COMPLETE</small></div>
-            </div>
-            <div class="checklist" id="checklist-container">
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="box">✓</div>
-                    <span>5 distinct moments from one ordinary day</span>
-                </div>
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="box">✓</div>
-                    <span>Product / supply chain (e.g., trainers, backpack)</span>
-                </div>
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="box">✓</div>
-                    <span>Food / global trade (e.g., breakfast ingredient)</span>
-                </div>
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="box">✓</div>
-                    <span>Media / global trend (song, game, sport)</span>
-                </div>
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="box">✓</div>
-                    <span>Culture, communication or identity</span>
-                </div>
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="box">✓</div>
-                    <span>At least two explanations with steps or arrows</span>
-                </div>
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="box">✓</div>
-                    <span>Comment on visible / less-visible culture or identity</span>
-                </div>
-                <div class="check-item" onclick="toggleCheck(this)">
-                    <div class="box">✓</div>
-                    <span>Final reflection: "What would change most, and why?"</span>
-                </div>
-            </div>
-            <button class="btn btn-secondary" onclick="resetChecklist()" style="font-size: 0.85rem;">Reset Checklist</button>
-        </div>
-    </section>
-
-    <!-- 13. BADGES -->
-    <section id="badges" class="section reveal">
+    <!-- 12. BADGES -->
+    <section id="badges" class="section section-alt reveal">
         <h2 class="section-title">Achievement Badges</h2>
-        <p class="section-subtitle">Unlock all 6 badges by exploring the site!</p>
+        <p class="section-subtitle">Unlock all 5 badges by exploring the site!</p>
         <div class="badges-row" id="badges-row">
             <div class="badge" id="badge-factory" title="Complete one full factory run"><span class="b-icon">🏭</span><span class="b-name">Factory Operator</span></div>
             <div class="badge" id="badge-quiz" title="Score 5/5 on the quiz"><span class="b-icon">🧠</span><span class="b-name">Quiz Master</span></div>
             <div class="badge" id="badge-chain" title="Break the domino chain"><span class="b-icon">🁡</span><span class="b-name">Chain Breaker</span></div>
-            <div class="badge" id="badge-checklist" title="100% checklist complete"><span class="b-icon">✅</span><span class="b-name">Task Master</span></div>
             <div class="badge" id="badge-reflect" title="Submit your reflection"><span class="b-icon">✍️</span><span class="b-name">Deep Thinker</span></div>
             <div class="badge" id="badge-explorer" title="Visit every section"><span class="b-icon">🧭</span><span class="b-name">Globe Explorer</span></div>
         </div>
     </section>
 
-    <!-- 14. FINAL REFLECTION -->
-    <section id="reflection" class="section section-alt reveal">
+    <!-- 13. FINAL REFLECTION -->
+    <section id="reflection" class="section reveal">
         <h2 class="section-title">Final Reflection</h2>
         <div class="reflection-box">
             <h3>"If global connections disappeared from my day, what would change most, and why?"</h3>
@@ -1140,8 +1070,8 @@
         </div>
     </section>
 
-    <!-- 15. GLOSSARY -->
-    <section id="glossary" class="section reveal">
+    <!-- 14. GLOSSARY -->
+    <section id="glossary" class="section section-alt reveal">
         <h2 class="section-title">Glossary of Global Terms</h2>
         <p class="section-subtitle">Hover (or tap) a card to reveal its definition!</p>
 
@@ -1260,6 +1190,112 @@
         $('#sound-toggle').textContent = Sound.enabled ? '🔊' : '🔇';
     }
 
+    /* ---------- Auto Reader (Human-like TTS) ---------- */
+    const Reader = (() => {
+        let enabled = store.get('reader', true);
+        let voice = null;
+        let speaking = false;
+
+        function stripEmoji(t) {
+            return String(t || '')
+                .replace(/[^\w\s.,!?'"\-:;()\/]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function pickVoice() {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = speechSynthesis.getVoices();
+            if (!voices.length) return null;
+            const preferred = [
+                /Google US English/i,
+                /Google UK English Female/i,
+                /Google UK English Male/i,
+                /Microsoft Aria Online \(Natural\)/i,
+                /Microsoft Aria/i,
+                /Microsoft Jenny/i,
+                /Microsoft Zira/i,
+                /Samantha/i,
+                /Karen/i,
+                /Moira/i,
+                /Tessa/i,
+                /Fiona/i,
+                /English.*Female/i,
+                /^en-US/i,
+                /^en-GB/i,
+                /^en-AU/i,
+                /^en-/i
+            ];
+            for (const p of preferred) {
+                const v = voices.find(vo => p.test(vo.name) || p.test(vo.lang));
+                if (v) return v;
+            }
+            return voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
+        }
+
+        function init() {
+            if (!('speechSynthesis' in window)) return;
+            voice = pickVoice();
+            try {
+                if (speechSynthesis.onvoiceschanged !== undefined) {
+                    speechSynthesis.onvoiceschanged = () => { voice = pickVoice(); };
+                }
+                speechSynthesis.addEventListener('voiceschanged', () => { voice = pickVoice(); });
+            } catch (e) {}
+            setTimeout(() => { voice = voice || pickVoice(); }, 300);
+            setTimeout(() => { voice = voice || pickVoice(); }, 1500);
+            setTimeout(() => { voice = voice || pickVoice(); }, 3500);
+        }
+
+        function setSpeakingIndicator(on) {
+            speaking = on;
+            const btn = document.getElementById('reader-toggle');
+            if (btn) btn.classList.toggle('speaking', on && enabled);
+        }
+
+        function speak(text) {
+            if (!enabled || !('speechSynthesis' in window)) return;
+            const clean = stripEmoji(text);
+            if (clean.length < 2) return;
+            if (!voice) voice = pickVoice();
+            try { speechSynthesis.cancel(); } catch (e) {}
+            const u = new SpeechSynthesisUtterance(clean);
+            if (voice) u.voice = voice;
+            u.rate = 1.02;
+            u.pitch = 1.0;
+            u.volume = 1;
+            u.onstart = () => setSpeakingIndicator(true);
+            u.onend = () => setSpeakingIndicator(false);
+            u.onerror = () => setSpeakingIndicator(false);
+            try { speechSynthesis.speak(u); } catch (e) {}
+        }
+
+        function speakElement(el) {
+            if (!el) return;
+            const text = el.getAttribute('aria-label') || el.getAttribute('data-label') || el.textContent || '';
+            speak(text);
+        }
+
+        function toggle() {
+            enabled = !enabled;
+            store.set('reader', enabled);
+            if (!enabled) { try { speechSynthesis.cancel(); } catch (e) {} setSpeakingIndicator(false); }
+            return enabled;
+        }
+
+        return { init, speak, speakElement, toggle, get enabled() { return enabled; } };
+    })();
+
+    function updateReaderBtn() {
+        const btn = $('#reader-toggle');
+        if (btn) {
+            btn.textContent = Reader.enabled ? '🗣️' : '🤐';
+            btn.title = Reader.enabled ? 'Voice reader ON (click to mute)' : 'Voice reader OFF (click to enable)';
+            btn.setAttribute('aria-label', Reader.enabled ? 'Voice reader on, click to mute' : 'Voice reader off, click to enable');
+            btn.classList.remove('speaking');
+        }
+    }
+
     /* ---------- Toasts ---------- */
     function toast(title, msg, icon) {
         const box = $('#toasts');
@@ -1327,7 +1363,6 @@
         factory:  ['🏭', 'Factory Operator'],
         quiz:     ['🧠', 'Quiz Master'],
         chain:    ['🁡', 'Chain Breaker'],
-        checklist:['✅', 'Task Master'],
         reflect:  ['✍️', 'Deep Thinker'],
         explorer: ['🧭', 'Globe Explorer']
     };
@@ -1434,7 +1469,7 @@
 
     /* ---------- Scroll: progress bar, back-to-top, scroll spy ---------- */
     const visited = new Set(store.get('visited', []));
-    const SECTION_IDS = ['factory','giants','journey','map','food','media','identity','domino','xfactor','whatif','quiz','checklist','badges','reflection','glossary'];
+    const SECTION_IDS = ['factory','giants','journey','map','food','media','identity','domino','xfactor','whatif','quiz','badges','reflection','glossary'];
     function checkExplorer() {
         if (SECTION_IDS.every(id => visited.has(id))) award('explorer');
     }
@@ -1486,12 +1521,13 @@
         const overlay = $('#palette-overlay'), input = $('#palette-input'), list = $('#palette-list');
         let sel = 0, filtered = [];
         const actions = SECTION_IDS.map(id => ({
-            icon: { factory:'🏭', giants:'🌐', journey:'📱', map:'🗺️', food:'🍌', media:'📡', identity:'🧭', domino:'🁡', xfactor:'⚡', whatif:'🌐', quiz:'🧠', checklist:'✅', badges:'🏅', reflection:'✍️', glossary:'📖' }[id],
+            icon: { factory:'🏭', giants:'🌐', journey:'📱', map:'🗺️', food:'🍌', media:'📡', identity:'🧭', domino:'🁡', xfactor:'⚡', whatif:'🌐', quiz:'🧠', badges:'🏅', reflection:'✍️', glossary:'📖' }[id],
             label: 'Go to: ' + id.charAt(0).toUpperCase() + id.slice(1),
             run: () => scrollToId(id)
         })).concat([
             { icon: '▶️', label: 'Factory: run next step', run: () => { scrollToId('factory'); setTimeout(() => fsGameAction(['source','assemble','pack','ship'][fsGameState]), 700); } },
             { icon: '🔊', label: 'Toggle sound', run: () => { Sound.toggle(); syncSoundBtn(); } },
+            { icon: '🗣️', label: 'Toggle voice reader', run: () => { Reader.toggle(); updateReaderBtn(); } },
             { icon: '📄', label: 'Export my report', run: exportReport },
             { icon: '🗑️', label: 'Reset all progress', run: resetAllProgress },
             { icon: '🏠', label: 'Back to top', run: () => window.scrollTo({ top: 0, behavior: 'smooth' }) }
@@ -1541,6 +1577,81 @@
         toast('Sound ' + (on ? 'ON 🔊' : 'OFF 🔇'), on ? 'Audio engine active.' : 'Running silent.', '🔊');
     });
     syncSoundBtn();
+
+    /* ---------- Reader toggle ---------- */
+    Reader.init();
+    updateReaderBtn();
+    $('#reader-toggle').addEventListener('click', () => {
+        const on = Reader.toggle();
+        updateReaderBtn();
+        toast('Voice reader ' + (on ? 'ON 🗣️' : 'OFF 🤐'),
+              on ? 'Click any element to hear it read aloud.' : 'Silent mode.',
+              '🗣️');
+        if (on) Reader.speak('Voice reader is on. Click anything to hear it read aloud.');
+    });
+
+    /* ---------- Auto reader: click-to-speak ---------- */
+    (function bindReaderClicks() {
+        const CLICK_SELECTOR = [
+            '.btn', '.tool-btn', '.journey-step', '.food-card', '.media-node',
+            '.xfactor-bubble', '.domino-box', '.glossary-card', '.company-btn',
+            '.map-dot', '.fs-prod-btn', '.fs-btn-control', '.toggle-btn',
+            '.option-btn', '.badge', '.layer-circle', 'nav a', '#mobile-menu a',
+            'button[role="button"]', '[role="button"]'
+        ].join(',');
+
+        const TRIGGER_SELECTOR = [
+            '.journey-step', '.food-card', '.media-node', '.xfactor-bubble',
+            '.company-btn', '.map-dot', '.fs-btn-control', '.fs-prod-btn',
+            '.domino-box', '#btn-global-on', '#btn-global-off'
+        ].join(',');
+
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('#startup-video-screen, #boot, #reader-toggle')) return;
+            const el = e.target.closest(CLICK_SELECTOR);
+            if (!el) return;
+
+            // Trigger elements — their detail boxes will be spoken via mutation observer
+            if (el.matches(TRIGGER_SELECTOR)) return;
+
+            // Quiz options — read the feedback result
+            if (el.matches('.option-btn')) {
+                const box = el.closest('.quiz-question-box');
+                if (box) {
+                    setTimeout(() => {
+                        const fb = box.querySelector('.quiz-feedback');
+                        if (fb && fb.textContent.trim()) Reader.speak(fb.textContent);
+                    }, 150);
+                }
+                return;
+            }
+
+            Reader.speakElement(el);
+        });
+    })();
+
+    /* ---------- Auto reader: detail box mutation observer ---------- */
+    (function observeDetailBoxes() {
+        const ids = [
+            'journey-detail', 'food-detail', 'media-detail', 'xfactor-detail',
+            'map-info', 'company-path-info', 'fs-status-log', 'fs-current-product',
+            'whatif-msg', 'game-msg', 'reflection-msg'
+        ];
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            let last = (el.textContent || '').replace(/\s+/g, ' ').trim();
+            try {
+                new MutationObserver(() => {
+                    const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
+                    if (text && text !== last) {
+                        last = text;
+                        setTimeout(() => Reader.speak(text), 80);
+                    }
+                }).observe(el, { childList: true, subtree: true, characterData: true });
+            } catch (e) {}
+        });
+    })();
 
     /* ============================================================
        3D FACTORY — WebGL engine with CSS fallback
@@ -2124,39 +2235,6 @@
     }
 
     /* ============================================================
-       CHECKLIST — persisted with progress ring
-       ============================================================ */
-    const checkItems = $$('#checklist-container .check-item');
-    let checkState = store.get('checklist', checkItems.map(() => false));
-
-    function updateChecklistUI() {
-        const done = checkState.filter(Boolean).length;
-        const pct = Math.round(done / checkState.length * 100);
-        const CIRC = 2 * Math.PI * 63;
-        $('#ring-fg').style.strokeDashoffset = CIRC * (1 - pct / 100);
-        $('#ring-pct').textContent = pct + '%';
-        $('#ck-val').textContent = pct;
-        if (pct === 100) award('checklist');
-    }
-    function toggleCheck(element) {
-        Sound.click();
-        const i = checkItems.indexOf(element);
-        checkState[i] = !checkState[i];
-        element.classList.toggle('completed', checkState[i]);
-        store.set('checklist', checkState);
-        updateChecklistUI();
-    }
-    function resetChecklist() {
-        Sound.click();
-        checkState = checkItems.map(() => false);
-        store.set('checklist', checkState);
-        checkItems.forEach(el => el.classList.remove('completed'));
-        updateChecklistUI();
-        toast('Checklist reset', 'Fresh start — you can do it!', '✅');
-    }
-    checkItems.forEach((el, i) => { el.classList.toggle('completed', !!checkState[i]); });
-
-    /* ============================================================
        REFLECTION + REPORT EXPORT
        ============================================================ */
     let saveDraftTimer = null;
@@ -2201,7 +2279,6 @@
 
     function exportReport() {
         Sound.success();
-        const done = checkState.filter(Boolean).length;
         const badgeList = Object.keys(badges).map(id => BADGE_META[id][0] + ' ' + BADGE_META[id][1]);
         const reflection = store.get('reflection_done', store.get('reflection_draft', '(none yet)'));
         const lines = [
@@ -2212,8 +2289,7 @@
             '',
             '⚡ Total XP: ' + XP,
             '🧠 Quiz best: ' + store.get('quiz_best', 0) + '/5',
-            '✅ Checklist: ' + done + '/' + checkState.length + ' tasks complete',
-            '🏅 Badges (' + badgeList.length + '/6): ' + (badgeList.join(', ') || 'none yet'),
+            '🏅 Badges (' + badgeList.length + '/5): ' + (badgeList.join(', ') || 'none yet'),
             '',
             '✍️ FINAL REFLECTION',
             'Q: If global connections disappeared from my day, what would change most, and why?',
@@ -2233,7 +2309,7 @@
     }
 
     function resetAllProgress() {
-        if (!confirm('Reset ALL progress (XP, badges, checklist, quiz best, reflection)? This cannot be undone!')) return;
+        if (!confirm('Reset ALL progress (XP, badges, quiz best, reflection)? This cannot be undone!')) return;
         Object.keys(localStorage)
             .filter(k => k.startsWith('alezify_'))
             .forEach(k => localStorage.removeItem(k));
@@ -2257,7 +2333,6 @@
 
         renderQuiz();
         syncBadges();
-        updateChecklistUI();
         lockReflectionIfDone();
         checkExplorer();
 
