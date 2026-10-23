@@ -9,6 +9,8 @@
     <link rel="icon" type="image/svg+xml" href="https://app-uploads.krea.ai/public/f44d0e5b-9914-42df-b995-c07cb3732bc8.svg">
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Kokoro-82M browser TTS engine (no server, no Python) -->
+    <script src="https://cdn.jsdelivr.net/npm/kokoro-js/dist/kokoro.web.js"></script>
     <style>
         /* ============================================
            ALEZIFY OS — ULTRA EDITION
@@ -1190,12 +1192,14 @@
         $('#sound-toggle').textContent = Sound.enabled ? '🔊' : '🔇';
     }
 
-    /* ---------- Auto Reader (Human-like TTS) ---------- */
+    /* ---------- Auto Reader — Kokoro-82M, male, slow, clear, browser-only ---------- */
     const Reader = (() => {
-        let enabled = store.get('reader', true);
-        let voice = null;
-        let speaking = false;
+        let enabled   = store.get('reader', true);
+        let speaking  = false;
+        let tts       = null;               // KokoroTTS instance
+        let loading   = false;
 
+        /* ---- Text cleaning ---- */
         function stripEmoji(t) {
             return String(t || '')
                 .replace(/[^\w\s.,!?'"\-:;()\/]/g, ' ')
@@ -1203,84 +1207,158 @@
                 .trim();
         }
 
-        function pickVoice() {
-            if (!('speechSynthesis' in window)) return null;
-            const voices = speechSynthesis.getVoices();
-            if (!voices.length) return null;
-            const preferred = [
-                /Google US English/i,
-                /Google UK English Female/i,
-                /Google UK English Male/i,
-                /Microsoft Aria Online \(Natural\)/i,
-                /Microsoft Aria/i,
-                /Microsoft Jenny/i,
-                /Microsoft Zira/i,
-                /Samantha/i,
-                /Karen/i,
-                /Moira/i,
-                /Tessa/i,
-                /Fiona/i,
-                /English.*Female/i,
-                /^en-US/i,
-                /^en-GB/i,
-                /^en-AU/i,
-                /^en-/i
-            ];
-            for (const p of preferred) {
-                const v = voices.find(vo => p.test(vo.name) || p.test(vo.lang));
-                if (v) return v;
-            }
-            return voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
-        }
-
-        function init() {
-            if (!('speechSynthesis' in window)) return;
-            voice = pickVoice();
-            try {
-                if (speechSynthesis.onvoiceschanged !== undefined) {
-                    speechSynthesis.onvoiceschanged = () => { voice = pickVoice(); };
-                }
-                speechSynthesis.addEventListener('voiceschanged', () => { voice = pickVoice(); });
-            } catch (e) {}
-            setTimeout(() => { voice = voice || pickVoice(); }, 300);
-            setTimeout(() => { voice = voice || pickVoice(); }, 1500);
-            setTimeout(() => { voice = voice || pickVoice(); }, 3500);
-        }
-
+        /* ---- Speaking indicator (unchanged) ---- */
         function setSpeakingIndicator(on) {
             speaking = on;
             const btn = document.getElementById('reader-toggle');
             if (btn) btn.classList.toggle('speaking', on && enabled);
         }
 
-        function speak(text) {
-            if (!enabled || !('speechSynthesis' in window)) return;
+        /* ---- Load Kokoro once, lazily ---- */
+        async function ensureModel() {
+            if (tts) return true;
+            if (loading) return false;
+            if (typeof KokoroTTS === 'undefined') {
+                console.warn('[Reader] kokoro.web.js not loaded — falling back to browser voice.');
+                return false;
+            }
+            loading = true;
+            try {
+                tts = await KokoroTTS.from_pretrained(
+                    'onnx-community/Kokoro-82M-v1.0-ONNX',
+                    { dtype: 'q8', device: 'wasm' }   // q8 keeps download ~86 MB and runs on any CPU
+                );
+                console.info('[Reader] Kokoro‑82M ready (male voice: am_adam).');
+                return true;
+            } catch (e) {
+                console.warn('[Reader] Kokoro load failed:', e);
+                tts = null;
+                return false;
+            } finally {
+                loading = false;
+            }
+        }
+
+        /* ---- Primary: Kokoro ----
+           am_adam  = American English male, mature / professional
+           speed    = 0.85 → noticeably slower than natural, still clear
+        */
+        async function speakWithKokoro(text) {
+            const clean = stripEmoji(text);
+            if (clean.length < 2) return false;
+            const ok = await ensureModel();
+            if (!ok) return false;
+
+            try {
+                setSpeakingIndicator(true);
+
+                const audio = await tts.generate(clean, {
+                    voice: 'am_adam',   // male, professional
+                    speed: 0.85          // slow & clear (0.1–6 allowed)
+                });
+
+                const blob = audio.toBlob();
+                const url  = URL.createObjectURL(blob);
+                const player = new Audio(url);
+
+                player.onended = () => {
+                    URL.revokeObjectURL(url);
+                    setSpeakingIndicator(false);
+                };
+                player.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    setSpeakingIndicator(false);
+                };
+
+                await player.play();
+                return true;
+            } catch (e) {
+                console.warn('[Reader] Kokoro synthesis failed:', e);
+                setSpeakingIndicator(false);
+                return false;
+            }
+        }
+
+        /* ---- Fallback: browser voice (still male, still slow) ---- */
+        let fallbackVoice = null;
+
+        const MALE_PATTERNS = [
+            /Microsoft Guy/i, /Microsoft David/i, /Microsoft Mark/i,
+            /Google UK English Male/i, /\bDaniel\b/i, /\bAlex\b/i,
+            /English.*Male/i, /^en-US/i, /^en-GB/i, /^en-/i
+        ];
+
+        function pickMaleVoice() {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = speechSynthesis.getVoices();
+            if (!voices.length) return null;
+            for (const p of MALE_PATTERNS) {
+                const v = voices.find(vo => p.test(vo.name) || p.test(vo.lang));
+                if (v) return v;
+            }
+            return voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
+        }
+
+        function initFallbackVoice() {
+            if (!('speechSynthesis' in window)) return;
+            fallbackVoice = pickMaleVoice();
+            try {
+                speechSynthesis.addEventListener('voiceschanged', () => {
+                    fallbackVoice = pickMaleVoice();
+                });
+            } catch (e) {}
+            setTimeout(() => { fallbackVoice = fallbackVoice || pickMaleVoice(); }, 300);
+            setTimeout(() => { fallbackVoice = fallbackVoice || pickMaleVoice(); }, 1500);
+        }
+
+        function speakWithFallback(text) {
+            if (!('speechSynthesis' in window)) return;
             const clean = stripEmoji(text);
             if (clean.length < 2) return;
-            if (!voice) voice = pickVoice();
+            if (!fallbackVoice) fallbackVoice = pickMaleVoice();
+
             try { speechSynthesis.cancel(); } catch (e) {}
+
             const u = new SpeechSynthesisUtterance(clean);
-            if (voice) u.voice = voice;
-            u.rate = 1.02;
-            u.pitch = 1.0;
-            u.volume = 1;
+            if (fallbackVoice) u.voice = fallbackVoice;
+            u.rate   = 0.82;   // slow
+            u.pitch  = 0.92;   // lower → male warmth
+            u.volume = 1.0;
             u.onstart = () => setSpeakingIndicator(true);
-            u.onend = () => setSpeakingIndicator(false);
+            u.onend   = () => setSpeakingIndicator(false);
             u.onerror = () => setSpeakingIndicator(false);
             try { speechSynthesis.speak(u); } catch (e) {}
         }
 
+        /* ---- Public API ---- */
+        async function speak(text) {
+            if (!enabled) return;
+            const kokoroOk = await speakWithKokoro(text);
+            if (!kokoroOk) speakWithFallback(text);
+        }
+
         function speakElement(el) {
             if (!el) return;
-            const text = el.getAttribute('aria-label') || el.getAttribute('data-label') || el.textContent || '';
+            const text = el.getAttribute('aria-label')
+                      || el.getAttribute('data-label')
+                      || el.textContent
+                      || '';
             speak(text);
         }
 
         function toggle() {
             enabled = !enabled;
             store.set('reader', enabled);
-            if (!enabled) { try { speechSynthesis.cancel(); } catch (e) {} setSpeakingIndicator(false); }
+            if (!enabled) {
+                try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {}
+                setSpeakingIndicator(false);
+            }
             return enabled;
+        }
+
+        function init() {
+            initFallbackVoice();
+            // Do NOT load the model here — wait until the user enables the reader or clicks something.
         }
 
         return { init, speak, speakElement, toggle, get enabled() { return enabled; } };
@@ -1288,12 +1366,14 @@
 
     function updateReaderBtn() {
         const btn = $('#reader-toggle');
-        if (btn) {
-            btn.textContent = Reader.enabled ? '🗣️' : '🤐';
-            btn.title = Reader.enabled ? 'Voice reader ON (click to mute)' : 'Voice reader OFF (click to enable)';
-            btn.setAttribute('aria-label', Reader.enabled ? 'Voice reader on, click to mute' : 'Voice reader off, click to enable');
-            btn.classList.remove('speaking');
-        }
+        if (!btn) return;
+        btn.textContent = Reader.enabled ? '🗣️' : '🤐';
+        const title = Reader.enabled
+            ? 'Voice reader ON — Kokoro‑82M male (am_adam), slow & clear (click to mute)'
+            : 'Voice reader OFF (click to enable Kokoro‑82M male voice)';
+        btn.title = title;
+        btn.setAttribute('aria-label', title);
+        btn.classList.remove('speaking');
     }
 
     /* ---------- Toasts ---------- */
@@ -1578,16 +1658,20 @@
     });
     syncSoundBtn();
 
-    /* ---------- Reader toggle ---------- */
+    /* ---------- Reader toggle (Kokoro male voice) ---------- */
     Reader.init();
     updateReaderBtn();
-    $('#reader-toggle').addEventListener('click', () => {
+
+    $('#reader-toggle').addEventListener('click', async () => {
         const on = Reader.toggle();
         updateReaderBtn();
-        toast('Voice reader ' + (on ? 'ON 🗣️' : 'OFF 🤐'),
-              on ? 'Click any element to hear it read aloud.' : 'Silent mode.',
-              '🗣️');
-        if (on) Reader.speak('Voice reader is on. Click anything to hear it read aloud.');
+
+        if (on) {
+            toast('Voice reader ON 🗣️', 'Loading Kokoro‑82M male voice… first use may take a moment.', '🗣️');
+            Reader.speak('Voice reader is on. I am using a professional male voice. I will speak slowly and clearly.');
+        } else {
+            toast('Voice reader OFF 🤐', 'Silent mode.', '🗣️');
+        }
     });
 
     /* ---------- Auto reader: click-to-speak ---------- */
