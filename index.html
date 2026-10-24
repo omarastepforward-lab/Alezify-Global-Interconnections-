@@ -204,4 +204,2855 @@
         .hero-arrow { font-size: 1.6rem; animation: bounceDown 1.4s infinite; }
 
         /* ============================================
-           3D CINEMATIC FACTORY — scoped to
+           3D CINEMATIC FACTORY — scoped to #factory
+           ============================================ */
+        .fs-section {
+            position: relative; width: 100%; height: 100vh; height: 100dvh; min-height: 700px;
+            background: #000; overflow: hidden;
+            border-top: 3px solid var(--accent);
+            border-bottom: 3px solid var(--accent);
+        }
+
+        /* Cinematic canvas + HUD */
+        #factory #c { display: block; width: 100%; height: 100%; position: absolute; inset: 0; }
+        #factory #hud { position: absolute; inset: 0; pointer-events: none; z-index: 10; }
+
+        /* Cinematic letterbox */
+        #factory .letterbox {
+            position: absolute; left: 0; right: 0; height: 0;
+            background: #000; z-index: 11;
+            transition: height 0.6s ease;
+        }
+        #factory .letterbox.top { top: 0; }
+        #factory .letterbox.bottom { bottom: 0; }
+        #factory .letterbox.show { height: 6vh; }
+
+        /* Raise HUD children above letterbox */
+        #factory #phase-title,
+        #factory #phase-sub,
+        #factory #brand,
+        #factory #map-overlay,
+        #factory #timeline,
+        #factory #controls { z-index: 12; }
+
+        /* Phase title card */
+        #factory #phase-title {
+            position: absolute; top: 12vh; left: 50%; transform: translateX(-50%);
+            font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 900;
+            letter-spacing: 0.35em; text-transform: uppercase;
+            color: #FFD166; text-shadow: 0 0 24px #FFD166, 0 4px 14px #000;
+            opacity: 0; transition: opacity 0.7s ease;
+            text-align: center; white-space: nowrap;
+        }
+        #factory #phase-sub {
+            position: absolute; top: calc(12vh + 2.6rem); left: 50%; transform: translateX(-50%);
+            font-size: clamp(0.7rem, 1.3vw, 0.95rem); letter-spacing: 0.25em;
+            color: #D3F7FD; opacity: 0; transition: opacity 0.7s ease;
+            text-align: center; text-transform: uppercase;
+        }
+        #factory .show { opacity: 1 !important; }
+
+        /* Brand logo bottom-left */
+        #factory #brand {
+            position: absolute; bottom: 4vh; left: 4vw;
+            font-size: clamp(1rem, 2vw, 1.8rem); font-weight: 900;
+            letter-spacing: 0.2em; color: #fff;
+            opacity: 0; transition: opacity 1.2s ease;
+            text-shadow: 0 0 20px #E2B2FF, 0 4px 10px #000;
+        }
+        #factory #brand span { color: #E2B2FF; }
+        #factory #brand small {
+            display: block; font-size: 0.55em; letter-spacing: 0.35em;
+            color: #D3F7FD; opacity: 0.8; font-weight: normal; margin-top: 4px;
+        }
+
+        /* Timeline progress */
+        #factory #timeline {
+            position: absolute; bottom: 4vh; left: 50%;
+            transform: translateX(-50%);
+            width: min(420px, 60vw); height: 5px;
+            background: rgba(211, 247, 253, 0.15);
+            border-radius: 4px; overflow: hidden;
+            pointer-events: auto;
+        }
+        #factory #timeline-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #FFD166, #E2B2FF, #06D6A0);
+            border-radius: 4px; transition: width 0.1s linear;
+        }
+        #factory #timeline-label {
+            position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+            font-size: 0.65rem; letter-spacing: 0.2em; color: #D3F7FD;
+            text-transform: uppercase; opacity: 0.8; white-space: nowrap;
+        }
+
+        /* Map overlay (top-right) */
+        #factory #map-overlay {
+            position: absolute; top: 4vh; right: 3vw;
+            width: clamp(180px, 20vw, 260px); height: clamp(130px, 15vw, 190px);
+            background: rgba(14, 13, 60, 0.94);
+            border: 2px solid #FFD166; border-radius: 10px;
+            padding: 10px;
+            opacity: 0; transition: opacity 1.2s ease;
+            box-shadow: 0 0 30px rgba(255, 209, 102, 0.35);
+            backdrop-filter: blur(8px); pointer-events: none;
+        }
+        #factory #map-overlay h4 {
+            color: #FFD166; font-size: 0.7rem; letter-spacing: 0.25em;
+            text-transform: uppercase; margin-bottom: 6px; padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 209, 102, 0.3);
+        }
+        #factory #map-svg { width: 100%; height: calc(100% - 22px); display: block; }
+
+        /* Controls */
+        #factory #controls {
+            position: absolute; bottom: 4vh; right: 3vw;
+            display: flex; gap: 8px; pointer-events: auto;
+        }
+        #factory #controls button {
+            padding: 9px 16px; border-radius: 50px;
+            border: 2px solid #E2B2FF;
+            background: rgba(14, 13, 60, 0.85); color: #fff;
+            cursor: pointer; font-weight: 700;
+            font-size: 0.75rem; letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transition: all 0.2s; backdrop-filter: blur(8px);
+            font-family: inherit;
+        }
+        #factory #controls button:hover {
+            background: #E2B2FF; color: #0E0D3C;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(226, 178, 255, 0.4);
+        }
+
+        /* ============================================
+           REAL-WORLD GIANTS
+           ============================================ */
+        .giants-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1000px; width: 100%; }
+        .giant-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.5rem; border-radius: var(--radius); transition: var(--transition); }
+        .giant-card:hover { transform: translateY(-6px); border-color: var(--yellow); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
+        .giant-card h3 { color: var(--yellow); margin-bottom: 0.5rem; font-size: 1.4rem; }
+        .giant-card .stat { font-size: 1.8rem; color: var(--secondary); font-weight: bold; display: block; margin-bottom: 0.3rem; }
+        .giant-card ul { list-style: none; padding: 0; }
+        .giant-card li { padding: 0.4rem 0; border-bottom: 1px solid rgba(211, 247, 253, 0.1); font-size: 0.9rem; }
+        .giant-card li:last-child { border-bottom: none; }
+
+        /* ============================================
+           JOURNEY (SMARTPHONE)
+           ============================================ */
+        .journey-container { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; max-width: 1000px; margin-bottom: 2rem; }
+        .journey-step {
+            background: var(--primary); border: 3px solid var(--secondary); border-radius: var(--radius);
+            padding: 1.2rem; width: 140px; text-align: center; cursor: pointer;
+            transition: var(--transition); position: relative;
+        }
+        .journey-step:hover { transform: translateY(-4px); }
+        .journey-step.active { background: var(--accent); border-color: var(--accent); transform: scale(1.08); z-index: 10; box-shadow: 0 0 20px var(--accent); }
+        .journey-step .step-icon { font-size: 2rem; margin-bottom: 0.3rem; }
+        .journey-step .step-label { font-weight: bold; font-size: 0.8rem; color: var(--secondary); }
+        .journey-step.active .step-label { color: var(--primary); }
+        .detail-box {
+            background: rgba(211, 247, 253, 0.1); border: 3px dashed var(--secondary);
+            border-radius: var(--radius); padding: 1.5rem; width: 100%; max-width: 900px;
+            min-height: 180px; display: flex; flex-direction: column; justify-content: center; text-align: left;
+        }
+        .detail-box h3 { color: var(--yellow); font-size: 1.4rem; margin-bottom: 0.8rem; text-align: center; }
+        .detail-box p { font-size: 1rem; margin-bottom: 0.8rem; }
+        .arrow-chain {
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+            gap: 0.4rem; font-weight: bold; color: var(--yellow); margin: 0.8rem 0;
+            font-size: 0.9rem; background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 10px;
+        }
+        .arrow-chain span { color: var(--secondary); background: var(--primary); padding: 4px 8px; border-radius: 5px; border: 1px solid var(--secondary); font-size: 0.85rem; animation: chainPop 0.4s ease backwards; }
+        .arrow-chain span:nth-child(1) { animation-delay: 0.05s; }
+        .arrow-chain span:nth-child(3) { animation-delay: 0.15s; }
+        .arrow-chain span:nth-child(5) { animation-delay: 0.25s; }
+        @keyframes chainPop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* ============================================
+           MAP
+           ============================================ */
+        .map-wrapper {
+            position: relative; width: 100%; max-width: 900px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg') no-repeat center center;
+            background-size: contain; aspect-ratio: 16/9;
+            border: 4px solid var(--secondary); border-radius: var(--radius);
+            background-color: rgba(211, 247, 253, 0.05);
+        }
+        .map-arcs { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+        .map-arcs path { fill: none; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 12 10; animation: arcFlow 1.2s linear infinite; opacity: 0; transition: opacity 0.5s; }
+        .map-arcs path.show { opacity: 1; }
+        .map-arcs .arc-amazon { stroke: var(--yellow); filter: drop-shadow(0 0 6px var(--yellow)); }
+        .map-arcs .arc-apple { stroke: var(--accent); filter: drop-shadow(0 0 6px var(--accent)); }
+        @keyframes arcFlow { to { stroke-dashoffset: -22; } }
+        .map-dot {
+            position: absolute; width: 28px; height: 28px; background-color: var(--yellow);
+            border-radius: 50%; cursor: pointer; transition: var(--transition);
+            box-shadow: 0 0 20px var(--yellow); display: flex; justify-content: center; align-items: center;
+            font-size: 0.65rem; font-weight: bold; color: var(--primary); border: 2px solid var(--primary);
+            z-index: 2;
+        }
+        .map-dot:hover { transform: scale(1.5); background-color: var(--accent); }
+        .map-dot::after {
+            content: attr(data-label); position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: var(--secondary); padding: 5px 10px; border-radius: 8px;
+            font-size: 0.8rem; white-space: nowrap; opacity: 0; pointer-events: none;
+            transition: var(--transition); border: 2px solid var(--secondary); z-index: 5;
+        }
+        .map-dot:hover::after { opacity: 1; top: -50px; }
+        .map-info {
+            margin-top: 1.5rem; padding: 1.5rem; background: rgba(226, 178, 255, 0.1);
+            border-radius: var(--radius); text-align: center; min-height: 100px; width: 100%; max-width: 800px;
+            border: 2px solid var(--accent);
+        }
+        .map-info h3 { color: var(--accent); font-size: 1.6rem; margin-bottom: 0.3rem; }
+        .company-paths { display: flex; gap: 0.8rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; }
+        .company-btn {
+            padding: 0.6rem 1.2rem; background: var(--primary); color: var(--secondary);
+            border: 2px solid var(--secondary); border-radius: 50px; cursor: pointer;
+            font-weight: bold; font-family: var(--font-main); transition: var(--transition);
+        }
+        .company-btn:hover, .company-btn.active { background: var(--secondary); color: var(--primary); }
+
+        /* ============================================
+           FOOD JOURNEY
+           ============================================ */
+        .food-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; width: 100%; max-width: 900px; margin-bottom: 1.5rem; }
+        .food-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.2rem; border-radius: var(--radius); text-align: center; cursor: pointer; transition: var(--transition); }
+        .food-card:hover { transform: translateY(-5px); border-color: var(--yellow); }
+        .food-card.active { border-color: var(--accent); background: rgba(226, 178, 255, 0.15); box-shadow: var(--glow-accent); }
+        .food-card .food-icon { font-size: 2.5rem; margin-bottom: 0.3rem; }
+        .food-card h4 { color: var(--secondary); font-size: 1rem; }
+        .food-detail { width: 100%; max-width: 900px; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: var(--radius); border: 2px solid var(--accent); min-height: 130px; }
+
+        /* ============================================
+           MEDIA SPREAD
+           ============================================ */
+        .media-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; }
+        .media-network { display: flex; justify-content: space-around; align-items: center; width: 100%; margin: 1.5rem 0; flex-wrap: wrap; gap: 1rem; }
+        .media-node { width: 90px; height: 90px; border-radius: 50%; background: var(--primary); border: 3px solid var(--secondary); display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.7rem; text-align: center; transition: var(--transition); cursor: pointer; }
+        .media-node:hover { transform: scale(1.08); border-color: var(--yellow); }
+        .media-node.active { background: var(--accent); color: var(--primary); border-color: var(--accent); transform: scale(1.1); box-shadow: var(--glow-accent); }
+        .media-node .m-icon { font-size: 1.8rem; }
+        .media-node .m-label { font-weight: bold; font-size: 0.65rem; }
+        .media-arrow { color: var(--yellow); font-size: 1.3rem; }
+
+        /* ============================================
+           IDENTITY LAYERS
+           ============================================ */
+        .identity-layers { position: relative; width: 100%; max-width: 500px; height: 350px; margin: 1.5rem auto; display: flex; justify-content: center; align-items: center; }
+        .layer-circle { position: absolute; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-align: center; transition: var(--transition); cursor: pointer; border: 2px solid var(--secondary); }
+        .layer-circle:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--yellow); }
+        .layer-personal { width: 100px; height: 100px; background: var(--accent); color: var(--primary); font-weight: bold; font-size: 0.8rem; z-index: 4; }
+        .layer-local { width: 170px; height: 170px; background: rgba(226, 178, 255, 0.3); border: 2px dashed var(--secondary); z-index: 3; }
+        .layer-national { width: 250px; height: 250px; background: rgba(211, 247, 253, 0.15); border: 2px dashed var(--secondary); z-index: 2; }
+        .layer-global { width: 340px; height: 340px; background: rgba(6, 214, 160, 0.1); border: 2px solid var(--green); z-index: 1; }
+        .layer-label { position: absolute; font-size: 0.7rem; font-weight: bold; color: var(--secondary); }
+
+        /* ============================================
+           DOMINO EFFECT
+           ============================================ */
+        .domino-container { width: 100%; max-width: 1000px; display: flex; flex-direction: column; align-items: center; }
+        .mood-meter { display: flex; justify-content: space-around; width: 100%; max-width: 600px; background: rgba(0,0,0,0.4); padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; border: 2px solid var(--secondary); }
+        .mood-card { text-align: center; }
+        .mood-card .mood-emoji { font-size: 3rem; display: block; margin-bottom: 0.3rem; transition: var(--transition); }
+        .mood-card .mood-label { font-weight: bold; font-size: 0.9rem; color: var(--secondary); }
+        .domino-chain { display: flex; justify-content: center; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .domino-box { padding: 0.8rem 0.6rem; background: var(--primary); border: 3px solid var(--secondary); border-radius: var(--radius); text-align: center; width: 110px; cursor: pointer; transition: var(--transition); }
+        .domino-box .d-icon { font-size: 1.8rem; }
+        .domino-box .d-label { font-size: 0.7rem; font-weight: bold; margin-top: 0.2rem; }
+        .domino-box:hover { transform: translateY(-5px); border-color: var(--yellow); }
+        .domino-box.broken { background: var(--red); border-color: var(--red); animation: shake 0.5s; }
+        .domino-box.delayed { background: var(--orange); border-color: var(--orange); animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        .game-msg { font-size: 1rem; text-align: center; color: var(--yellow); font-weight: bold; min-height: 30px; }
+
+        /* ============================================
+           X-FACTOR
+           ============================================ */
+        .xfactor-visual { display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0; }
+        .xfactor-bubble { background: var(--primary); border: 3px solid var(--secondary); padding: 0.8rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; transition: var(--transition); font-size: 0.9rem; }
+        .xfactor-bubble:hover { background: var(--secondary); color: var(--primary); transform: scale(1.05); }
+        .xfactor-bubble.active { background: var(--accent); border-color: var(--accent); color: var(--primary); }
+
+        /* ============================================
+           WHAT IF SIMULATOR
+           ============================================ */
+        .whatif-toggle { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; }
+        .toggle-btn { padding: 0.8rem 1.5rem; background: var(--primary); border: 3px solid var(--secondary); color: var(--secondary); border-radius: 50px; cursor: pointer; font-weight: bold; font-family: var(--font-main); font-size: 0.9rem; transition: var(--transition); }
+        .toggle-btn.active { background: var(--secondary); color: var(--primary); }
+        .whatif-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; width: 100%; max-width: 900px; }
+        .whatif-card { background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1rem; border-radius: var(--radius); text-align: center; transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.6s, filter 0.6s; }
+        .whatif-card.lost { opacity: 0.3; border-color: var(--red); filter: grayscale(1); transform: scale(0.96); }
+        .whatif-card .w-icon { font-size: 2rem; margin-bottom: 0.3rem; }
+        .whatif-card h4 { color: var(--yellow); font-size: 1rem; margin-bottom: 0.3rem; }
+
+        /* ============================================
+           QUIZ
+           ============================================ */
+        .quiz-toolbar { display: flex; gap: 0.8rem; align-items: center; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .xp-badge { background: rgba(255,209,102,0.15); border: 2px solid var(--yellow); color: var(--yellow); border-radius: 50px; padding: 0.4rem 1rem; font-weight: bold; font-size: 0.85rem; }
+        .quiz-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 1rem; }
+        .quiz-question-box { background: rgba(226, 178, 255, 0.1); padding: 1.2rem; border-radius: var(--radius); border: 3px solid var(--accent); }
+        .quiz-question-box h3 { color: var(--yellow); margin-bottom: 0.8rem; font-size: 1.1rem; }
+        .quiz-timer { height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-bottom: 0.8rem; }
+        .quiz-timer .fill { height: 100%; width: 100%; background: var(--green); border-radius: 10px; transition: width 1s linear, background 0.3s; }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 0.6rem; }
+        .option-btn { padding: 0.7rem; background: var(--primary); color: var(--white); border: 2px solid var(--secondary); border-radius: 10px; font-size: 0.9rem; cursor: pointer; text-align: left; transition: var(--transition); font-family: var(--font-main); }
+        .option-btn:hover:not(:disabled) { background: var(--secondary); color: var(--primary); }
+        .option-btn:disabled { cursor: default; opacity: 0.85; }
+        .option-btn.correct { background: var(--green); color: var(--primary); border-color: var(--green); }
+        .option-btn.wrong { background: var(--red); color: var(--white); border-color: var(--red); }
+        .quiz-feedback { margin-top: 0.6rem; font-weight: bold; font-size: 0.9rem; color: var(--yellow); }
+
+        /* ============================================
+           BADGES
+           ============================================ */
+        .badges-row { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; }
+        .badge { width: 74px; text-align: center; opacity: 0.3; filter: grayscale(1); transition: var(--transition); cursor: pointer; }
+        .badge.unlocked { opacity: 1; filter: none; }
+        .badge .b-icon { font-size: 2.2rem; display: block; }
+        .badge .b-name { font-size: 0.6rem; font-weight: bold; color: var(--secondary); }
+        .badge.unlocked .b-icon { animation: badgeGlow 2s infinite alternate; }
+        @keyframes badgeGlow { from { transform: scale(1); } to { transform: scale(1.12); } }
+
+        /* ============================================
+           REFLECTION
+           ============================================ */
+        .reflection-box { width: 100%; max-width: 800px; background: rgba(211, 247, 253, 0.05); border: 3px solid var(--secondary); padding: 1.5rem; border-radius: var(--radius); text-align: center; }
+        .reflection-box textarea { width: 100%; height: 130px; padding: 0.8rem; border-radius: 10px; border: 2px solid var(--accent); background: var(--primary); color: var(--white); font-family: var(--font-main); font-size: 1rem; resize: vertical; margin-bottom: 0.8rem; }
+        .reflection-box button { padding: 0.8rem 2rem; background: var(--accent); color: var(--primary); border: none; border-radius: 50px; font-weight: bold; font-family: var(--font-display); font-size: 1rem; cursor: pointer; transition: var(--transition); }
+        .reflection-box button:hover { transform: scale(1.05); }
+        .word-count { font-size: 0.8rem; color: var(--secondary); margin-bottom: 0.8rem; text-align: right; }
+        .reflection-actions { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+
+        /* ============================================
+           GLOSSARY
+           ============================================ */
+        .glossary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.8rem; width: 100%; max-width: 1000px; }
+        .glossary-card { background: rgba(211, 247, 253, 0.05); border: 2px solid var(--secondary); padding: 0.8rem; border-radius: 10px; cursor: pointer; transition: var(--transition); }
+        .glossary-card:hover, .glossary-card.open { border-color: var(--yellow); background: rgba(255, 209, 102, 0.1); }
+        .glossary-card h4 { color: var(--yellow); font-size: 1rem; margin-bottom: 0.2rem; }
+        .glossary-card p { font-size: 0.8rem; opacity: 0; max-height: 0; transition: all 0.3s ease; overflow: hidden; }
+        .glossary-card:hover p, .glossary-card.open p { opacity: 1; max-height: 100px; margin-top: 0.4rem; }
+
+        /* --- COMMAND PALETTE --- */
+        .palette-overlay { position: fixed; inset: 0; z-index: 4000; background: rgba(5,5,26,0.7); backdrop-filter: blur(4px); display: none; justify-content: center; padding-top: 12vh; }
+        .palette-overlay.open { display: flex; }
+        .palette {
+            width: min(560px, 92vw); height: fit-content; max-height: 60vh; overflow: hidden;
+            background: rgba(14,13,60,0.98); border: 3px solid var(--accent); border-radius: var(--radius);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6), var(--glow-accent);
+            display: flex; flex-direction: column;
+        }
+        .palette input { background: transparent; border: none; border-bottom: 2px solid rgba(211,247,253,0.2); color: var(--white); font-family: var(--font-main); font-size: 1.1rem; padding: 1rem 1.2rem; outline: none; }
+        .palette ul { list-style: none; overflow-y: auto; padding: 0.5rem; }
+        .palette li { padding: 0.65rem 1rem; border-radius: 10px; cursor: pointer; display: flex; gap: 0.7rem; align-items: center; color: var(--secondary); font-size: 0.95rem; }
+        .palette li:hover, .palette li.selected { background: rgba(226,178,255,0.2); color: var(--white); }
+        .palette li .p-icon { font-size: 1.1rem; }
+        .palette .p-hint { padding: 0.5rem 1.2rem; font-size: 0.7rem; color: var(--secondary); opacity: 0.6; border-top: 1px solid rgba(211,247,253,0.15); }
+
+        /* --- TOASTS --- */
+        #toasts { position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 4500; display: flex; flex-direction: column; gap: 0.6rem; max-width: 320px; }
+        .toast { background: rgba(14,13,60,0.97); border: 2px solid var(--accent); border-left: 6px solid var(--yellow); border-radius: 12px; padding: 0.7rem 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: toastIn 0.4s ease; font-size: 0.85rem; }
+        .toast b { color: var(--yellow); display: block; }
+        .toast.gone { animation: toastOut 0.4s ease forwards; }
+        @keyframes toastIn { from { transform: translateX(-120%); opacity: 0; } to { transform: none; opacity: 1; } }
+        @keyframes toastOut { to { transform: translateX(-120%); opacity: 0; } }
+
+        /* --- CONFETTI CANVAS --- */
+        #confetti-canvas { position: fixed; inset: 0; z-index: 4600; pointer-events: none; }
+
+        /* --- BACK TO TOP --- */
+        #back-to-top { position: fixed; bottom: 1.5rem; right: 1.5rem; width: 45px; height: 45px; background: var(--accent); color: var(--primary); border: none; border-radius: 50%; font-size: 1.3rem; cursor: pointer; display: none; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: var(--transition); }
+        #back-to-top:hover { transform: scale(1.1); }
+        #back-to-top.show { display: block; }
+
+        /* --- FOOTER --- */
+        footer { padding: 2rem; text-align: center; border-top: 4px solid var(--accent); background: rgba(0,0,0,0.35); }
+        footer p { color: var(--secondary); opacity: 0.7; font-size: 0.9rem; }
+        .footer-actions { display: flex; gap: 0.8rem; justify-content: center; margin: 1rem 0; flex-wrap: wrap; }
+        .footer-actions .btn { font-size: 0.8rem; padding: 0.6rem 1.3rem; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) { nav ul { display: none; } #hamburger { display: block; } }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .journey-step { width: 100%; }
+            .domino-box { width: 45%; }
+            .mood-meter { flex-direction: column; gap: 1rem; }
+            .giants-grid { grid-template-columns: 1fr; }
+            .fs-section { height: 70vh; min-height: 560px; }
+            .layer-circle { width: 100% !important; height: auto !important; aspect-ratio: 1; }
+            .identity-layers { height: auto; min-height: 320px; }
+            .guide-grid { grid-template-columns: 1fr; }
+            .instruction-banner { font-size: 0.8rem; padding: 0.55rem 1rem; }
+            .ib-arrow { display: none; }
+        }
+
+        /* --- REDUCED MOTION --- */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+            html { scroll-behavior: auto; }
+        }
+
+        /* --- STARTUP VIDEO --- */
+        #startup-video-screen {
+            position: fixed; inset: 0; z-index: 6000;
+            background: #000; display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: opacity 0.7s ease, visibility 0.7s;
+        }
+        #startup-video-screen.done { opacity: 0; visibility: hidden; pointer-events: none; }
+        #startup-video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        #startup-video-screen .sv-hint {
+            position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+            color: var(--secondary); font-size: 0.75rem; opacity: 0.7;
+            background: rgba(0,0,0,0.45); padding: 0.3rem 0.9rem; border-radius: 50px;
+            border: 1px dashed var(--yellow); pointer-events: none;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- STARTUP VIDEO -->
+    <div id="startup-video-screen" aria-label="Startup video">
+        <video id="startup-video" src="Untitled design.mp4" autoplay muted playsinline preload="auto"></video>
+        <div class="sv-hint">Click to skip</div>
+    </div>
+
+    <!-- BOOT SCREEN -->
+    <div id="boot" role="status" aria-label="Loading Alezify OS">
+        <div class="boot-logo">Alezify<span>OS</span></div>
+        <div class="boot-bar-wrap"><div class="boot-bar" id="boot-bar"></div></div>
+        <div class="boot-msg" id="boot-msg">Initializing kernel...</div>
+        <div class="boot-hint">click anywhere to skip</div>
+    </div>
+
+    <!-- BACKGROUND PARTICLES -->
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <!-- PROGRESS BAR -->
+    <div id="progress-bar"></div>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <a href="#home" class="logo">Alezify<span>OS</span></a>
+        <ul>
+            <li><a href="#start-here">🎯 Guide</a></li>
+            <li><a href="#factory">3D Factory</a></li>
+            <li><a href="#giants">Giants</a></li>
+            <li><a href="#journey">Journey</a></li>
+            <li><a href="#map">Map</a></li>
+            <li><a href="#food">Food</a></li>
+            <li><a href="#media">Media</a></li>
+            <li><a href="#identity">Identity</a></li>
+            <li><a href="#domino">Domino</a></li>
+            <li><a href="#xfactor">X-Factor</a></li>
+            <li><a href="#whatif">What If?</a></li>
+            <li><a href="#quiz">Quiz</a></li>
+            <li><a href="#reflection">Reflection</a></li>
+            <li><a href="#glossary">Glossary</a></li>
+        </ul>
+        <div class="nav-tools">
+            <button class="tool-btn" id="sound-toggle" title="Toggle sound" aria-label="Toggle sound">🔊</button>
+            <button class="tool-btn" id="reader-toggle" title="Voice reader (speak what you click)" aria-label="Toggle voice reader">🗣️</button>
+            <button class="tool-btn" id="palette-open" title="Command palette (Ctrl+K)" aria-label="Open command palette">⌘K</button>
+            <button class="tool-btn" id="hamburger" title="Menu" aria-label="Open menu">☰</button>
+        </div>
+    </nav>
+    <div id="mobile-menu">
+        <a href="#start-here">🎯 Start Here (Guide)</a>
+        <a href="#factory">🏭 3D Factory</a>
+        <a href="#giants">🌐 Real-World Giants</a>
+        <a href="#journey">📱 Smartphone Journey</a>
+        <a href="#map">🗺️ Global Map</a>
+        <a href="#food">🍌 Food Journey</a>
+        <a href="#media">📡 Media Spread</a>
+        <a href="#identity">🧭 Identity</a>
+        <a href="#domino">🁡 Domino Effect</a>
+        <a href="#xfactor">⚡ X-Factor</a>
+        <a href="#whatif">🌐 What If?</a>
+        <a href="#quiz">🧠 Quiz</a>
+        <a href="#reflection">✍️ Reflection</a>
+        <a href="#glossary">📖 Glossary</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <div class="floating-emoji" style="top: 15%; left: 8%; animation-delay: 0s;">📱</div>
+        <div class="floating-emoji" style="top: 25%; right: 10%; animation-delay: 1s;">🚢</div>
+        <div class="floating-emoji" style="bottom: 20%; left: 12%; animation-delay: 2s;">🏭</div>
+        <div class="floating-emoji" style="bottom: 25%; right: 8%; animation-delay: 1.5s;">🌍</div>
+        <div class="floating-emoji" style="top: 50%; left: 5%; animation-delay: 0.5s;">📦</div>
+        <div class="floating-emoji" style="top: 60%; right: 5%; animation-delay: 2.5s;">🚚</div>
+        <h1>My Global Life:</h1>
+        <h2>24 Hours Around the World</h2>
+        <p>Watch the 3D cinematic supply chain, explore real-world giants like Amazon and Apple, and discover how 5 moments in your day connect you with the whole world!</p>
+        <div class="hero-stats" aria-label="Your progress">
+            <div class="stat-chip">⚡ <b id="xp-val">0</b> XP</div>
+            <div class="stat-chip">🏅 <b id="badge-val">0</b>/5 Badges</div>
+            <div class="stat-chip">🧠 Best Quiz: <b id="quiz-val">–</b></div>
+        </div>
+        <div class="hero-actions">
+            <button class="btn" onclick="scrollToId('start-here')">Start the Mission! 🎯</button>
+            <button class="btn btn-secondary" onclick="scrollToId('factory')">Skip to Factory 🏭</button>
+        </div>
+        <div class="hero-scroll-hint">
+            <span>Scroll to see your mission guide</span>
+            <span class="hero-arrow">⬇️</span>
+        </div>
+    </section>
+
+    <!-- ============================================
+         START HERE — MISSION GUIDE
+         ============================================ -->
+    <section id="start-here" class="section guide-section reveal">
+        <h2 class="section-title">🎯 Start Here — Your Mission Guide</h2>
+        <p class="section-subtitle">Here's <strong>exactly what to do</strong> on every part of this page. Follow the arrows from top to bottom. You can also <strong>click any card</strong> below to jump straight to that section!</p>
+
+        <div class="guide-progress-bar">
+            🎯 Progress: <b id="guide-progress-val">0</b> / <span id="guide-progress-total">14</span> sections visited
+        </div>
+
+        <div class="guide-grid">
+            <div class="guide-card" data-target="factory">
+                <div class="guide-num">1</div>
+                <div class="guide-icon">🏭</div>
+                <div class="guide-body">
+                    <h3>3D Cinematic Factory</h3>
+                    <p><strong>What to do:</strong> Watch the cinematic global supply chain! You'll see 16 regions gathering materials, the assembly line, fleet loading, and regional distribution. Use Replay ↺ and Skip ⏭ to control the phases.</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="giants">
+                <div class="guide-num">2</div>
+                <div class="guide-icon">🌐</div>
+                <div class="guide-body">
+                    <h3>Real-World Giants</h3>
+                    <p><strong>What to do:</strong> Just scroll and read the Amazon & Apple cards. Discover how real companies use the same supply chain!</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="journey">
+                <div class="guide-num">3</div>
+                <div class="guide-icon">📱</div>
+                <div class="guide-body">
+                    <h3>Smartphone Journey</h3>
+                    <p><strong>What to do:</strong> Click each of the 5 steps left-to-right: Materials → Components → Assembly → Transport → You!</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="map">
+                <div class="guide-num">4</div>
+                <div class="guide-icon">🗺️</div>
+                <div class="guide-body">
+                    <h3>Global Map</h3>
+                    <p><strong>What to do:</strong> Click the glowing dots to see what each continent makes. Then try the Amazon & Apple journey buttons.</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="food">
+                <div class="guide-num">5</div>
+                <div class="guide-icon">🍌</div>
+                <div class="guide-body">
+                    <h3>Food Journey</h3>
+                    <p><strong>What to do:</strong> Click a breakfast item — banana, chocolate, cereal, or tea — to trace it around the world!</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="media">
+                <div class="guide-num">6</div>
+                <div class="guide-icon">📡</div>
+                <div class="guide-body">
+                    <h3>Media Spread</h3>
+                    <p><strong>What to do:</strong> Click each circle left-to-right: 🇰🇷 South Korea → 📱 Social Media → 🌍 Global Fans → 🏠 Your Home.</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="identity">
+                <div class="guide-num">7</div>
+                <div class="guide-icon">🧭</div>
+                <div class="guide-body">
+                    <h3>Identity Layers</h3>
+                    <p><strong>What to do:</strong> Hover over (or tap) each of the 4 circles to explore your Personal, Local, National & Global identity.</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="domino">
+                <div class="guide-num">8</div>
+                <div class="guide-icon">🁡</div>
+                <div class="guide-body">
+                    <h3>Domino Effect</h3>
+                    <p><strong>What to do:</strong> Click any of the 5 chain boxes to <em>break</em> it and see the ripple effect. Click "Fix the Chain" to repair!</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="xfactor">
+                <div class="guide-num">9</div>
+                <div class="guide-icon">⚡</div>
+                <div class="guide-body">
+                    <h3>X-Factor</h3>
+                    <p><strong>What to do:</strong> Click each choice bubble — Repair, Recycle, Buy Local, Green Transport — to see how small actions ripple!</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="whatif">
+                <div class="guide-num">10</div>
+                <div class="guide-icon">🌐</div>
+                <div class="guide-body">
+                    <h3>What If?</h3>
+                    <p><strong>What to do:</strong> Click "🚫 Global OFF" to see what would disappear from your day. Then toggle back ON.</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="quiz">
+                <div class="guide-num">11</div>
+                <div class="guide-icon">🧠</div>
+                <div class="guide-body">
+                    <h3>Quiz</h3>
+                    <p><strong>What to do:</strong> Answer all 5 questions. Toggle "⏱️ Challenge Mode" ON for a 15-second timer per question!</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="badges">
+                <div class="guide-num">12</div>
+                <div class="guide-icon">🏅</div>
+                <div class="guide-body">
+                    <h3>Badges</h3>
+                    <p><strong>What to do:</strong> Complete tasks around the site (cinematic, quiz, domino, reflection, exploring) to unlock all 5 badges.</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="reflection">
+                <div class="guide-num">13</div>
+                <div class="guide-icon">✍️</div>
+                <div class="guide-body">
+                    <h3>Reflection</h3>
+                    <p><strong>What to do:</strong> Type your answer (at least 30 words) to the big question. Then click "Submit Answer" and export your report!</p>
+                </div>
+            </div>
+            <div class="guide-card" data-target="glossary">
+                <div class="guide-num">14</div>
+                <div class="guide-icon">📖</div>
+                <div class="guide-body">
+                    <h3>Glossary</h3>
+                    <p><strong>What to do:</strong> Hover over or tap each card to reveal the definition of key global terms like Supply Chain & Resilience.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bouncing-arrow">
+            <span>Ready? Let's begin!</span>
+            <button class="btn" onclick="scrollToId('factory')">Start with the 3D Factory → 🏭</button>
+        </div>
+    </section>
+
+    <!-- ============================================
+         3D CINEMATIC FACTORY (replaces old game)
+         ============================================ -->
+    <section id="factory" class="fs-section">
+        <canvas id="c"></canvas>
+        <div id="hud">
+            <div class="letterbox top" id="lb-top"></div>
+            <div class="letterbox bottom" id="lb-bottom"></div>
+            <div id="phase-title"></div>
+            <div id="phase-sub"></div>
+            <div id="brand">Alezify<span>.com</span><small>Global Supply Chain</small></div>
+            <div id="map-overlay">
+                <h4>◆ Live Distribution</h4>
+                <svg id="map-svg" viewBox="0 0 240 140" preserveAspectRatio="none"></svg>
+            </div>
+            <div id="timeline">
+                <div id="timeline-label">Phase 1 / 5 — Global Gathering</div>
+                <div id="timeline-fill"></div>
+            </div>
+            <div id="controls">
+                <button id="btn-replay" title="Restart cinematic">↺ Replay</button>
+                <button id="btn-skip" title="Skip to next phase">Skip ⏭</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="post-factory-cta">
+        <a href="#giants" class="next-section-cta">
+            <span>Next Stop</span>
+            <strong>Real-World Giants</strong>
+            <span class="nsc-arrow">⬇️</span>
+        </a>
+    </div>
+
+    <!-- 2. REAL-WORLD GIANTS -->
+    <section id="giants" class="section section-alt reveal">
+        <h2 class="section-title">Real-World Giants</h2>
+        <p class="section-subtitle">See how the principles you just simulated are used by the world's largest companies.</p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Just scroll and read.</strong> These cards show how Amazon & Apple really work — no clicking needed!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="giants-grid">
+            <div class="giant-card">
+                <h3>📦 Amazon</h3>
+                <span class="stat"><span class="count-up" data-count="1000000">0</span>+</span>
+                <p style="color: var(--secondary); margin-bottom: 0.8rem; font-size: 0.85rem;">Robots in fulfillment centers worldwide.</p>
+                <ul>
+                    <li><strong>Network:</strong> 200+ US fulfillment centers, 80,000 trailers, 100 cargo aircraft.</li>
+                    <li><strong>Automation:</strong> Robots like Hercules transport inventory pods to workers.</li>
+                    <li><strong>Speed:</strong> Advanced forecasting allows two-to-five day delivery speeds.</li>
+                    <li><strong>Scale:</strong> Handles over 1 million parcels per day at a single automated facility.</li>
+                </ul>
+            </div>
+            <div class="giant-card">
+                <h3>📱 Apple</h3>
+                <span class="stat">$<span class="count-up" data-count="416">0</span> Billion</span>
+                <p style="color: var(--secondary); margin-bottom: 0.8rem; font-size: 0.85rem;">Revenue in fiscal 2025, mostly from design and software.</p>
+                <ul>
+                    <li><strong>Design:</strong> Designs in California but owns almost no factories.</li>
+                    <li><strong>Assembly:</strong> China assembles iPhone Pro models; India now assembles ~25% of all iPhones.</li>
+                    <li><strong>Components:</strong> Processors from TSMC in Taiwan, memory from South Korea and Japan.</li>
+                    <li><strong>Materials:</strong> Investing $500 million in US rare-earth magnet production.</li>
+                </ul>
+            </div>
+        </div>
+        <a href="#journey" class="next-section-cta">
+            <span>Next Stop</span>
+            <strong>The Smartphone Journey</strong>
+            <span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 3. SMARTPHONE JOURNEY -->
+    <section id="journey" class="section reveal">
+        <h2 class="section-title">The Journey of a Smartphone</h2>
+        <p class="section-subtitle">Click each step to see how a phone is built around the world. Every object has a passport!</p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Click each of the 5 steps below IN ORDER</strong> from left to right. The detail box will update after each click!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="journey-container">
+            <div class="journey-step" onclick="showJourney('materials', this)" tabindex="0" role="button">
+                <div class="step-icon">⛏️</div><div class="step-label">1. Materials</div>
+            </div>
+            <div class="journey-step" onclick="showJourney('components', this)" tabindex="0" role="button">
+                <div class="step-icon">🔌</div><div class="step-label">2. Components</div>
+            </div>
+            <div class="journey-step" onclick="showJourney('assembly', this)" tabindex="0" role="button">
+                <div class="step-icon">🏭</div><div class="step-label">3. Assembly</div>
+            </div>
+            <div class="journey-step" onclick="showJourney('transport', this)" tabindex="0" role="button">
+                <div class="step-icon">🚚</div><div class="step-label">4. Transport</div>
+            </div>
+            <div class="journey-step" onclick="showJourney('you', this)" tabindex="0" role="button">
+                <div class="step-icon">🤳</div><div class="step-label">5. You!</div>
+            </div>
+        </div>
+        <div class="detail-box" id="journey-detail">
+            <h3>👆 Click a step above!</h3>
+            <p>See how a simple object becomes a global story.</p>
+        </div>
+        <a href="#map" class="next-section-cta">
+            <span>Next Stop</span><strong>The Global Map</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 4. INTERACTIVE MAP -->
+    <section id="map" class="section section-alt reveal">
+        <h2 class="section-title">Where Does Our Stuff Come From?</h2>
+        <p class="section-subtitle">Click the glowing dots on the map to see what different continents make. <span class="highlight">Asia makes the most (50%)!</span></p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Click the glowing dots</strong> on the map. Then try the <strong>Amazon</strong> and <strong>Apple</strong> journey buttons below!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="map-wrapper">
+            <svg class="map-arcs" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+                <path id="arc-amazon" class="arc-amazon" d="M 1120 405 Q 800 80 400 315" />
+                <path id="arc-apple" class="arc-apple" d="M 1120 405 Q 950 220 768 378" />
+            </svg>
+            <div class="map-dot" style="top: 35%; left: 25%;" data-label="North America (22%)" onclick="updateMapInfo('North America', '22%', 'Designs cool software and makes advanced parts for phones, planes, and computers.')">NA</div>
+            <div class="map-dot" style="top: 42%; left: 48%;" data-label="Europe (22%)" onclick="updateMapInfo('Europe', '22%', 'Makes high-quality machines, cars, and luxury items like watches.')">EU</div>
+            <div class="map-dot" style="top: 45%; left: 70%;" data-label="Asia (50%)" onclick="updateMapInfo('Asia', '50%', 'The biggest factory in the world! Makes phones, clothes, toys, and computer chips.')">AS</div>
+            <div class="map-dot" style="top: 65%; left: 55%;" data-label="Africa (2%)" onclick="updateMapInfo('Africa', '2%', 'Provides raw materials like metals and minerals used in batteries.')">AF</div>
+            <div class="map-dot" style="top: 75%; left: 85%;" data-label="Australia (1%)" onclick="updateMapInfo('Australia', '1%', 'Supplies raw materials like iron and wool.')">AU</div>
+            <div class="map-dot" style="top: 70%; left: 30%;" data-label="South America (6%)" onclick="updateMapInfo('South America', '6%', 'Grows lots of food like coffee and supplies metals like copper.')">SA</div>
+        </div>
+        <div class="map-info" id="map-info">
+            <h3>Click a dot!</h3><p>Discover who makes what.</p>
+        </div>
+        <div class="company-paths">
+            <button class="company-btn" onclick="showCompanyPath('amazon', this)">📦 Amazon Journey</button>
+            <button class="company-btn" onclick="showCompanyPath('apple', this)">📱 Apple Journey</button>
+        </div>
+        <div class="map-info" id="company-path-info" style="margin-top: 1rem;">
+            <p style="opacity: 0.7;">Click a company to see its supply chain journey.</p>
+        </div>
+        <a href="#food" class="next-section-cta">
+            <span>Next Stop</span><strong>Your Breakfast's Journey</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 5. FOOD JOURNEY -->
+    <section id="food" class="section reveal">
+        <h2 class="section-title">Your Breakfast's Global Journey</h2>
+        <p class="section-subtitle">Pick a breakfast item to see how it travels from farm to plate!</p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Click any food item below</strong> to see where it comes from and how it reaches your plate!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="food-grid">
+            <div class="food-card" onclick="showFood('banana', this)" tabindex="0" role="button">
+                <div class="food-icon">🍌</div><h4>Banana</h4>
+            </div>
+            <div class="food-card" onclick="showFood('chocolate', this)" tabindex="0" role="button">
+                <div class="food-icon">🍫</div><h4>Chocolate</h4>
+            </div>
+            <div class="food-card" onclick="showFood('cereal', this)" tabindex="0" role="button">
+                <div class="food-icon">🥣</div><h4>Cereal</h4>
+            </div>
+            <div class="food-card" onclick="showFood('tea', this)" tabindex="0" role="button">
+                <div class="food-icon">🍵</div><h4>Tea</h4>
+            </div>
+        </div>
+        <div class="food-detail" id="food-detail">
+            <h3 style="color: var(--yellow); text-align: center; margin-bottom: 0.8rem;">👆 Click a breakfast item!</h3>
+            <p style="text-align: center; opacity: 0.7;">See the journey from farm to your plate.</p>
+        </div>
+        <a href="#media" class="next-section-cta">
+            <span>Next Stop</span><strong>How Trends Spread</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 6. MEDIA SPREAD -->
+    <section id="media" class="section section-alt reveal">
+        <h2 class="section-title">How Trends Spread Globally</h2>
+        <p class="section-subtitle">A song, game, or dance trend can travel around the world in days. Click a node to see how it spreads!</p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Click each circle IN ORDER</strong> from left to right: 🇰🇷 South Korea → 📱 Social Media → 🌍 Global Fans → 🏠 Your Home</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="media-container">
+            <div class="media-network">
+                <div class="media-node" id="mn-1" onclick="activateMediaNode(1)" tabindex="0" role="button">
+                    <span class="m-icon">🇰🇷</span><span class="m-label">South Korea</span>
+                </div>
+                <div class="media-arrow">→</div>
+                <div class="media-node" id="mn-2" onclick="activateMediaNode(2)" tabindex="0" role="button">
+                    <span class="m-icon">📱</span><span class="m-label">Social Media</span>
+                </div>
+                <div class="media-arrow">→</div>
+                <div class="media-node" id="mn-3" onclick="activateMediaNode(3)" tabindex="0" role="button">
+                    <span class="m-icon">🌍</span><span class="m-label">Global Fans</span>
+                </div>
+                <div class="media-arrow">→</div>
+                <div class="media-node" id="mn-4" onclick="activateMediaNode(4)" tabindex="0" role="button">
+                    <span class="m-icon">🏠</span><span class="m-label">Your Home</span>
+                </div>
+            </div>
+            <div class="food-detail" id="media-detail" style="text-align: center;">
+                <h3 style="color: var(--yellow); margin-bottom: 0.8rem;">👆 Click a node to see how a trend spreads!</h3>
+                <p>From local artists to global fans, media connects us all.</p>
+            </div>
+        </div>
+        <a href="#identity" class="next-section-cta">
+            <span>Next Stop</span><strong>Overlapping Identities</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 7. IDENTITY LAYERS -->
+    <section id="identity" class="section reveal">
+        <h2 class="section-title">Overlapping Identities</h2>
+        <p class="section-subtitle">We all have different layers of identity. Global connections help shape who we are. Hover over the circles!</p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Hover over (or tap)</strong> each circle below to explore your Personal, Local, National & Global identity layers!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="identity-layers">
+            <div class="layer-circle layer-global"><span class="layer-label" style="top: 5%;">🌐 Global</span></div>
+            <div class="layer-circle layer-national"><span class="layer-label" style="top: 8%;">🌍 National</span></div>
+            <div class="layer-circle layer-local"><span class="layer-label" style="top: 12%;">📍 Local</span></div>
+            <div class="layer-circle layer-personal"><span>🏠 Personal</span></div>
+        </div>
+        <div style="width: 100%; max-width: 700px; background: rgba(211, 247, 253, 0.1); padding: 1rem; border-radius: var(--radius); margin-top: 1rem; text-align: center;">
+            <p style="font-size: 0.9rem;"><strong>Teacher Tip:</strong> One world does not mean one culture. Connection helps us share differences as well as similarities. Think about how a global trend has changed how you express your <em>own</em> identity.</p>
+        </div>
+        <a href="#domino" class="next-section-cta">
+            <span>Next Stop</span><strong>The Domino Effect</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 8. DOMINO EFFECT -->
+    <section id="domino" class="section section-alt reveal">
+        <h2 class="section-title">The Domino Effect</h2>
+        <p class="section-subtitle">A global system is connected. If one link breaks, it changes lives and moods! <strong>Click any box to break the chain!</strong></p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Click any of the 5 boxes below to BREAK the chain</strong> and watch what happens. Then click "🔄 Fix the Chain" to repair it!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="domino-container">
+            <div class="mood-meter">
+                <div class="mood-card" id="mood-shop"><span class="mood-emoji">😃</span><span class="mood-label">Shop Owner</span></div>
+                <div class="mood-card" id="mood-you"><span class="mood-emoji">😃</span><span class="mood-label">You (The Customer)</span></div>
+            </div>
+            <div class="domino-chain">
+                <div class="domino-box" id="d1" onclick="triggerDomino(0)" tabindex="0" role="button"><div class="d-icon">⛏️</div><div class="d-label">Supplier</div></div>
+                <div class="domino-box" id="d2" onclick="triggerDomino(1)" tabindex="0" role="button"><div class="d-icon">🏭</div><div class="d-label">Factory</div></div>
+                <div class="domino-box" id="d3" onclick="triggerDomino(2)" tabindex="0" role="button"><div class="d-icon">🚢</div><div class="d-label">Port</div></div>
+                <div class="domino-box" id="d4" onclick="triggerDomino(3)" tabindex="0" role="button"><div class="d-icon">🏪</div><div class="d-label">Shop</div></div>
+                <div class="domino-box" id="d5" onclick="triggerDomino(4)" tabindex="0" role="button"><div class="d-icon">👤</div><div class="d-label">You</div></div>
+            </div>
+            <div class="game-msg" id="game-msg">Everything is running smoothly! Everyone is happy.</div>
+            <button class="btn" onclick="resetDomino()" style="margin-top: 0.8rem; font-size: 0.9rem;">Fix the Chain! 🔄</button>
+        </div>
+        <a href="#xfactor" class="next-section-cta">
+            <span>Next Stop</span><strong>X-Factor: Small Choices</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 9. X-FACTOR -->
+    <section id="xfactor" class="section reveal">
+        <h2 class="section-title">X-Factor: Small Choices, Big Effects</h2>
+        <p class="section-subtitle">The network changes when people make one tiny decision. Click a choice to see its ripple effect!</p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Click each choice bubble below</strong> to see how one small action can ripple through the whole global network!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="xfactor-visual" id="xfactor-visual">
+            <div class="xfactor-bubble" onclick="showXFactor('repair', this)" tabindex="0" role="button">🔧 Repair instead of replace</div>
+            <div class="xfactor-bubble" onclick="showXFactor('recycle', this)" tabindex="0" role="button">♻️ Recycle old devices</div>
+            <div class="xfactor-bubble" onclick="showXFactor('local', this)" tabindex="0" role="button">🏪 Buy from local shops</div>
+            <div class="xfactor-bubble" onclick="showXFactor('transport', this)" tabindex="0" role="button">🚲 Use greener transport</div>
+        </div>
+        <div class="detail-box" id="xfactor-detail">
+            <h3>👆 Click a choice above!</h3>
+            <p>See how your small decisions ripple through the global network.</p>
+        </div>
+        <a href="#whatif" class="next-section-cta">
+            <span>Next Stop</span><strong>What If Global Connections Disappeared?</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 10. WHAT IF SIMULATOR -->
+    <section id="whatif" class="section section-alt reveal">
+        <h2 class="section-title">What If Global Connections Disappeared?</h2>
+        <p class="section-subtitle">Imagine your day without global links. Toggle the connections on and off to see what would change!</p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Click "🚫 Global OFF" below</strong> to see what would disappear from your day. Then click "🌐 Global ON" to bring it back!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="whatif-toggle">
+            <button class="toggle-btn active" id="btn-global-on" onclick="setGlobalStatus(true)">🌐 Global ON</button>
+            <button class="toggle-btn" id="btn-global-off" onclick="setGlobalStatus(false)">🚫 Global OFF</button>
+        </div>
+        <div class="whatif-grid" id="whatif-grid">
+            <div class="whatif-card" data-global="true"><div class="w-icon">🍌</div><h4>Fresh Fruit</h4><p>Bananas, mangoes, and avocados would disappear.</p></div>
+            <div class="whatif-card" data-global="true"><div class="w-icon">📱</div><h4>Smartphones</h4><p>No phones, computers, or video games.</p></div>
+            <div class="whatif-card" data-global="true"><div class="w-icon">👟</div><h4>Clothing & Shoes</h4><p>Most of your wardrobe would vanish.</p></div>
+            <div class="whatif-card" data-global="true"><div class="w-icon">🎵</div><h4>Global Music & Media</h4><p>No K-pop, anime, or global video games.</p></div>
+            <div class="whatif-card" data-global="true"><div class="w-icon">🏥</div><h4>Medicines</h4><p>Many medicines use ingredients from around the world.</p></div>
+            <div class="whatif-card" data-global="true"><div class="w-icon">🏫</div><h4>Knowledge & Learning</h4><p>No internet, no global news, no online learning.</p></div>
+        </div>
+        <div class="game-msg" id="whatif-msg" style="margin-top: 1.5rem; font-size: 1rem;">With global connections, your day is rich and full of variety.</div>
+        <a href="#quiz" class="next-section-cta">
+            <span>Next Stop</span><strong>The Big Global Quiz!</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 11. QUIZ -->
+    <section id="quiz" class="section reveal">
+        <h2 class="section-title">The Big Global Quiz!</h2>
+        <p class="section-subtitle">Let's see if you understand how the global chain works. Answer these 5 questions!</p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Answer all 5 questions below.</strong> Turn ON "⏱️ Challenge Mode" for a 15-second timer per question!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="quiz-toolbar">
+            <div class="xp-badge">⚡ <span id="quiz-xp">0</span> XP earned</div>
+            <button class="toggle-btn" id="challenge-toggle" onclick="toggleChallenge()">⏱️ Challenge Mode: OFF</button>
+            <button class="toggle-btn" onclick="renderQuiz()">🔄 Restart Quiz</button>
+        </div>
+        <div class="quiz-container" id="quiz-container"></div>
+        <div class="game-msg" id="quiz-score" style="margin-top: 1.5rem;"></div>
+        <a href="#badges" class="next-section-cta">
+            <span>Next Stop</span><strong>Achievement Badges</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 12. BADGES -->
+    <section id="badges" class="section section-alt reveal">
+        <h2 class="section-title">Achievement Badges</h2>
+        <p class="section-subtitle">Unlock all 5 badges by exploring the site!</p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Complete tasks around the site</strong> (cinematic, quiz, domino, reflection, exploring every section) to unlock all 5 badges!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="badges-row" id="badges-row">
+            <div class="badge" id="badge-factory" title="Watch the full cinematic"><span class="b-icon">🏭</span><span class="b-name">Factory Operator</span></div>
+            <div class="badge" id="badge-quiz" title="Score 5/5 on the quiz"><span class="b-icon">🧠</span><span class="b-name">Quiz Master</span></div>
+            <div class="badge" id="badge-chain" title="Break the domino chain"><span class="b-icon">🁡</span><span class="b-name">Chain Breaker</span></div>
+            <div class="badge" id="badge-reflect" title="Submit your reflection"><span class="b-icon">✍️</span><span class="b-name">Deep Thinker</span></div>
+            <div class="badge" id="badge-explorer" title="Visit every section"><span class="b-icon">🧭</span><span class="b-name">Globe Explorer</span></div>
+        </div>
+        <a href="#reflection" class="next-section-cta">
+            <span>Next Stop</span><strong>Final Reflection</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 13. FINAL REFLECTION -->
+    <section id="reflection" class="section reveal">
+        <h2 class="section-title">Final Reflection</h2>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Type your answer in the box below</strong> (at least 30 words). Then click <strong>"Submit Answer 🚀"</strong> and <strong>"📄 Export My Report"</strong>!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="reflection-box">
+            <h3>"If global connections disappeared from my day, what would change most, and why?"</h3>
+            <p style="color: var(--secondary); margin-bottom: 1rem; font-size: 0.95rem;">Type your answer below. Think about your shoes, your food, or the media you enjoy. Your draft is saved automatically.</p>
+            <textarea id="reflection-text" placeholder="If global connections disappeared, I would miss..." oninput="updateWordCount()"></textarea>
+            <div class="word-count" id="word-count">0 words</div>
+            <div class="reflection-actions">
+                <button onclick="submitReflection()">Submit Answer 🚀</button>
+                <button class="btn btn-secondary" onclick="exportReport()" style="font-size: 0.85rem;">📄 Export My Report</button>
+            </div>
+            <div id="reflection-msg" style="margin-top: 0.8rem; color: var(--green); font-weight: bold;"></div>
+        </div>
+        <a href="#glossary" class="next-section-cta">
+            <span>Last Stop</span><strong>Glossary of Global Terms</strong><span class="nsc-arrow">⬇️</span>
+        </a>
+    </section>
+
+    <!-- 14. GLOSSARY -->
+    <section id="glossary" class="section section-alt reveal">
+        <h2 class="section-title">Glossary of Global Terms</h2>
+        <p class="section-subtitle">Hover (or tap) a card to reveal its definition!</p>
+        <div class="instruction-banner">
+            <span class="ib-arrow">👉</span>
+            <span><strong>Hover over or tap each card below</strong> to reveal the definition of key global terms!</span>
+            <span class="ib-arrow">👈</span>
+        </div>
+        <div class="glossary-grid">
+            <div class="glossary-card"><h4>Supply Chain</h4><p>The steps a product goes through from raw materials to your hands.</p></div>
+            <div class="glossary-card"><h4>Redundancy</h4><p>Having more than one path or backup so the system can recover from problems.</p></div>
+            <div class="glossary-card"><h4>Specialization</h4><p>When different places focus on the work they do best.</p></div>
+            <div class="glossary-card"><h4>Global Interconnection</h4><p>Different parts of the world depending on one another.</p></div>
+            <div class="glossary-card"><h4>Resilience</h4><p>The ability of a network to survive shocks and keep working.</p></div>
+            <div class="glossary-card"><h4>Interdependence</h4><p>When countries or people rely on each other to function.</p></div>
+            <div class="glossary-card"><h4>Logistics</h4><p>The process of planning and moving goods around the world.</p></div>
+            <div class="glossary-card"><h4>Identity</h4><p>The qualities, beliefs, and experiences that make you who you are.</p></div>
+        </div>
+        <div class="bouncing-arrow" style="margin-top: 2.5rem;">
+            <span>🎉 You finished the whole journey!</span>
+            <button class="btn" onclick="scrollToId('start-here')">Back to the Guide 🎯</button>
+        </div>
+    </section>
+
+    <!-- TOASTS -->
+    <div id="toasts" aria-live="polite"></div>
+
+    <!-- COMMAND PALETTE -->
+    <div class="palette-overlay" id="palette-overlay">
+        <div class="palette" role="dialog" aria-label="Command palette">
+            <input id="palette-input" type="text" placeholder="Type a command... (e.g. 'quiz', 'factory', 'sound')" autocomplete="off" spellcheck="false">
+            <ul id="palette-list"></ul>
+            <div class="p-hint">↑↓ navigate · Enter run · Esc close · Ctrl+K anywhere to open</div>
+        </div>
+    </div>
+
+    <!-- BACK TO TOP -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Back to top">↑</button>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-actions">
+            <button class="btn" onclick="exportReport()">📄 Export Report</button>
+            <button class="btn btn-secondary" onclick="resetAllProgress()">🗑️ Reset All Progress</button>
+        </div>
+        <p>Alezify OS — Built To Rise.</p>
+        <p style="color: var(--yellow); margin-top: 0.5rem;">Designed by Omar Sanad | Year 7 Global Project</p>
+        <p style="margin-top: 1rem;">&copy; 2026 Alezify. All rights reserved. Global Interconnection for Kids.</p>
+    </footer>
+
+    <script>
+    /* ============================================================
+       ALEZIFY OS CORE
+       ============================================================ */
+    'use strict';
+    const $  = (s, r) => (r || document).querySelector(s);
+    const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function scrollToId(id) {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
+    }
+
+    /* ---------- Persistent store ---------- */
+    const store = {
+        get(k, d) {
+            try { const v = localStorage.getItem('alezify_' + k); return v === null ? d : JSON.parse(v); }
+            catch (e) { return d; }
+        },
+        set(k, v) { try { localStorage.setItem('alezify_' + k, JSON.stringify(v)); } catch (e) {} },
+        del(k) { try { localStorage.removeItem('alezify_' + k); } catch (e) {} }
+    };
+
+    /* ---------- Audio engine ---------- */
+    const Sound = (() => {
+        let ctx = null;
+        let enabled = store.get('sound', true);
+        function init() { if (!ctx) { try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } }
+        function beep(freq, dur, type, vol) {
+            if (!enabled || !ctx) return;
+            const osc = ctx.createOscillator(), gain = ctx.createGain();
+            osc.type = type || 'sine'; osc.frequency.value = freq;
+            gain.gain.setValueAtTime(vol || 0.07, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(); osc.stop(ctx.currentTime + dur);
+        }
+        return {
+            init,
+            click()  { init(); beep(800, 0.05); },
+            pop()    { init(); beep(520, 0.07, 'triangle'); },
+            success(){ init(); beep(523.25, 0.1); setTimeout(() => beep(659.25, 0.1), 100); setTimeout(() => beep(783.99, 0.28), 200); },
+            fanfare(){ init(); [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.18,'triangle',0.09), i*110)); },
+            fail()   { init(); beep(200, 0.3, 'sawtooth'); },
+            toggle() { enabled = !enabled; store.set('sound', enabled); return enabled; },
+            get enabled() { return enabled; }
+        };
+    })();
+
+    function syncSoundBtn() {
+        $('#sound-toggle').textContent = Sound.enabled ? '🔊' : '🔇';
+    }
+
+    /* ---------- Reader (Kokoro-82M male voice) ---------- */
+    const Reader = (() => {
+        let enabled   = store.get('reader', true);
+        let speaking  = false;
+        let tts       = null;
+        let loading   = false;
+
+        function stripEmoji(t) {
+            return String(t || '').replace(/[^\w\s.,!?'"\-:;()\/]/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+
+        function setSpeakingIndicator(on) {
+            speaking = on;
+            const btn = document.getElementById('reader-toggle');
+            if (btn) btn.classList.toggle('speaking', on && enabled);
+        }
+
+        async function ensureModel() {
+            if (tts) return true;
+            if (loading) return false;
+            if (typeof KokoroTTS === 'undefined') return false;
+            loading = true;
+            try {
+                tts = await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', { dtype: 'q8', device: 'wasm' });
+                return true;
+            } catch (e) { tts = null; return false; }
+            finally { loading = false; }
+        }
+
+        async function speakWithKokoro(text) {
+            const clean = stripEmoji(text);
+            if (clean.length < 2) return false;
+            const ok = await ensureModel();
+            if (!ok) return false;
+            try {
+                setSpeakingIndicator(true);
+                const audio = await tts.generate(clean, { voice: 'am_adam', speed: 0.85 });
+                const blob = audio.toBlob();
+                const url  = URL.createObjectURL(blob);
+                const player = new Audio(url);
+                player.onended = () => { URL.revokeObjectURL(url); setSpeakingIndicator(false); };
+                player.onerror = () => { URL.revokeObjectURL(url); setSpeakingIndicator(false); };
+                await player.play();
+                return true;
+            } catch (e) { setSpeakingIndicator(false); return false; }
+        }
+
+        let fallbackVoice = null;
+        const MALE_PATTERNS = [
+            /Microsoft Guy/i, /Microsoft David/i, /Microsoft Mark/i,
+            /Google UK English Male/i, /\bDaniel\b/i, /\bAlex\b/i,
+            /English.*Male/i, /^en-US/i, /^en-GB/i, /^en-/i
+        ];
+
+        function pickMaleVoice() {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = speechSynthesis.getVoices();
+            if (!voices.length) return null;
+            for (const p of MALE_PATTERNS) {
+                const v = voices.find(vo => p.test(vo.name) || p.test(vo.lang));
+                if (v) return v;
+            }
+            return voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
+        }
+
+        function initFallbackVoice() {
+            if (!('speechSynthesis' in window)) return;
+            fallbackVoice = pickMaleVoice();
+            try { speechSynthesis.addEventListener('voiceschanged', () => { fallbackVoice = pickMaleVoice(); }); } catch (e) {}
+            setTimeout(() => { fallbackVoice = fallbackVoice || pickMaleVoice(); }, 300);
+            setTimeout(() => { fallbackVoice = fallbackVoice || pickMaleVoice(); }, 1500);
+        }
+
+        function speakWithFallback(text) {
+            if (!('speechSynthesis' in window)) return;
+            const clean = stripEmoji(text);
+            if (clean.length < 2) return;
+            if (!fallbackVoice) fallbackVoice = pickMaleVoice();
+            try { speechSynthesis.cancel(); } catch (e) {}
+            const u = new SpeechSynthesisUtterance(clean);
+            if (fallbackVoice) u.voice = fallbackVoice;
+            u.rate = 0.82; u.pitch = 0.92; u.volume = 1.0;
+            u.onstart = () => setSpeakingIndicator(true);
+            u.onend = () => setSpeakingIndicator(false);
+            u.onerror = () => setSpeakingIndicator(false);
+            try { speechSynthesis.speak(u); } catch (e) {}
+        }
+
+        async function speak(text) {
+            if (!enabled) return;
+            const kokoroOk = await speakWithKokoro(text);
+            if (!kokoroOk) speakWithFallback(text);
+        }
+
+        function speakElement(el) {
+            if (!el) return;
+            const text = el.getAttribute('aria-label') || el.getAttribute('data-label') || el.textContent || '';
+            speak(text);
+        }
+
+        function toggle() {
+            enabled = !enabled;
+            store.set('reader', enabled);
+            if (!enabled) {
+                try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {}
+                setSpeakingIndicator(false);
+            }
+            return enabled;
+        }
+
+        function init() { initFallbackVoice(); }
+
+        return { init, speak, speakElement, toggle, get enabled() { return enabled; } };
+    })();
+
+    function updateReaderBtn() {
+        const btn = $('#reader-toggle');
+        if (!btn) return;
+        btn.textContent = Reader.enabled ? '🗣️' : '🤐';
+        const title = Reader.enabled
+            ? 'Voice reader ON — Kokoro‑82M male (am_adam), slow & clear (click to mute)'
+            : 'Voice reader OFF (click to enable Kokoro‑82M male voice)';
+        btn.title = title;
+        btn.setAttribute('aria-label', title);
+        btn.classList.remove('speaking');
+    }
+
+    /* ---------- Toasts ---------- */
+    function toast(title, msg, icon) {
+        const box = $('#toasts');
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.innerHTML = `<b>${icon || '🔔'} ${title}</b>${msg}`;
+        box.appendChild(el);
+        setTimeout(() => { el.classList.add('gone'); setTimeout(() => el.remove(), 450); }, 4200);
+    }
+
+    /* ---------- Confetti ---------- */
+    const Confetti = (() => {
+        const canvas = $('#confetti-canvas');
+        const ctx2 = canvas.getContext('2d');
+        let parts = [], running = false;
+        function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        function burst(n) {
+            if (reducedMotion) return;
+            const colors = ['#FFD166', '#E2B2FF', '#06D6A0', '#EF476F', '#D3F7FD', '#F78C6B'];
+            for (let i = 0; i < (n || 140); i++) {
+                parts.push({
+                    x: innerWidth / 2 + (Math.random() - 0.5) * 240,
+                    y: innerHeight * 0.35,
+                    vx: (Math.random() - 0.5) * 13,
+                    vy: -Math.random() * 13 - 4,
+                    s: Math.random() * 7 + 4,
+                    c: colors[(Math.random() * colors.length) | 0],
+                    r: Math.random() * Math.PI,
+                    vr: (Math.random() - 0.5) * 0.3,
+                    life: 1
+                });
+            }
+            if (!running) { running = true; requestAnimationFrame(loop); }
+        }
+        function loop() {
+            ctx2.clearRect(0, 0, canvas.width, canvas.height);
+            parts = parts.filter(p => p.life > 0);
+            for (const p of parts) {
+                p.x += p.vx; p.y += p.vy; p.vy += 0.32; p.r += p.vr; p.life -= 0.006;
+                ctx2.save(); ctx2.translate(p.x, p.y); ctx2.rotate(p.r);
+                ctx2.globalAlpha = Math.max(p.life, 0);
+                ctx2.fillStyle = p.c; ctx2.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * 0.6);
+                ctx2.restore();
+            }
+            if (parts.length) requestAnimationFrame(loop);
+            else { running = false; ctx2.clearRect(0, 0, canvas.width, canvas.height); }
+        }
+        return { burst };
+    })();
+
+    /* ---------- XP system ---------- */
+    let XP = store.get('xp', 0);
+    function addXP(n, why) {
+        XP += n; store.set('xp', XP);
+        const el = $('#xp-val');
+        el.textContent = XP;
+        el.parentElement.style.transform = 'scale(1.15)';
+        setTimeout(() => el.parentElement.style.transform = '', 200);
+        if (why) toast('+' + n + ' XP', why, '⚡');
+    }
+
+    /* ---------- Badges ---------- */
+    const BADGE_META = {
+        factory:  ['🏭', 'Factory Operator'],
+        quiz:     ['🧠', 'Quiz Master'],
+        chain:    ['🁡', 'Chain Breaker'],
+        reflect:  ['✍️', 'Deep Thinker'],
+        explorer: ['🧭', 'Globe Explorer']
+    };
+    let badges = store.get('badges', {});
+    function award(id) {
+        if (badges[id]) return;
+        badges[id] = Date.now(); store.set('badges', badges);
+        const el = $('#badge-' + id);
+        if (el) el.classList.add('unlocked');
+        const meta = BADGE_META[id];
+        toast('Badge unlocked!', meta[0] + ' ' + meta[1], '🏅');
+        Sound.fanfare(); Confetti.burst(90);
+        $('#badge-val').textContent = Object.keys(badges).length;
+    }
+    function syncBadges() {
+        Object.keys(badges).forEach(id => { const el = $('#badge-' + id); if (el) el.classList.add('unlocked'); });
+        $('#badge-val').textContent = Object.keys(badges).length;
+    }
+
+    /* ---------- Boot sequence ---------- */
+    (function boot() {
+        const msgs = [
+            'Initializing kernel...', 'Loading 3D engine...', 'Calibrating conveyor belts...',
+            'Waking up the robots...', 'Mapping supply chains...', 'Brewing hot chocolate...',
+            'Alezify OS ready!'
+        ];
+        const bar = $('#boot-bar'), msg = $('#boot-msg'), screen = $('#boot');
+        let i = 0, done = false;
+        const iv = setInterval(() => {
+            if (done) return;
+            i++;
+            bar.style.width = Math.min(i / msgs.length * 100, 100) + '%';
+            msg.textContent = msgs[Math.min(i, msgs.length - 1)];
+            if (i >= msgs.length) finish();
+        }, reducedMotion ? 60 : 340);
+        function finish() {
+            if (done) return; done = true;
+            clearInterval(iv);
+            bar.style.width = '100%';
+            screen.classList.add('done');
+            setTimeout(() => screen.remove(), 800);
+        }
+        screen.addEventListener('click', finish);
+    })();
+
+    /* ---------- Startup video ---------- */
+    (function startupVideo() {
+        const screen = document.getElementById('startup-video-screen');
+        const video = document.getElementById('startup-video');
+        if (!screen || !video) return;
+        let done = false;
+        function finish() {
+            if (done) return; done = true;
+            try { video.pause(); } catch (e) {}
+            screen.classList.add('done');
+            setTimeout(() => screen.remove(), 800);
+        }
+        video.addEventListener('ended', finish);
+        video.addEventListener('error', finish);
+        screen.addEventListener('click', finish);
+        const p = video.play();
+        if (p && p.catch) p.catch(() => {});
+        setTimeout(() => { if (video.readyState < 2) finish(); }, 8000);
+    })();
+
+    /* ---------- Background particles ---------- */
+    (function particles() {
+        if (reducedMotion) return;
+        const canvas = $('#bg-canvas'), ctx = canvas.getContext('2d');
+        let W, H, dots = [];
+        function resize() {
+            W = canvas.width = innerWidth; H = canvas.height = innerHeight;
+            const n = Math.min(90, Math.floor(W * H / 22000));
+            dots = Array.from({ length: n }, () => ({
+                x: Math.random() * W, y: Math.random() * H,
+                vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+                r: Math.random() * 2 + 0.6
+            }));
+        }
+        window.addEventListener('resize', resize); resize();
+        (function loop() {
+            ctx.clearRect(0, 0, W, H);
+            for (const d of dots) {
+                d.x += d.vx; d.y += d.vy;
+                if (d.x < 0 || d.x > W) d.vx *= -1;
+                if (d.y < 0 || d.y > H) d.vy *= -1;
+                ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(211,247,253,0.5)'; ctx.fill();
+            }
+            for (let i = 0; i < dots.length; i++) {
+                for (let j = i + 1; j < dots.length; j++) {
+                    const a = dots[i], b = dots[j];
+                    const dx = a.x - b.x, dy = a.y - b.y, dist = dx * dx + dy * dy;
+                    if (dist < 13000) {
+                        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+                        ctx.strokeStyle = `rgba(226,178,255,${0.14 * (1 - dist / 13000)})`;
+                        ctx.lineWidth = 1; ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(loop);
+        })();
+    })();
+
+    /* ---------- Scroll / progress / guide ---------- */
+    const visited = new Set(store.get('visited', []));
+    const SECTION_IDS = ['start-here','factory','giants','journey','map','food','media','identity','domino','xfactor','whatif','quiz','badges','reflection','glossary'];
+
+    function syncGuideCards() {
+        let count = 0;
+        const cards = $$('.guide-card');
+        cards.forEach(card => {
+            const target = card.dataset.target;
+            const v = visited.has(target);
+            card.classList.toggle('visited', v);
+            if (v) count++;
+        });
+        const val = $('#guide-progress-val');
+        if (val) val.textContent = count;
+        const totalEl = $('#guide-progress-total');
+        if (totalEl) totalEl.textContent = cards.length;
+    }
+
+    function checkExplorer() {
+        if (SECTION_IDS.every(id => visited.has(id))) award('explorer');
+    }
+    window.addEventListener('scroll', () => {
+        const st = document.documentElement.scrollTop;
+        const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        $('#progress-bar').style.width = (st / sh * 100) + '%';
+        $('#back-to-top').classList.toggle('show', st > 500);
+
+        let current = 'home';
+        SECTION_IDS.concat(['home']).forEach(id => {
+            const el = document.getElementById(id);
+            if (el && st >= el.offsetTop - 120) current = id;
+        });
+        if (SECTION_IDS.includes(current) && !visited.has(current)) {
+            visited.add(current); store.set('visited', [...visited]);
+            checkExplorer();
+            syncGuideCards();
+        }
+        $$('nav a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+    }, { passive: true });
+
+    /* ---------- Hamburger / mobile menu ---------- */
+    $('#hamburger').addEventListener('click', () => { Sound.click(); $('#mobile-menu').classList.toggle('open'); });
+    $$('#mobile-menu a').forEach(a => a.addEventListener('click', () => $('#mobile-menu').classList.remove('open')));
+
+    /* ---------- Reveal on scroll ---------- */
+    const revealIO = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealIO.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    $$('.reveal').forEach(el => revealIO.observe(el));
+
+    /* ---------- Count-up stats ---------- */
+    const countIO = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (!e.isIntersecting) return;
+            countIO.unobserve(e.target);
+            const target = +e.target.dataset.count, t0 = performance.now(), dur = 1600;
+            (function tick(t) {
+                const k = Math.min((t - t0) / dur, 1);
+                const eased = 1 - Math.pow(1 - k, 3);
+                e.target.textContent = Math.floor(target * eased).toLocaleString('en-US');
+                if (k < 1) requestAnimationFrame(tick);
+            })(t0);
+        });
+    }, { threshold: 0.5 });
+    $$('.count-up').forEach(el => countIO.observe(el));
+
+    /* ---------- Guide card clicks ---------- */
+    $$('.guide-card').forEach(card => {
+        card.addEventListener('click', () => {
+            Sound.click();
+            scrollToId(card.dataset.target);
+        });
+    });
+
+    /* ---------- Command palette ---------- */
+    const Palette = (() => {
+        const overlay = $('#palette-overlay'), input = $('#palette-input'), list = $('#palette-list');
+        let sel = 0, filtered = [];
+        const icons = { 'start-here':'🎯', factory:'🏭', giants:'🌐', journey:'📱', map:'🗺️', food:'🍌', media:'📡', identity:'🧭', domino:'🁡', xfactor:'⚡', whatif:'🌐', quiz:'🧠', badges:'🏅', reflection:'✍️', glossary:'📖' };
+        const actions = SECTION_IDS.map(id => ({
+            icon: icons[id] || '📌',
+            label: 'Go to: ' + id.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase()),
+            run: () => scrollToId(id)
+        })).concat([
+            { icon: '🎬', label: 'Factory: restart cinematic', run: () => { scrollToId('factory'); if (window.cinematicRestart) window.cinematicRestart(); } },
+            { icon: '🔊', label: 'Toggle sound', run: () => { Sound.toggle(); syncSoundBtn(); } },
+            { icon: '🗣️', label: 'Toggle voice reader', run: () => { Reader.toggle(); updateReaderBtn(); } },
+            { icon: '📄', label: 'Export my report', run: exportReport },
+            { icon: '🗑️', label: 'Reset all progress', run: resetAllProgress },
+            { icon: '🏠', label: 'Back to top', run: () => window.scrollTo({ top: 0, behavior: 'smooth' }) }
+        ]);
+
+        function render() {
+            const q = input.value.trim().toLowerCase();
+            filtered = actions.filter(a => a.label.toLowerCase().includes(q));
+            sel = Math.min(sel, Math.max(filtered.length - 1, 0));
+            list.innerHTML = filtered.map((a, i) =>
+                `<li class="${i === sel ? 'selected' : ''}" data-i="${i}"><span class="p-icon">${a.icon}</span>${a.label}</li>`
+            ).join('') || '<li><em>No matches...</em></li>';
+            $$('li', list).forEach(li => li.addEventListener('click', () => pick(+li.dataset.i)));
+        }
+        function pick(i) { const a = filtered[i]; if (!a) return; close(); a.run(); Sound.click(); }
+        function open() { overlay.classList.add('open'); input.value = ''; sel = 0; render(); setTimeout(() => input.focus(), 50); }
+        function close() { overlay.classList.remove('open'); }
+        input.addEventListener('input', () => { sel = 0; render(); });
+        input.addEventListener('keydown', e => {
+            if (e.key === 'ArrowDown') { e.preventDefault(); sel = Math.min(sel + 1, filtered.length - 1); render(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(sel - 1, 0); render(); }
+            else if (e.key === 'Enter') { e.preventDefault(); pick(sel); }
+        });
+        overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+        document.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); overlay.classList.contains('open') ? close() : open(); }
+            else if (e.key === 'Escape') close();
+        });
+        $('#palette-open').addEventListener('click', () => { Sound.click(); open(); });
+        return { open };
+    })();
+
+    /* ---------- Keyboard support for role=button ---------- */
+    document.addEventListener('keydown', e => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target.getAttribute && e.target.getAttribute('role') === 'button') {
+            e.preventDefault(); e.target.click();
+        }
+    });
+
+    /* ---------- Glossary tap toggle ---------- */
+    $$('.glossary-card').forEach(c => c.addEventListener('click', () => { Sound.pop(); c.classList.toggle('open'); }));
+
+    /* ---------- Sound toggle ---------- */
+    $('#sound-toggle').addEventListener('click', () => {
+        const on = Sound.toggle(); syncSoundBtn();
+        if (on) Sound.click();
+        toast('Sound ' + (on ? 'ON 🔊' : 'OFF 🔇'), on ? 'Audio engine active.' : 'Running silent.', '🔊');
+    });
+    syncSoundBtn();
+
+    /* ---------- Reader toggle ---------- */
+    Reader.init();
+    updateReaderBtn();
+
+    $('#reader-toggle').addEventListener('click', async () => {
+        const on = Reader.toggle();
+        updateReaderBtn();
+        if (on) {
+            toast('Voice reader ON 🗣️', 'Loading Kokoro‑82M male voice… first use may take a moment.', '🗣️');
+            Reader.speak('Voice reader is on. I am using a professional male voice. I will speak slowly and clearly.');
+        } else {
+            toast('Voice reader OFF 🤐', 'Silent mode.', '🗣️');
+        }
+    });
+
+    /* ---------- Auto reader: click-to-speak ---------- */
+    (function bindReaderClicks() {
+        const CLICK_SELECTOR = [
+            '.btn', '.tool-btn', '.journey-step', '.food-card', '.media-node',
+            '.xfactor-bubble', '.domino-box', '.glossary-card', '.company-btn',
+            '.map-dot', '.fs-prod-btn', '.fs-btn-control', '.toggle-btn',
+            '.option-btn', '.badge', '.layer-circle', 'nav a', '#mobile-menu a',
+            'button[role="button"]', '[role="button"]', '.guide-card',
+            '#btn-replay', '#btn-skip'
+        ].join(',');
+
+        const TRIGGER_SELECTOR = [
+            '.journey-step', '.food-card', '.media-node', '.xfactor-bubble',
+            '.company-btn', '.map-dot', '.domino-box', '#btn-global-on', '#btn-global-off', '.guide-card'
+        ].join(',');
+
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('#startup-video-screen, #boot, #reader-toggle')) return;
+            const el = e.target.closest(CLICK_SELECTOR);
+            if (!el) return;
+            if (el.matches(TRIGGER_SELECTOR)) return;
+            if (el.matches('.option-btn')) {
+                const box = el.closest('.quiz-question-box');
+                if (box) {
+                    setTimeout(() => {
+                        const fb = box.querySelector('.quiz-feedback');
+                        if (fb && fb.textContent.trim()) Reader.speak(fb.textContent);
+                    }, 150);
+                }
+                return;
+            }
+            if (el.matches('#btn-replay, #btn-skip')) {
+                Reader.speakElement(el);
+                return;
+            }
+            Reader.speakElement(el);
+        });
+    })();
+
+    /* ---------- Auto reader: detail box mutation observer ---------- */
+    (function observeDetailBoxes() {
+        const ids = [
+            'journey-detail', 'food-detail', 'media-detail', 'xfactor-detail',
+            'map-info', 'company-path-info', 'whatif-msg', 'game-msg', 'reflection-msg'
+        ];
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            let last = (el.textContent || '').replace(/\s+/g, ' ').trim();
+            try {
+                new MutationObserver(() => {
+                    const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
+                    if (text && text !== last) {
+                        last = text;
+                        setTimeout(() => Reader.speak(text), 80);
+                    }
+                }).observe(el, { childList: true, subtree: true, characterData: true });
+            } catch (e) {}
+        });
+    })();
+
+    /* ============================================================
+       CONTENT SECTIONS (journey, map, food, media, domino, xfactor, whatif)
+       ============================================================ */
+    const journeyData = {
+        materials: { icon: '⛏️', title: '1. Raw Materials', text: 'It starts with digging! We mine metals like lithium and cobalt from the earth in places like Africa and South America. This is the "Resource Stage".', chain: ['Mine in Africa', 'Raw Metal', 'Ship to Factory'] },
+        components: { icon: '🔌', title: '2. Components', text: 'The raw materials are turned into tiny parts! The screens come from Japan and the computer chips are made in Taiwan.', chain: ['Japan (Screens)', 'Taiwan (Chips)', 'South Korea (Memory)'] },
+        assembly: { icon: '🏭', title: '3. Assembly', text: 'All the parts are brought together in giant factories in Asia (like China and Vietnam) where workers and robots put the phone together. This is "Specialization" - places doing what they do best!', chain: ['China', 'Vietnam', 'India'] },
+        transport: { icon: '🚚', title: '4. Transport', text: 'The finished phones are packed into boxes and put on massive cargo ships or airplanes to travel across the ocean! 90% of world trade is carried by sea.', chain: ['Cargo Ship', 'Airplane', 'Delivery Truck'] },
+        you: { icon: '🤳', title: '5. You!', text: "Finally, the phone arrives at a store or your door. You unbox it and start using it, completing the global journey! Now it's your turn to reuse and recycle it when you're done.", chain: ['Shop', 'Your Door', 'You!'] }
+    };
+    function chainHTML(chain) {
+        let h = '<div class="arrow-chain">';
+        chain.forEach((s, i) => { h += `<span>${s}</span>`; if (i < chain.length - 1) h += '<strong> ➔ </strong>'; });
+        return h + '</div>';
+    }
+    function showJourney(step, element) {
+        Sound.pop();
+        $$('.journey-step').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        const d = journeyData[step];
+        $('#journey-detail').innerHTML = `<h3>${d.icon} ${d.title}</h3><p>${d.text}</p>${chainHTML(d.chain)}`;
+    }
+
+    function updateMapInfo(region, percent, text) {
+        Sound.pop();
+        $('#map-info').innerHTML = `<h3>${region} — ${percent}</h3><p>${text}</p>`;
+    }
+    function showCompanyPath(company, btn) {
+        Sound.click();
+        $$('.company-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        $('#arc-amazon').classList.toggle('show', company === 'amazon');
+        $('#arc-apple').classList.toggle('show', company === 'apple');
+        $('#company-path-info').innerHTML = company === 'amazon'
+            ? '<h3 style="color: var(--accent);">📦 Amazon Supply Chain</h3><p style="font-size: 0.9rem; margin-top: 0.5rem;">Inventory from Asia → US Fulfillment Centers → Robots pick items → Packed → Delivered to You by truck or plane. Watch the glowing arc cross the map!</p>'
+            : '<h3 style="color: var(--accent);">📱 Apple iPhone Supply Chain</h3><p style="font-size: 0.9rem; margin-top: 0.5rem;">Designed in California → Components from Taiwan/South Korea/Japan → Assembled in China & India → Shipped globally to You. Watch the glowing arc cross the map!</p>';
+    }
+
+    const foodData = {
+        banana: { icon: '🍌', title: 'The Banana Journey', text: 'Bananas grow in tropical climates like Ecuador and Costa Rica. Workers pick them green, they travel in refrigerated ships, and they ripen on the way to your supermarket!', chain: ['Ecuador', 'Refrigerated Ship', 'Supermarket', 'You'] },
+        chocolate: { icon: '🍫', title: 'The Chocolate Journey', text: 'Cocoa beans come from Ghana and Ivory Coast. They are dried, shipped to Europe or Asia, roasted, and turned into chocolate. Sugar comes from Brazil!', chain: ['Ghana (Cocoa)', 'Europe (Roasting)', 'Factory', 'You'] },
+        cereal: { icon: '🥣', title: 'The Cereal Journey', text: 'Wheat is grown in the USA, Canada, or Europe. It is processed into flakes, vitamins are added, and the box is printed with materials from forests!', chain: ['Farm', 'Processing Plant', 'Box Factory', 'You'] },
+        tea: { icon: '🍵', title: 'The Tea Journey', text: 'Tea leaves come from Kenya, India, or Sri Lanka. They are dried, blended, and shipped around the world. Every cup has a global story!', chain: ['Kenya (Leaves)', 'Sri Lanka', 'Blending', 'You'] }
+    };
+    function showFood(type, element) {
+        Sound.pop();
+        $$('.food-card').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        const d = foodData[type];
+        $('#food-detail').innerHTML = `<h3>${d.icon} ${d.title}</h3><p>${d.text}</p>${chainHTML(d.chain)}`;
+    }
+
+    const mediaData = {
+        1: { title: 'Where It Starts', text: 'An artist or creator in South Korea makes a song, game, or video. This is the creative origin point.' },
+        2: { title: 'Spreading Online', text: 'Social media algorithms push the content to global audiences. Fans share, remix, and make their own versions.' },
+        3: { title: 'Global Fans', text: 'People in the USA, Brazil, Europe, and Africa become fans. They create fan art, dance covers, and translations.' },
+        4: { title: 'Your Home', text: 'The trend reaches you through streaming, TikTok, YouTube, or games. You become part of a global community of fans!' }
+    };
+    function activateMediaNode(id) {
+        Sound.pop();
+        $$('.media-node').forEach(n => n.classList.remove('active'));
+        $('#mn-' + id).classList.add('active');
+        const d = mediaData[id];
+        $('#media-detail').innerHTML = `<h3 style="color: var(--yellow); margin-bottom: 0.8rem;">${d.title}</h3><p>${d.text}</p>`;
+    }
+
+    function triggerDomino(index) {
+        Sound.fail();
+        award('chain');
+        const chain = ['d1', 'd2', 'd3', 'd4', 'd5'];
+        const msg = $('#game-msg');
+        const shopMood = $('#mood-shop .mood-emoji');
+        const youMood = $('#mood-you .mood-emoji');
+        chain.forEach(id => $('#' + id).classList.remove('broken', 'delayed'));
+        shopMood.innerText = '😃'; youMood.innerText = '😃';
+        msg.innerText = 'Uh oh! You broke a link in the chain!';
+        msg.style.color = 'var(--yellow)';
+        $('#' + chain[index]).classList.add('broken');
+        let delay = 600;
+        for (let i = index + 1; i < chain.length; i++) {
+            setTimeout(() => { $('#' + chain[i]).classList.add('delayed'); Sound.pop(); }, delay);
+            delay += 600;
+        }
+        setTimeout(() => {
+            shopMood.innerText = '😟';
+            msg.innerText = 'The Shop has no products to sell! The Shop Owner is sad.';
+        }, delay);
+        setTimeout(() => {
+            youMood.innerText = '😡';
+            msg.innerText = "The Shop has no products, so YOU can't buy what you want! Everyone is upset! This is why we need redundancy (backup paths).";
+            msg.style.color = 'var(--red)';
+        }, delay + 800);
+    }
+    function resetDomino() {
+        Sound.click();
+        ['d1','d2','d3','d4','d5'].forEach(id => $('#' + id).classList.remove('broken', 'delayed'));
+        $('#mood-shop .mood-emoji').innerText = '😃';
+        $('#mood-you .mood-emoji').innerText = '😃';
+        const msg = $('#game-msg');
+        msg.innerText = 'Everything is running smoothly! Everyone is happy.';
+        msg.style.color = 'var(--yellow)';
+    }
+
+    const xfactorData = {
+        repair: { title: '🔧 Repair Instead of Replace', text: 'If you repair a broken phone, you reduce demand for new materials. This means less mining, less shipping, and less waste. Small choice → Big effect!' },
+        recycle: { title: '♻️ Recycle Old Devices', text: 'Recycling metals like gold and copper from old phones means fewer new mines are needed. Communities in Ghana and Chile benefit from less pollution.' },
+        local: { title: '🏪 Buy From Local Shops', text: 'Buying locally can reduce the shipping distance. It supports local jobs and cuts down on transport emissions.' },
+        transport: { title: '🚲 Use Greener Transport', text: 'Walking, cycling, or taking public transport reduces the carbon footprint of your daily commute. This helps global climate goals!' }
+    };
+    function showXFactor(type, element) {
+        Sound.pop();
+        $$('.xfactor-bubble').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        const d = xfactorData[type];
+        $('#xfactor-detail').innerHTML = `<h3>${d.title}</h3><p>${d.text}</p>`;
+    }
+
+    function setGlobalStatus(isOn) {
+        Sound.click();
+        $('#btn-global-on').classList.toggle('active', isOn);
+        $('#btn-global-off').classList.toggle('active', !isOn);
+        $$('.whatif-card').forEach(c => c.classList.toggle('lost', !isOn));
+        const msg = $('#whatif-msg');
+        if (isOn) {
+            msg.innerText = 'With global connections, your day is rich and full of variety.';
+            msg.style.color = 'var(--green)';
+        } else {
+            msg.innerText = 'Without global connections, your day would be VERY different. Most things you use come from far away!';
+            msg.style.color = 'var(--red)';
+        }
+    }
+
+    /* ============================================================
+       QUIZ
+       ============================================================ */
+    const quizData = [
+        { q: 'What is the "Secret Weapon" that makes a supply chain strong?', options: ['Having only one path', 'Having more than one path (Redundancy)', 'Using only airplanes'], correct: 1 },
+        { q: 'If a port closes, what happens to the shop and the customer?', options: ['Nothing changes', 'The shop gets more products', 'The shop gets fewer products and the customer notices'], correct: 2 },
+        { q: 'Which continent has the biggest share of the global supply chain (about 50%)?', options: ['North America', 'Asia', 'Europe'], correct: 1 },
+        { q: 'Where do cocoa beans (for chocolate) often come from?', options: ['Ghana and Ivory Coast', 'Canada and Norway', 'Japan and Australia'], correct: 0 },
+        { q: 'What does "X-Factor" mean in the global network?', options: ['The biggest factory in the world', 'Small choices that have big effects', 'The fastest ship'], correct: 1 }
+    ];
+    let quizScore = 0, quizAnswered = 0, streak = 0, quizXPRun = 0, challengeMode = false;
+
+    function toggleChallenge() {
+        Sound.click();
+        challengeMode = !challengeMode;
+        $('#challenge-toggle').textContent = '⏱️ Challenge Mode: ' + (challengeMode ? 'ON' : 'OFF');
+        $('#challenge-toggle').classList.toggle('active', challengeMode);
+        renderQuiz();
+    }
+
+    function startTimer(box, qIndex) {
+        if (!challengeMode) return;
+        const fill = $('.fill', box);
+        let left = 15;
+        fill.style.width = '100%'; fill.style.background = 'var(--green)';
+        const iv = setInterval(() => {
+            left--;
+            const pct = Math.max(left / 15 * 100, 0);
+            fill.style.width = pct + '%';
+            fill.style.background = left <= 5 ? 'var(--red)' : left <= 9 ? 'var(--yellow)' : 'var(--green)';
+            if (left <= 0) { clearInterval(iv); answerQuiz(qIndex, -1, null, box); }
+        }, 1000);
+        box._timer = iv;
+    }
+
+    function renderQuiz() {
+        const container = $('#quiz-container');
+        container.innerHTML = '';
+        quizScore = 0; quizAnswered = 0; streak = 0; quizXPRun = 0;
+        $('#quiz-score').innerText = '';
+        $('#quiz-xp').textContent = '0';
+        quizData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'quiz-question-box';
+            div.innerHTML = `<h3>Q${index + 1}: ${item.q}</h3>${challengeMode ? '<div class="quiz-timer"><div class="fill"></div></div>' : ''}`;
+            const optDiv = document.createElement('div');
+            optDiv.className = 'options-grid';
+            item.options.forEach((opt, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn'; btn.innerText = opt;
+                btn.onclick = () => answerQuiz(index, optIndex, btn, div);
+                optDiv.appendChild(btn);
+            });
+            div.appendChild(optDiv);
+            const feedback = document.createElement('div');
+            feedback.className = 'quiz-feedback';
+            div.appendChild(feedback);
+            container.appendChild(div);
+            startTimer(div, index);
+        });
+    }
+
+    function answerQuiz(qIndex, optIndex, btn, parentDiv) {
+        if (parentDiv.dataset.answered) return;
+        parentDiv.dataset.answered = 'true';
+        if (parentDiv._timer) clearInterval(parentDiv._timer);
+        const item = quizData[qIndex];
+        const feedback = parentDiv.querySelector('.quiz-feedback');
+        const allBtns = $$('.option-btn', parentDiv);
+        allBtns.forEach(b => b.disabled = true);
+        if (optIndex === item.correct) {
+            Sound.success();
+            if (btn) btn.classList.add('correct');
+            streak++;
+            const gained = 20 + (streak - 1) * 5;
+            quizXPRun += gained; quizScore++;
+            addXP(gained, streak > 1 ? `Correct! Streak x${streak}` : 'Correct answer!');
+            feedback.innerText = `✅ Correct! +${gained} XP${streak > 1 ? ' (streak bonus!)' : ''}`;
+            feedback.style.color = 'var(--green)';
+        } else {
+            Sound.fail();
+            streak = 0;
+            if (btn) btn.classList.add('wrong');
+            feedback.innerText = optIndex === -1
+                ? '⏰ Time is up! The correct answer was: ' + item.options[item.correct]
+                : '❌ Not quite. The correct answer was: ' + item.options[item.correct];
+            feedback.style.color = 'var(--red)';
+            allBtns.forEach((b, i) => { if (i === item.correct) b.classList.add('correct'); });
+        }
+        $('#quiz-xp').textContent = quizXPRun;
+        quizAnswered++;
+        if (quizAnswered === quizData.length) {
+            const best = store.get('quiz_best', 0);
+            const scoreMsg = `You scored ${quizScore} out of ${quizData.length}! ${quizScore === 5 ? '🏆 Perfect!' : quizScore >= 3 ? 'Nice work!' : 'Keep exploring!'}`;
+            $('#quiz-score').innerText = scoreMsg + (quizScore > best ? ` 🎉 New personal best!` : '');
+            $('#quiz-score').style.color = 'var(--yellow)';
+            $('#quiz-val').textContent = Math.max(quizScore, best);
+            store.set('quiz_best', Math.max(quizScore, best));
+            if (quizScore === 5) { Confetti.burst(200); award('quiz'); addXP(50, 'Quiz Master: perfect score!'); }
+        }
+    }
+
+    /* ============================================================
+       REFLECTION + REPORT
+       ============================================================ */
+    let saveDraftTimer = null;
+    function updateWordCount() {
+        const text = $('#reflection-text').value;
+        const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+        $('#word-count').innerText = words + ' words';
+        clearTimeout(saveDraftTimer);
+        saveDraftTimer = setTimeout(() => store.set('reflection_draft', text), 400);
+    }
+    function submitReflection() {
+        Sound.click();
+        const text = $('#reflection-text').value;
+        const msg = $('#reflection-msg');
+        if (text.trim().length < 30) {
+            Sound.fail();
+            msg.style.color = 'var(--red)';
+            msg.innerText = 'Please write a bit more! Try to explain what would change most and why.';
+            return;
+        }
+        Sound.success();
+        store.set('reflection_done', text);
+        msg.style.color = 'var(--green)';
+        msg.innerText = '✅ Excellent reflection! You have successfully explained how your day depends on global connections.';
+        const ta = $('#reflection-text'), btn = $('#reflection button');
+        ta.disabled = true; btn.disabled = true;
+        btn.innerText = 'Submitted!'; btn.style.background = 'var(--green)';
+        addXP(20, 'Reflection submitted!');
+        award('reflect');
+    }
+    function lockReflectionIfDone() {
+        const done = store.get('reflection_done', null);
+        if (!done) return;
+        $('#reflection-text').value = done;
+        updateWordCount();
+        const ta = $('#reflection-text'), btn = $('#reflection button');
+        ta.disabled = true; btn.disabled = true;
+        btn.innerText = 'Submitted!'; btn.style.background = 'var(--green)';
+        $('#reflection-msg').style.color = 'var(--green)';
+        $('#reflection-msg').innerText = '✅ Reflection submitted — great work!';
+    }
+
+    function exportReport() {
+        Sound.success();
+        const badgeList = Object.keys(badges).map(id => BADGE_META[id][0] + ' ' + BADGE_META[id][1]);
+        const reflection = store.get('reflection_done', store.get('reflection_draft', '(none yet)'));
+        const lines = [
+            '==============================================',
+            '  ALEZIFY OS — GLOBAL INTERCONNECTION REPORT',
+            '  Omar Sanad | Year 7 Global Project',
+            '==============================================',
+            '',
+            '⚡ Total XP: ' + XP,
+            '🧠 Quiz best: ' + store.get('quiz_best', 0) + '/5',
+            '🏅 Badges (' + badgeList.length + '/5): ' + (badgeList.join(', ') || 'none yet'),
+            '',
+            '✍️ FINAL REFLECTION',
+            'Q: If global connections disappeared from my day, what would change most, and why?',
+            'A: ' + reflection,
+            '',
+            'Sections visited: ' + [...visited].sort().join(', '),
+            '',
+            'Generated by Alezify OS on ' + new Date().toLocaleString()
+        ];
+        const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'alezify-global-report.txt';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        toast('Report exported!', 'Downloaded as alezify-global-report.txt', '📄');
+    }
+
+    function resetAllProgress() {
+        if (!confirm('Reset ALL progress (XP, badges, quiz best, reflection)? This cannot be undone!')) return;
+        Object.keys(localStorage).filter(k => k.startsWith('alezify_')).forEach(k => localStorage.removeItem(k));
+        location.reload();
+    }
+
+    /* ============================================================
+       3D CINEMATIC FACTORY — scoped to #factory section
+       Adapted from the cinematic global supply chain build.
+       ============================================================ */
+    (function CinematicFactory() {
+        const factorySection = document.getElementById('factory');
+        if (!factorySection) return;
+
+        const canvas = document.getElementById('c');
+        if (!canvas) return;
+
+        function sectionSize() {
+            return { W: factorySection.clientWidth, H: factorySection.clientHeight };
+        }
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        const initSize = sectionSize();
+        renderer.setSize(initSize.W, initSize.H);
+        renderer.setScissorTest(true);
+        renderer.setClearColor(0x05051a, 1);
+        renderer.autoClear = false;
+        renderer.shadowMap.enabled = false;
+
+        const clock = new THREE.Clock();
+
+        /* Shared geometry (with CapsuleGeometry fallback for r128) */
+        const GEO = {
+            humanBody : THREE.CapsuleGeometry
+                ? new THREE.CapsuleGeometry(0.16, 0.28, 3, 6)
+                : new THREE.CylinderGeometry(0.16, 0.16, 0.6, 6),
+            humanHead : new THREE.SphereGeometry(0.14, 6, 5),
+            box       : new THREE.BoxGeometry(0.7, 0.7, 0.7),
+            wheel     : new THREE.CylinderGeometry(0.25, 0.25, 0.18, 8),
+        };
+        const MAT = {
+            humanBody : new THREE.MeshStandardMaterial({ color: 0x4a6fa5, roughness: 0.75 }),
+            humanHead : new THREE.MeshStandardMaterial({ color: 0xe0c0a0, roughness: 0.7 }),
+            box       : new THREE.MeshStandardMaterial({ color: 0xb07040, roughness: 0.7 }),
+            boxEdge   : new THREE.LineBasicMaterial({ color: 0xFFD166 }),
+            dark      : new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8 }),
+            white     : new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 }),
+        };
+
+        /* Phase timeline */
+        const PHASES = [
+            { title: 'Global Material Gathering', sub: '16 regions · 16 sources',         dur: 11.0 },
+            { title: 'Convergence',               sub: 'The world becomes one network',    dur: 3.2  },
+            { title: 'Assembly Line',             sub: '14 boxes · one synchronised ride', dur: 10.0 },
+            { title: 'Fleet Loading',             sub: 'Air · Sea · Road',                 dur: 8.0  },
+            { title: 'Regional Distribution',     sub: 'Cairo · Giza · Delta',             dur: 12.0 },
+        ];
+        const TOTAL_DURATION = PHASES.reduce((s, p) => s + p.dur, 0);
+        let phaseIndex = 0, phaseTime = 0, globalTime = 0;
+        let autoRun = true;
+        let cinematicCompleted = false;
+        let cinematicActive = false;
+
+        /* Main scene */
+        const mainScene = new THREE.Scene();
+        mainScene.background = new THREE.Color(0x0a0a1e);
+        mainScene.fog = new THREE.Fog(0x0a0a1e, 70, 200);
+
+        const mainCamera = new THREE.PerspectiveCamera(50, initSize.W / initSize.H, 0.1, 500);
+        mainCamera.position.set(0, 28, 55);
+        mainCamera.lookAt(0, 2, 0);
+
+        mainScene.add(new THREE.AmbientLight(0x8899cc, 0.55));
+        const sun = new THREE.DirectionalLight(0xfff0d0, 1.15);
+        sun.position.set(35, 60, 25); mainScene.add(sun);
+        const pl1 = new THREE.PointLight(0xE2B2FF, 0.9, 90); pl1.position.set(-30, 18, 30); mainScene.add(pl1);
+        const pl2 = new THREE.PointLight(0xFFD166, 0.7, 90); pl2.position.set(30, 14, -25); mainScene.add(pl2);
+
+        const ground = new THREE.Mesh(
+            new THREE.PlaneGeometry(260, 260),
+            new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.95 })
+        );
+        ground.rotation.x = -Math.PI / 2; mainScene.add(ground);
+
+        const mainGrid = new THREE.GridHelper(260, 130, 0x3a3a6e, 0x252550);
+        mainGrid.position.y = 0.02;
+        mainGrid.material.transparent = true;
+        mainGrid.material.opacity = 0.35;
+        mainScene.add(mainGrid);
+
+        /* Factory */
+        const factoryGroup = new THREE.Group();
+        mainScene.add(factoryGroup);
+
+        const factoryMain = new THREE.Mesh(
+            new THREE.BoxGeometry(28, 11, 18),
+            new THREE.MeshStandardMaterial({ color: 0x2a2a4e, metalness: 0.4, roughness: 0.6 })
+        );
+        factoryMain.position.set(0, 5.5, -22); factoryGroup.add(factoryMain);
+
+        const roof = new THREE.Mesh(
+            new THREE.BoxGeometry(30, 1.2, 20),
+            new THREE.MeshStandardMaterial({ color: 0x1a1a3e, metalness: 0.5, roughness: 0.5 })
+        );
+        roof.position.set(0, 11.6, -22); factoryGroup.add(roof);
+
+        const winMat = new THREE.MeshStandardMaterial({ color: 0xFFD166, emissive: 0xFFD166, emissiveIntensity: 0.7 });
+        for (let x = -12; x <= 12; x += 4) {
+            const w = new THREE.Mesh(new THREE.BoxGeometry(2, 1.6, 0.25), winMat);
+            w.position.set(x, 7.5, -13); factoryGroup.add(w);
+        }
+
+        function makeBannerTexture(text) {
+            const c = document.createElement('canvas');
+            c.width = 1024; c.height = 256;
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#0E0D3C'; ctx.fillRect(0, 0, c.width, c.height);
+            ctx.strokeStyle = '#FFD166'; ctx.lineWidth = 14;
+            ctx.strokeRect(8, 8, c.width - 16, c.height - 16);
+            ctx.font = 'bold 128px "Arial Black", sans-serif';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.shadowColor = '#E2B2FF'; ctx.shadowBlur = 34;
+            ctx.fillStyle = '#FFD166';
+            ctx.fillText(text, c.width / 2, c.height / 2 + 8);
+            return new THREE.CanvasTexture(c);
+        }
+        const banner = new THREE.Mesh(
+            new THREE.PlaneGeometry(20, 5),
+            new THREE.MeshBasicMaterial({ map: makeBannerTexture('Alezify.com') })
+        );
+        banner.position.set(0, 13.5, -13); factoryGroup.add(banner);
+
+        const bannerGlow = new THREE.PointLight(0xFFD166, 1.4, 28);
+        bannerGlow.position.set(0, 13, -9); factoryGroup.add(bannerGlow);
+
+        /* Rail + boxes */
+        const RAIL_START = -8, RAIL_END = 8;
+        const RAIL_LENGTH = RAIL_END - RAIL_START;
+        const RAIL_Y = 1.0;
+        const BOX_COUNT = 14;
+        const BOX_SPACING = 1.1;
+        const BOX_START_X = RAIL_START + 0.6;
+        const BOX_TRAVEL = 5.5;
+
+        const rail = new THREE.Mesh(
+            new THREE.BoxGeometry(RAIL_LENGTH, 0.3, 1.5),
+            new THREE.MeshStandardMaterial({ color: 0x3a3a6e, metalness: 0.7, roughness: 0.35 })
+        );
+        rail.position.set((RAIL_START + RAIL_END) / 2, RAIL_Y, 0);
+        mainScene.add(rail);
+
+        const stripeMat = new THREE.MeshStandardMaterial({ color: 0x5a5a9e, metalness: 0.5, roughness: 0.4 });
+        for (let x = RAIL_START; x < RAIL_END; x += 0.85) {
+            const s = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.32, 1.52), stripeMat);
+            s.position.set(x, RAIL_Y, 0); mainScene.add(s);
+        }
+        const supportMat = new THREE.MeshStandardMaterial({ color: 0x252550, metalness: 0.6, roughness: 0.5 });
+        for (let x = RAIL_START + 1; x <= RAIL_END - 1; x += 3) {
+            const sup = new THREE.Mesh(new THREE.BoxGeometry(0.32, 1.0, 0.32), supportMat);
+            sup.position.set(x, RAIL_Y / 2, 0); mainScene.add(sup);
+        }
+
+        const boxes = [];
+        const boxEdgeGeo = new THREE.EdgesGeometry(GEO.box);
+        for (let i = 0; i < BOX_COUNT; i++) {
+            const startX = BOX_START_X + i * BOX_SPACING;
+            const b = new THREE.Mesh(GEO.box, MAT.box.clone());
+            b.position.set(startX, RAIL_Y + 0.5, 0);
+            b.userData.startX = startX;
+            mainScene.add(b);
+            const edges = new THREE.LineSegments(boxEdgeGeo, MAT.boxEdge);
+            b.add(edges);
+            boxes.push(b);
+        }
+
+        /* Workers */
+        function makeHuman(bodyColor) {
+            const g = new THREE.Group();
+            const bodyMat = bodyColor
+                ? new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.75 })
+                : MAT.humanBody;
+            const body = new THREE.Mesh(GEO.humanBody, bodyMat);
+            body.position.y = 0.42; g.add(body);
+            const head = new THREE.Mesh(GEO.humanHead, MAT.humanHead);
+            head.position.y = 0.9; g.add(head);
+            return g;
+        }
+
+        const workers = [];
+        for (let i = 0; i < BOX_COUNT; i++) {
+            const w = makeHuman();
+            const bx = BOX_START_X + i * BOX_SPACING;
+            w.position.set(bx, 0, 0.95);
+            w.userData.baseX = bx;
+            w.userData.phase = i * 0.35;
+            mainScene.add(w);
+            workers.push(w);
+        }
+
+        /* Transport fleet */
+        function makeCargoPlane(scale) {
+            scale = scale || 1;
+            const g = new THREE.Group();
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0xE2B2FF, metalness: 0.4, roughness: 0.4 });
+            const wingMat = new THREE.MeshStandardMaterial({ color: 0xc080d0, metalness: 0.3, roughness: 0.5 });
+            const engMat  = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.85, roughness: 0.3 });
+
+            const fuse = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 2.8, 12), bodyMat);
+            fuse.rotation.z = Math.PI / 2; fuse.position.y = 0.4; g.add(fuse);
+
+            const nose = new THREE.Mesh(new THREE.ConeGeometry(0.42, 0.8, 12), bodyMat);
+            nose.rotation.z = -Math.PI / 2; nose.position.set(1.85, 0.4, 0); g.add(nose);
+
+            const wings = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.12, 4.2), wingMat);
+            wings.position.set(0.1, 0.4, 0); g.add(wings);
+
+            const tail = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.12), wingMat);
+            tail.position.set(-1.3, 0.95, 0); g.add(tail);
+
+            const stab = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.09, 1.4), wingMat);
+            stab.position.set(-1.3, 0.45, 0); g.add(stab);
+
+            [-0.85, 0.85].forEach(z => {
+                const eng = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.45, 8), engMat);
+                eng.rotation.z = Math.PI / 2; eng.position.set(0.4, 0.4, z); g.add(eng);
+            });
+
+            g.scale.setScalar(scale);
+            return g;
+        }
+
+        function makeTruck() {
+            const g = new THREE.Group();
+            const cabMat = new THREE.MeshStandardMaterial({ color: 0xcc4444, metalness: 0.4, roughness: 0.5 });
+            const trailMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.3, roughness: 0.65 });
+
+            const cab = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 1.8), cabMat);
+            cab.position.set(0, 0.8, 1.5); g.add(cab);
+
+            const trailer = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.8, 3.2), trailMat);
+            trailer.position.set(0, 1.1, -0.8); g.add(trailer);
+
+            [[-0.75, 1.5], [0.75, 1.5], [-0.75, -1.8], [0.75, -1.8], [-0.75, -0.8], [0.75, -0.8]].forEach(([x, z]) => {
+                const w = new THREE.Mesh(GEO.wheel, MAT.dark);
+                w.rotation.z = Math.PI / 2; w.position.set(x, 0.3, z); g.add(w);
+            });
+            return g;
+        }
+
+        function makeShip() {
+            const g = new THREE.Group();
+            const hullMat = new THREE.MeshStandardMaterial({ color: 0x7A2233, roughness: 0.75 });
+            const deckMat = new THREE.MeshStandardMaterial({ color: 0x23233c, roughness: 0.6 });
+            const towerMat = new THREE.MeshStandardMaterial({ color: 0xD3F7FD, roughness: 0.4 });
+
+            const hull = new THREE.Mesh(new THREE.BoxGeometry(6.5, 1.3, 2.4), hullMat);
+            hull.position.y = 0.65; g.add(hull);
+
+            const stripe = new THREE.Mesh(
+                new THREE.BoxGeometry(6.52, 0.22, 2.42),
+                new THREE.MeshStandardMaterial({ color: 0xFFD166 })
+            );
+            stripe.position.y = 1.15; g.add(stripe);
+
+            const deck = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.18, 2.5), deckMat);
+            deck.position.y = 1.4; g.add(deck);
+
+            const tower = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.8, 2.0), towerMat);
+            tower.position.set(-2.5, 2.4, 0); g.add(tower);
+            return g;
+        }
+
+        const trucks = [makeTruck(), makeTruck()];
+        trucks[0].position.set(12, 0, 6); trucks[1].position.set(16, 0, 6);
+        trucks.forEach(t => { t.rotation.y = Math.PI; mainScene.add(t); });
+
+        const planes = [makeCargoPlane(2.2), makeCargoPlane(2.2)];
+        planes[0].position.set(5, 0.6, -12); planes[1].position.set(0, 0.6, -18);
+        planes.forEach(p => mainScene.add(p));
+
+        const ship = makeShip();
+        ship.position.set(25, 0.2, 8); mainScene.add(ship);
+
+        const water = new THREE.Mesh(
+            new THREE.PlaneGeometry(30, 18),
+            new THREE.MeshStandardMaterial({ color: 0x0a2a55, metalness: 0.75, roughness: 0.22 })
+        );
+        water.rotation.x = -Math.PI / 2; water.position.set(25, 0.02, 8); mainScene.add(water);
+
+        const landingPlane = makeCargoPlane(2);
+        landingPlane.position.set(0, 32, -45); landingPlane.rotation.z = -0.15;
+        mainScene.add(landingPlane);
+
+        /* Phase 4 destinations */
+        function makeCar() {
+            const g = new THREE.Group();
+            const bodyMat = new THREE.MeshStandardMaterial({ color: 0x06D6A0, metalness: 0.4, roughness: 0.4 });
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.5, 1.5), bodyMat);
+            body.position.y = 0.38; g.add(body);
+            const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.75), bodyMat);
+            cabin.position.set(0, 0.78, -0.1); g.add(cabin);
+            [[-0.42, 0.55], [0.42, 0.55], [-0.42, -0.55], [0.42, -0.55]].forEach(([x, z]) => {
+                const w = new THREE.Mesh(GEO.wheel, MAT.dark);
+                w.rotation.z = Math.PI / 2; w.position.set(x, 0.25, z); g.add(w);
+            });
+            return g;
+        }
+
+        function makeHouse(color) {
+            const g = new THREE.Group();
+            const wall = new THREE.Mesh(
+                new THREE.BoxGeometry(2.2, 1.6, 2.2),
+                new THREE.MeshStandardMaterial({ color: 0xD3F7FD, roughness: 0.85 })
+            );
+            wall.position.y = 0.8; g.add(wall);
+            const roof = new THREE.Mesh(
+                new THREE.ConeGeometry(1.7, 1.1, 4),
+                new THREE.MeshStandardMaterial({ color: color, roughness: 0.7 })
+            );
+            roof.position.y = 2.15; roof.rotation.y = Math.PI / 4; g.add(roof);
+            return g;
+        }
+
+        const destinations = [
+            { name: 'Cairo', pos: new THREE.Vector3(-22, 0, 46), color: 0xEF476F },
+            { name: 'Giza',  pos: new THREE.Vector3(  6, 0, 58), color: 0xFFD166 },
+            { name: 'Delta', pos: new THREE.Vector3(-38, 0, 38), color: 0x06D6A0 },
+        ];
+        destinations.forEach(d => {
+            const h = makeHouse(d.color); h.position.copy(d.pos); mainScene.add(h);
+        });
+
+        function makeRoute(from, to, out) {
+            const mid = from.clone().lerp(to, 0.5); mid.x += out;
+            return new THREE.CatmullRomCurve3([from, mid, to]);
+        }
+        const factoryExit = new THREE.Vector3(0, 0, 14);
+        const routes = [
+            makeRoute(factoryExit, destinations[0].pos, -12),
+            makeRoute(factoryExit, destinations[1].pos,   6),
+            makeRoute(factoryExit, destinations[2].pos, -22),
+        ];
+        routes.forEach(r => {
+            const pts = r.getPoints(60);
+            const geo = new THREE.BufferGeometry().setFromPoints(pts);
+            const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xFFD166, transparent: true, opacity: 0.3 }));
+            line.position.y = 0.04; mainScene.add(line);
+        });
+
+        let convoy = [];
+        function spawnConvoy() {
+            const configs = [
+                { route: routes[0], truckColor: 0xcc4444, dest: 0 },
+                { route: routes[1], truckColor: 0x44cc88, dest: 1 },
+                { route: routes[2], truckColor: 0x4488cc, dest: 2 },
+            ];
+            convoy = [];
+            configs.forEach(cfg => {
+                const truck = makeTruck();
+                truck.children[0].material = new THREE.MeshStandardMaterial({ color: cfg.truckColor, metalness: 0.4, roughness: 0.5 });
+                truck.scale.setScalar(1.1); mainScene.add(truck);
+                const car = makeCar(); mainScene.add(car);
+                const worker = makeHuman(0xffffff); worker.visible = false; mainScene.add(worker);
+                convoy.push({ truck, car, worker, route: cfg.route, progress: 0, speed: 0.04, delivererProgress: 0, dest: destinations[cfg.dest] });
+            });
+        }
+
+        /* Regional scenes */
+        const REGION_NAMES = [
+            'Egypt','China','Brazil','India','USA','Japan','Germany','Australia',
+            'Nigeria','Canada','Mexico','S. Korea','Vietnam','S. Africa','Turkey','Indonesia',
+        ];
+        const REGION_COLORS = [
+            0xc9a227, 0xd94f4f, 0x3fbf5f, 0xff9a3d, 0x4d7fff, 0xff69b4, 0x8b8b8b, 0xff7f3f,
+            0x36a846, 0xcc3333, 0x2e8b57, 0x7f00ff, 0xffd166, 0xcc7700, 0xcc0000, 0x009966,
+        ];
+
+        const regions = [];
+        function buildRegion(idx) {
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a1e);
+            scene.fog = new THREE.Fog(0x0a0a1e, 14, 40);
+            scene.add(new THREE.AmbientLight(0xaabbee, 0.75));
+            const dir = new THREE.DirectionalLight(0xfff5d0, 1.1);
+            dir.position.set(6, 12, 6); scene.add(dir);
+
+            const groundMesh = new THREE.Mesh(
+                new THREE.PlaneGeometry(24, 24),
+                new THREE.MeshStandardMaterial({ color: REGION_COLORS[idx], roughness: 0.9 })
+            );
+            groundMesh.rotation.x = -Math.PI / 2; scene.add(groundMesh);
+
+            const grid = new THREE.GridHelper(24, 24, 0xffffff, 0x333333);
+            grid.position.y = 0.01;
+            grid.material.transparent = true; grid.material.opacity = 0.18; scene.add(grid);
+
+            const piles = [];
+            [[-3.2, 0, -1.8], [-1.6, 0, -2.2], [0, 0, -2.0], [1.6, 0, -2.2], [3.2, 0, -1.8]].forEach(([x, , z]) => {
+                const pile = new THREE.Mesh(
+                    new THREE.DodecahedronGeometry(0.55, 0),
+                    new THREE.MeshStandardMaterial({ color: 0xb08050, roughness: 0.85 })
+                );
+                pile.position.set(x, 0.45, z); scene.add(pile); piles.push(pile);
+            });
+
+            const plane = makeCargoPlane(1.4);
+            plane.position.set(4.5, 0.1, 3.5); plane.rotation.y = -Math.PI / 4; scene.add(plane);
+
+            const humans = [];
+            for (let i = 0; i < 5; i++) {
+                const h = makeHuman();
+                h.position.set(-3.2 + i * 1.6, 0, 1.6); scene.add(h);
+                humans.push({
+                    mesh: h,
+                    startX: -3.2 + i * 1.6, startZ: 1.6,
+                    pileX: -3.2 + i * 1.6, pileZ: -1.0,
+                    planeX: 3.4 + i * 0.35, planeZ: 2.8,
+                    phaseOffset: i * 0.12,
+                });
+            }
+
+            const cam = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+            cam.position.set(0, 7.5, 10.5); cam.lookAt(0, 0.6, 0);
+            return { scene, camera: cam, plane, humans, label: REGION_NAMES[idx] };
+        }
+        for (let i = 0; i < 16; i++) regions.push(buildRegion(i));
+
+        function resetRegions() {
+            regions.forEach(r => {
+                r.plane.visible = true;
+                r.plane.position.set(4.5, 0.1, 3.5);
+                r.plane.rotation.set(0, -Math.PI / 4, 0);
+                r.humans.forEach(h => {
+                    h.mesh.visible = true;
+                    h.mesh.scale.setScalar(1);
+                    h.mesh.position.set(h.startX, 0, h.startZ);
+                });
+            });
+        }
+
+        /* Split-screen render */
+        function renderSplitScreen(collapse) {
+            const { W, H } = sectionSize();
+            const cellW = W / 4, cellH = H / 4;
+            const cx = W / 2, cy = H / 2;
+            for (let i = 0; i < 16; i++) {
+                const col = i % 4, row = Math.floor(i / 4);
+                let x = col * cellW;
+                let y = H - (row + 1) * cellH;
+                let w = cellW, h = cellH;
+                const cellCX = x + w / 2, cellCY = y + h / 2;
+                const newCX = cellCX + (cx - cellCX) * collapse;
+                const newCY = cellCY + (cy - cellCY) * collapse;
+                const newW = w * (1 - collapse) + 2 * collapse;
+                const newH = h * (1 - collapse) + 2 * collapse;
+                x = newCX - newW / 2; y = newCY - newH / 2;
+                w = newW; h = newH;
+                if (w < 1 || h < 1) continue;
+                renderer.setViewport(x, y, w, h);
+                renderer.setScissor(x, y, w, h);
+                const r = regions[i];
+                r.camera.aspect = w / h;
+                r.camera.updateProjectionMatrix();
+                renderer.clearDepth();
+                renderer.render(r.scene, r.camera);
+            }
+        }
+
+        /* Camera paths */
+        const camCurve2 = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(-2, 14, 24), new THREE.Vector3(-4, 8, 14),
+            new THREE.Vector3(0, 5.5, 8), new THREE.Vector3(4, 6.5, 12),
+            new THREE.Vector3(1, 7, 16),
+        ]);
+        const lookCurve2 = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(-2, 2, 0), new THREE.Vector3(0, 2, 0),
+            new THREE.Vector3(2, 1.5, 0), new THREE.Vector3(0, 1.5, 0),
+            new THREE.Vector3(-1, 2, 0),
+        ]);
+        const camCurve3 = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(8, 22, 24), new THREE.Vector3(20, 16, 14),
+            new THREE.Vector3(28, 12, 14), new THREE.Vector3(18, 15, 22),
+            new THREE.Vector3(4, 22, 30),
+        ]);
+        const lookCurve3 = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(2, 2, 0), new THREE.Vector3(12, 2, 4),
+            new THREE.Vector3(24, 1, 8), new THREE.Vector3(12, 1.5, 4),
+            new THREE.Vector3(2, 2, 0),
+        ]);
+        const camCurve4 = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(0, 22, 30), new THREE.Vector3(-12, 18, 38),
+            new THREE.Vector3(-22, 18, 48), new THREE.Vector3(-10, 22, 55),
+            new THREE.Vector3(0, 26, 70),
+        ]);
+        const lookCurve4 = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(0, 1, 14), new THREE.Vector3(-10, 1, 28),
+            new THREE.Vector3(-18, 1, 42), new THREE.Vector3(-8, 1, 52),
+            new THREE.Vector3(0, 1, 55),
+        ]);
+
+        /* HUD */
+        const phaseTitleEl = document.getElementById('phase-title');
+        const phaseSubEl   = document.getElementById('phase-sub');
+        const brandEl      = document.getElementById('brand');
+        const mapOverlay   = document.getElementById('map-overlay');
+        const tlFill       = document.getElementById('timeline-fill');
+        const tlLabel      = document.getElementById('timeline-label');
+
+        function showTitleCard(idx) {
+            const p = PHASES[idx];
+            phaseTitleEl.textContent = p.title;
+            phaseSubEl.textContent = p.sub;
+            phaseTitleEl.classList.add('show');
+            phaseSubEl.classList.add('show');
+            setTimeout(() => {
+                phaseTitleEl.classList.remove('show');
+                phaseSubEl.classList.remove('show');
+            }, 2600);
+        }
+
+        function updateTimeline() {
+            const p = PHASES[phaseIndex];
+            const pct = (globalTime / TOTAL_DURATION) * 100;
+            tlFill.style.width = pct + '%';
+            tlLabel.textContent = `Phase ${phaseIndex + 1} / 5 — ${p.title}`;
+        }
+
+        const mapSvg = document.getElementById('map-svg');
+        mapSvg.innerHTML = `
+            <rect x="0" y="0" width="240" height="140" fill="transparent"/>
+            <circle cx="26" cy="116" r="5" fill="#E2B2FF"/>
+            <text x="36" y="120" font-size="6" fill="#E2B2FF" font-family="monospace">FACTORY</text>
+            <path id="rt-cairo" d="M 26 116 Q 110 30 200 32" stroke="#EF476F" stroke-width="1.6" fill="none" stroke-dasharray="3 3" opacity="0.7"/>
+            <path id="rt-giza"  d="M 26 116 Q 90 60 140 28"  stroke="#FFD166" stroke-width="1.6" fill="none" stroke-dasharray="3 3" opacity="0.7"/>
+            <path id="rt-delta" d="M 26 116 Q 50 90 65 55"   stroke="#06D6A0" stroke-width="1.6" fill="none" stroke-dasharray="3 3" opacity="0.7"/>
+            <circle id="d-cairo" cx="26" cy="116" r="3" fill="#EF476F"/>
+            <circle id="d-giza"  cx="26" cy="116" r="3" fill="#FFD166"/>
+            <circle id="d-delta" cx="26" cy="116" r="3" fill="#06D6A0"/>
+            <text x="185" y="24" font-size="6" fill="#EF476F" font-family="monospace">CAIRO</text>
+            <text x="130" y="22" font-size="6" fill="#FFD166" font-family="monospace">GIZA</text>
+            <text x="58"  y="50" font-size="6" fill="#06D6A0" font-family="monospace">DELTA</text>
+        `;
+
+        /* Phase state */
+        function resetPhase2() {
+            boxes.forEach(b => {
+                b.position.x = b.userData.startX;
+                b.position.y = RAIL_Y + 0.5;
+                b.position.z = 0;
+                b.rotation.set(0, 0, 0);
+                b.scale.setScalar(1);
+                b.visible = true;
+            });
+            workers.forEach((w, i) => {
+                w.position.set(w.userData.baseX, 0, 0.95);
+                w.visible = true;
+            });
+        }
+
+        function resetPhase3() {
+            trucks[0].position.set(12, 0, 6); trucks[0].rotation.set(0, Math.PI, 0);
+            trucks[1].position.set(16, 0, 6); trucks[1].rotation.set(0, Math.PI, 0);
+            planes[0].position.set(5, 0.6, -12); planes[0].rotation.set(0, 0, 0);
+            planes[1].position.set(0, 0.6, -18); planes[1].rotation.set(0, 0, 0);
+            ship.position.set(25, 0.2, 8);
+            boxes.forEach(b => {
+                b.position.set(b.userData.startX + BOX_TRAVEL, RAIL_Y + 0.5, 0);
+                b.visible = true;
+            });
+        }
+
+        function resetPhase4() {
+            convoy.forEach(c => {
+                mainScene.remove(c.truck); mainScene.remove(c.car); mainScene.remove(c.worker);
+            });
+            convoy = [];
+            ['cairo', 'giza', 'delta'].forEach(k => {
+                const dot = document.getElementById('d-' + k);
+                if (dot) { dot.setAttribute('cx', 26); dot.setAttribute('cy', 116); }
+            });
+        }
+
+        function onPhaseEnter(idx) {
+            showTitleCard(idx);
+            if (idx === 0) {
+                resetRegions();
+                brandEl.classList.remove('show');
+                mapOverlay.classList.remove('show');
+                document.getElementById('lb-top').classList.add('show');
+                document.getElementById('lb-bottom').classList.add('show');
+            }
+            if (idx === 1) {
+                brandEl.classList.add('show');
+                landingPlane.position.set(0, 32, -45);
+                landingPlane.rotation.set(0, 0, -0.15);
+            }
+            if (idx === 2) { resetPhase2(); mapOverlay.classList.remove('show'); }
+            if (idx === 3) { resetPhase3(); }
+            if (idx === 4) { resetPhase4(); spawnConvoy(); mapOverlay.classList.add('show'); }
+        }
+
+        /* Per-frame animations */
+        function animatePhase1(t) {
+            regions.forEach(r => {
+                r.humans.forEach(h => {
+                    const ht = t + h.phaseOffset;
+                    if (ht < 3) {
+                        const p = ht / 3;
+                        h.mesh.position.x = h.startX + (h.pileX - h.startX) * p;
+                        h.mesh.position.z = h.startZ + (h.pileZ - h.startZ) * p;
+                        h.mesh.position.y = Math.abs(Math.sin(ht * 12)) * 0.08;
+                    } else if (ht < 5) {
+                        h.mesh.position.x = h.pileX; h.mesh.position.z = h.pileZ;
+                        h.mesh.position.y = Math.abs(Math.sin(ht * 10)) * 0.12;
+                    } else if (ht < 7) {
+                        const p = (ht - 5) / 2;
+                        h.mesh.position.x = h.pileX + (h.planeX - h.pileX) * p;
+                        h.mesh.position.z = h.pileZ + (h.planeZ - h.pileZ) * p;
+                        h.mesh.position.y = Math.abs(Math.sin(ht * 12)) * 0.08;
+                    } else if (ht < 8) {
+                        const p = (ht - 7);
+                        h.mesh.scale.setScalar(Math.max(0.05, 1 - p));
+                    } else { h.mesh.visible = false; }
+                });
+                if (t > 6) {
+                    const p = Math.min((t - 6) / 4, 1);
+                    const eased = p * p;
+                    r.plane.position.y = 0.1 + eased * 9;
+                    r.plane.position.z = 3.5 - eased * 4;
+                    r.plane.position.x = 4.5 + eased * 2;
+                    r.plane.rotation.z = eased * 0.25;
+                    r.plane.rotation.x = eased * 0.1;
+                }
+            });
+        }
+
+        function animateTransition(t) {
+            const p = Math.min(t / 2.4, 1);
+            const eased = p * p * (3 - 2 * p);
+            landingPlane.position.y = 32 - eased * 30.5;
+            landingPlane.position.z = -45 + eased * 18;
+            landingPlane.rotation.z = -0.15 + eased * 0.15;
+            if (t > 2.4) landingPlane.position.x += 0.05;
+        }
+
+        function animatePhase2(t) {
+            if (t < 4) {
+                workers.forEach((w, i) => {
+                    w.position.y = Math.abs(Math.sin(t * 9 + i * 0.4)) * 0.14;
+                    w.rotation.z = Math.sin(t * 7 + i) * 0.15;
+                });
+            } else if (t < 8.5) {
+                const p = Math.min((t - 4) / 4.5, 1);
+                const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+                const offset = eased * BOX_TRAVEL;
+                boxes.forEach(b => {
+                    b.position.x = b.userData.startX + offset;
+                    b.rotation.y = offset * 0.05;
+                });
+                workers.forEach((w, i) => {
+                    w.rotation.z = 0;
+                    w.position.x = w.userData.baseX + offset;
+                    w.position.y = Math.abs(Math.sin(t * 14 + i)) * 0.06;
+                });
+            } else {
+                workers.forEach(w => w.position.y = 0);
+            }
+        }
+
+        function animatePhase3(t) {
+            if (t > 2) {
+                const p = Math.min((t - 2) / 4, 1);
+                const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+                const destinations = [
+                    { pos: new THREE.Vector3(11.6, 2.0, 6.4), boxCount: [0, 1] },
+                    { pos: new THREE.Vector3(12.4, 2.0, 6.4), boxCount: [2, 3] },
+                    { pos: new THREE.Vector3(15.6, 2.0, 6.4), boxCount: [4, 5] },
+                    { pos: new THREE.Vector3(16.4, 2.0, 6.4), boxCount: [6, 7] },
+                    { pos: new THREE.Vector3(5.0, 2.2, -12),  boxCount: [8, 9] },
+                    { pos: new THREE.Vector3(5.5, 2.2, -12),  boxCount: [10] },
+                    { pos: new THREE.Vector3(25.0, 2.4, 8),   boxCount: [11, 12] },
+                    { pos: new THREE.Vector3(25.6, 2.4, 8),   boxCount: [13] },
+                ];
+                const targets = new Array(BOX_COUNT).fill(null);
+                destinations.forEach(d => d.boxCount.forEach(i => targets[i] = d.pos));
+                boxes.forEach((b, i) => {
+                    const target = targets[i];
+                    if (!target) return;
+                    const startX = b.userData.startX + BOX_TRAVEL;
+                    const startY = RAIL_Y + 0.5;
+                    b.position.x = startX + (target.x - startX) * eased;
+                    b.position.z = 0 + (target.z - 0) * eased;
+                    const arcY = Math.sin(eased * Math.PI) * 3.5;
+                    b.position.y = startY + (target.y - startY) * eased + arcY;
+                    b.rotation.y = eased * Math.PI * 0.5;
+                    b.scale.setScalar(1 - eased * 0.25);
+                });
+            }
+        }
+
+        function animatePhase4(t) {
+            if (!convoy.length) return;
+            const mapEndpoints = {
+                cairo: { x: 200, y: 32 },
+                giza:  { x: 140, y: 28 },
+                delta: { x: 65,  y: 55 },
+            };
+            convoy.forEach((c, idx) => {
+                c.progress = Math.min(c.progress + 0.0045, 1);
+                const pos = c.route.getPoint(c.progress);
+                c.truck.position.copy(pos); c.truck.position.y = 0;
+                const ahead = c.route.getPoint(Math.min(c.progress + 0.01, 1));
+                c.truck.lookAt(ahead.x, 0, ahead.z); c.truck.rotateY(Math.PI);
+                const carPos = c.route.getPoint(Math.max(0, c.progress - 0.035));
+                c.car.position.copy(carPos); c.car.position.y = 0;
+                c.car.lookAt(pos.x, 0, pos.z); c.car.rotateY(Math.PI);
+                const mapKeys = ['cairo', 'giza', 'delta'];
+                const end = mapEndpoints[mapKeys[idx]];
+                if (end) {
+                    const dot = document.getElementById('d-' + mapKeys[idx]);
+                    if (dot) {
+                        dot.setAttribute('cx', 26 + (end.x - 26) * c.progress);
+                        dot.setAttribute('cy', 116 + (end.y - 116) * c.progress);
+                    }
+                }
+                if (c.progress > 0.92) {
+                    c.worker.visible = true;
+                    c.delivererProgress = Math.min(c.delivererProgress + 0.02, 1);
+                    const house = c.dest.pos;
+                    c.worker.position.set(
+                        c.truck.position.x + (house.x - c.truck.position.x) * c.delivererProgress + 1.5 * (1 - c.delivererProgress),
+                        0,
+                        c.truck.position.z + (house.z - c.truck.position.z) * c.delivererProgress
+                    );
+                    c.worker.rotation.z = Math.sin(t * 12) * 0.1;
+                }
+            });
+        }
+
+        /* Main loop */
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = Math.min(clock.getDelta(), 0.1);
+            if (!cinematicActive) return;
+
+            if (autoRun) {
+                phaseTime += dt;
+                globalTime += dt;
+                if (phaseTime >= PHASES[phaseIndex].dur) {
+                    phaseTime = 0;
+                    phaseIndex = (phaseIndex + 1) % PHASES.length;
+                    if (phaseIndex === 0) {
+                        globalTime = 0;
+                        if (!cinematicCompleted) {
+                            cinematicCompleted = true;
+                            if (typeof addXP === 'function') addXP(50, 'Watched the full supply chain cinematic!');
+                            if (typeof award === 'function') award('factory');
+                        }
+                    }
+                    onPhaseEnter(phaseIndex);
+                }
+            }
+
+            if (phaseIndex === 0) animatePhase1(phaseTime);
+            else if (phaseIndex === 1) animateTransition(phaseTime);
+            else if (phaseIndex === 2) animatePhase2(phaseTime);
+            else if (phaseIndex === 3) animatePhase3(phaseTime);
+            else if (phaseIndex === 4) animatePhase4(phaseTime);
+
+            const { W, H } = sectionSize();
+            mainCamera.aspect = W / H;
+            mainCamera.updateProjectionMatrix();
+
+            if (phaseIndex === 1) {
+                const p = phaseTime / PHASES[1].dur;
+                mainCamera.position.set(
+                    THREE.MathUtils.lerp(8, 0, p),
+                    THREE.MathUtils.lerp(32, 18, p),
+                    THREE.MathUtils.lerp(42, 30, p)
+                );
+                mainCamera.lookAt(
+                    THREE.MathUtils.lerp(2, 0, p), 2,
+                    THREE.MathUtils.lerp(-6, -2, p)
+                );
+            } else if (phaseIndex === 2) {
+                const p = Math.min(phaseTime / PHASES[2].dur, 1);
+                mainCamera.position.copy(camCurve2.getPoint(p));
+                mainCamera.lookAt(lookCurve2.getPoint(p));
+            } else if (phaseIndex === 3) {
+                const p = Math.min(phaseTime / PHASES[3].dur, 1);
+                mainCamera.position.copy(camCurve3.getPoint(p));
+                mainCamera.lookAt(lookCurve3.getPoint(p));
+            } else if (phaseIndex === 4) {
+                const p = Math.min(phaseTime / PHASES[4].dur, 1);
+                mainCamera.position.copy(camCurve4.getPoint(p));
+                mainCamera.lookAt(lookCurve4.getPoint(p));
+            }
+
+            renderer.setScissorTest(false);
+            renderer.setViewport(0, 0, W, H);
+            renderer.clear();
+            renderer.setScissorTest(true);
+
+            if (phaseIndex === 0) {
+                renderer.setScissorTest(false);
+                renderer.setViewport(0, 0, W, H);
+                renderer.setScissor(0, 0, W, H);
+                renderer.setClearColor(0x000000, 1);
+                renderer.clear();
+                renderer.setScissorTest(true);
+                renderSplitScreen(0);
+            } else if (phaseIndex === 1) {
+                renderer.setScissorTest(false);
+                renderer.setViewport(0, 0, W, H);
+                renderer.setScissor(0, 0, W, H);
+                renderer.render(mainScene, mainCamera);
+                renderer.setScissorTest(true);
+                const t = phaseTime / PHASES[1].dur;
+                const collapse = Math.max(0, Math.min((t - 0.25) / 0.55, 1));
+                if (collapse < 1) renderSplitScreen(collapse);
+            } else {
+                renderer.setScissorTest(false);
+                renderer.setViewport(0, 0, W, H);
+                renderer.setScissor(0, 0, W, H);
+                renderer.render(mainScene, mainCamera);
+            }
+
+            updateTimeline();
+        }
+
+        /* Controls */
+        function restartCinematic() {
+            phaseIndex = 0;
+            phaseTime = 0;
+            globalTime = 0;
+            cinematicCompleted = false;
+            resetRegions();
+            resetPhase2();
+            resetPhase3();
+            resetPhase4();
+            onPhaseEnter(0);
+        }
+
+        function skipPhase() {
+            phaseTime = 0;
+            phaseIndex = (phaseIndex + 1) % PHASES.length;
+            if (phaseIndex === 0) globalTime = 0;
+            onPhaseEnter(phaseIndex);
+        }
+
+        document.getElementById('btn-replay').addEventListener('click', () => { Sound.click(); restartCinematic(); });
+        document.getElementById('btn-skip').addEventListener('click', () => { Sound.click(); skipPhase(); });
+
+        /* Resize */
+        let ro = null;
+        function resizeCinematic() {
+            const { W, H } = sectionSize();
+            if (W === 0 || H === 0) return;
+            renderer.setSize(W, H);
+            mainCamera.aspect = W / H;
+            mainCamera.updateProjectionMatrix();
+        }
+        window.addEventListener('resize', resizeCinematic);
+        try {
+            ro = new ResizeObserver(resizeCinematic);
+            ro.observe(factorySection);
+        } catch (e) { /* ResizeObserver not available */ }
+
+        /* Visibility detection — pause animation when section is off-screen */
+        try {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(e => { cinematicActive = e.isIntersecting; });
+            }, { threshold: 0.05 });
+            io.observe(factorySection);
+        } catch (e) {
+            cinematicActive = true; /* fallback: always animate */
+        }
+
+        /* Expose restart for command palette */
+        window.cinematicRestart = restartCinematic;
+
+        /* Kick off */
+        onPhaseEnter(0);
+        animate();
+    })();
+
+    /* ============================================================
+       INIT
+       ============================================================ */
+    document.addEventListener('DOMContentLoaded', () => {
+        $('#xp-val').textContent = XP;
+        $('#quiz-val').textContent = store.get('quiz_best', 0) || '–';
+
+        renderQuiz();
+        syncBadges();
+        lockReflectionIfDone();
+        checkExplorer();
+        syncGuideCards();
+
+        const draft = store.get('reflection_draft', '');
+        if (draft && !$('#reflection-text').disabled) {
+            $('#reflection-text').value = draft;
+            updateWordCount();
+        }
+
+        document.body.addEventListener('pointerdown', () => Sound.init(), { once: true });
+    });
+    </script>
+</body>
+</html>
