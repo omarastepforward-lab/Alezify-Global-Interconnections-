@@ -392,6 +392,27 @@
         #fs3d { width: 100%; height: 100%; display: block; }
         #fs3d canvas { display: block; }
 
+        /* --- SHIPMENT COUNTER (NEW) --- */
+        .fs-shipment-row {
+            display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; justify-content: center;
+            background: rgba(14,13,60,0.9); border: 1px solid rgba(211,247,253,0.25);
+            border-radius: 50px; padding: 0.4rem 1.1rem;
+        }
+        .fs-box-counter {
+            font-size: 0.8rem; font-weight: bold; color: var(--yellow); white-space: nowrap;
+        }
+        .fs-box-counter b { color: var(--white); font-size: 1rem; }
+        .fs-pips { display: flex; gap: 6px; }
+        .fs-pips span {
+            width: 16px; height: 16px; border-radius: 4px;
+            border: 2px solid rgba(211,247,253,0.35);
+            background: rgba(0,0,0,0.45);
+            transition: all 0.3s ease;
+        }
+        .fs-pips span.on { box-shadow: 0 0 10px rgba(255,209,102,0.7); }
+        .fs-pips span.on.sea { background: var(--green); border-color: var(--green); }
+        .fs-pips span.on.air { background: var(--accent); border-color: var(--accent); }
+
         /* CSS 3D FALLBACK WORLD */
         .fs-world {
             width: 1200px; height: 800px; position: relative;
@@ -467,6 +488,46 @@
         .fs-obj[data-type="apple"] .fs-o-face { background: var(--green); }
         .fs-obj[data-type="normal"] .fs-o-face { background: var(--orange); }
         .fs-obj.box .fs-o-face { background: #8B4513; border: 2px solid #D2B48C; }
+
+        /* --- CSS FALLBACK: STAGING SLOTS + CARGO SHIP (NEW) --- */
+        .fs-staging {
+            position: absolute; top: 73%; left: 58%;
+            width: 300px; height: 100px;
+            display: flex; flex-wrap: wrap; gap: 8px;
+            transform: translateZ(30px); transform-style: preserve-3d;
+        }
+        .fs-stage-slot {
+            width: 88px; height: 40px;
+            border: 2px dashed rgba(211,247,253,0.25);
+            border-radius: 6px; background: rgba(0,0,0,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; transition: all 0.4s ease;
+        }
+        .fs-stage-slot.filled {
+            background: #8B4513; border: 2px solid #D2B48C;
+            box-shadow: 0 0 12px rgba(139,69,19,0.7);
+        }
+        .fs-ship {
+            position: absolute; top: 84%; left: 6%;
+            width: 380px; height: 110px;
+            transform: translateZ(15px); transform-style: preserve-3d;
+            transition: transform 2.4s ease-in, opacity 0.8s;
+        }
+        .fs-ship-hull {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 46px;
+            background: linear-gradient(180deg, #7A2233 0%, #4a1420 100%);
+            border: 2px solid var(--yellow);
+            border-radius: 4px 4px 44px 44px / 4px 4px 28px 28px;
+        }
+        .fs-ship-deck {
+            position: absolute; bottom: 46px; left: 10px; right: 10px; height: 12px;
+            background: #23233c; border-radius: 3px;
+        }
+        .fs-ship-tower {
+            position: absolute; bottom: 58px; left: 30px; width: 56px; height: 46px;
+            background: var(--secondary); border-radius: 4px;
+            box-shadow: inset 0 -16px 0 #0b0a2e;
+        }
 
         /* ============================================
            REAL-WORLD GIANTS
@@ -880,7 +941,7 @@
                 <div class="guide-icon">🏭</div>
                 <div class="guide-body">
                     <h3>3D Factory</h3>
-                    <p><strong>What to do:</strong> Click the 4 step buttons <em>IN ORDER</em>: Source → Assemble → Pack → Ship. Watch the product travel along the belt and fly away on the cargo plane!</p>
+                    <p><strong>What to do:</strong> Click the 4 step buttons <em>IN ORDER</em>: Source → Assemble → Pack → Ship. Keep repeating to build <strong>6 boxes</strong>. Then 2 boxes fly away on the cargo plane ✈️ and 4 sail off on the cargo ship 🚢!</p>
                 </div>
             </div>
             <div class="guide-card" data-target="giants">
@@ -1000,7 +1061,7 @@
         <div class="fs-ui-top">
             <h2>Alezify Fulfillment Center</h2>
             <p id="fs-current-product">Currently Producing: Amazon Fulfillment (Prime Order)</p>
-            <p class="fs-instr">👇 Click the 4 buttons below <strong>IN ORDER</strong>: 1 Source → 2 Assemble → 3 Pack → 4 Ship</p>
+            <p class="fs-instr">👇 Repeat the 4 steps <strong>6 TIMES</strong> to fill a shipment: 1 Source → 2 Assemble → 3 Pack → 4 Ship</p>
         </div>
         <div class="fs-hint">🖱️ Drag to orbit • Scroll to zoom • Real-time 3D engine</div>
 
@@ -1038,6 +1099,20 @@
                 <div class="fs-obj box" id="fs-obj-box">
                     <div class="fs-o-face fs-o-top"></div><div class="fs-o-face fs-o-front"></div><div class="fs-o-face fs-o-side"></div>
                 </div>
+                <!-- NEW: staging slots + cargo ship (CSS fallback) -->
+                <div class="fs-staging" id="fs-staging">
+                    <div class="fs-stage-slot"></div>
+                    <div class="fs-stage-slot"></div>
+                    <div class="fs-stage-slot"></div>
+                    <div class="fs-stage-slot"></div>
+                    <div class="fs-stage-slot"></div>
+                    <div class="fs-stage-slot"></div>
+                </div>
+                <div class="fs-ship" id="fs-ship">
+                    <div class="fs-ship-hull"></div>
+                    <div class="fs-ship-deck"></div>
+                    <div class="fs-ship-tower"></div>
+                </div>
             </div>
         </div>
 
@@ -1046,6 +1121,13 @@
                 <button class="fs-prod-btn active" onclick="fsSelectProduct('amazon', this)">📦 Amazon Order</button>
                 <button class="fs-prod-btn" onclick="fsSelectProduct('apple', this)">📱 Apple iPhone</button>
                 <button class="fs-prod-btn" onclick="fsSelectProduct('normal', this)">👕 Normal Product</button>
+            </div>
+            <!-- NEW: shipment progress -->
+            <div class="fs-shipment-row">
+                <div class="fs-box-counter">📦 Staged: <b id="fs-box-count">0</b> / 6</div>
+                <div class="fs-pips" id="fs-pips">
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
             </div>
             <div class="fs-controls">
                 <button class="fs-btn-control" id="fs-btn-source" onclick="fsGameAction('source')">
@@ -2226,11 +2308,44 @@
     /* ============================================================
        3D FACTORY — WebGL engine with CSS fallback
        ============================================================ */
+    const BOX_TARGET = 6;          // 6 boxes per shipment
+    const BOXES_BY_AIR = 2;        // 2 fly away on the cargo plane
+    const BOXES_BY_SEA = 4;        // 4 sail away on the cargo ship
+
     const Factory3D = (() => {
         let ok = false, scene, camera, renderer, controls, clock;
         let item, itemMat, machines = [], tweens = [];
         let planeGroup = null, propellers = [];
-        const BELT_Z = 1.2, ITEM_Y = 1.05, SX = [-4.5, 0, 4.5];
+        let shipGroup = null;
+        let stagedBoxes = [];
+        let boxColor = 0x8B4513;
+
+        const BELT_Z  = 1.2;
+        const ITEM_Y  = 1.05;
+        const SX      = [-4.5, 0, 4.5];
+        const PLANE_X = 10.9;
+        const PLANE_Y = 3.7;
+        const SHIP_X  = 11;
+        const SHIP_Y  = -0.2;
+        const SHIP_Z  = 6.8;
+        const STAGE_Y = 0.88;
+
+        /* 6 staging slots:  columns 8.7 / 9.8 / 10.9  ×  2 rows.
+           Slots 0–3 (x = 8.7 & 9.8) → cargo ship.
+           Slots 4–5 (x = 10.9)       → cargo plane.              */
+        const STAGE_SLOTS = [];
+        [8.7, 9.8, 10.9].forEach(cx => {
+            [BELT_Z - 0.62, BELT_Z + 0.62].forEach(cz => {
+                STAGE_SLOTS.push({ x: cx, y: STAGE_Y, z: cz });
+            });
+        });
+
+        /* World-space deck slots on the cargo ship (4 boxes). */
+        const SHIP_SLOTS = [0, 1, 2, 3].map(i => ({
+            x: SHIP_X + 1.3 + i * 1.1,
+            y: SHIP_Y + 2.05,
+            z: SHIP_Z
+        }));
 
         function emojiTexture(emoji) {
             const c = document.createElement('canvas'); c.width = c.height = 128;
@@ -2245,6 +2360,14 @@
             const from = {};
             for (const k in to) from[k] = obj[k];
             return new Promise(res => tweens.push({ obj, to, from, t: 0, dur, res }));
+        }
+        function arcMove(obj, to, peakY, dur) {
+            const from = { x: obj.position.x, y: obj.position.y, z: obj.position.z };
+            return tween(obj.position, {
+                x: (from.x + to.x) / 2,
+                y: peakY,
+                z: (from.z + to.z) / 2
+            }, dur / 2).then(() => tween(obj.position, to, dur / 2));
         }
         function stepTweens(dt) {
             for (let i = tweens.length - 1; i >= 0; i--) {
@@ -2319,36 +2442,98 @@
                 propellers.push(prop);
             });
 
-            // Soft glow so the plane reads well against the dark floor
             const glowLight = new THREE.PointLight(0x06D6A0, 0.9, 14);
             glowLight.position.set(0, 0.4, 0);
             g.add(glowLight);
 
             g.visible = false;
-            g.position.set(20, 14, BELT_Z);
+            g.position.set(PLANE_X, 16, BELT_Z);
             scene.add(g);
             return g;
         }
 
-        function resetPlane() {
-            if (!planeGroup) return;
-            if (item && item.parent === planeGroup) {
-                planeGroup.remove(item);
-                scene.add(item);
+        /* ---------- Cargo ship ---------- */
+        function buildShip() {
+            const g = new THREE.Group();
+
+            const hullMat  = new THREE.MeshStandardMaterial({ color: 0x7A2233, roughness: 0.75, metalness: 0.25 });
+            const deckMat  = new THREE.MeshStandardMaterial({ color: 0x23233c, roughness: 0.65, metalness: 0.35 });
+            const towerMat = new THREE.MeshStandardMaterial({ color: 0xD3F7FD, roughness: 0.35, metalness: 0.35 });
+            const glassMat = new THREE.MeshStandardMaterial({ color: 0x0b0a2e, roughness: 0.15, metalness: 0.85, emissive: 0x06D6A0, emissiveIntensity: 0.5 });
+
+            const hull = new THREE.Mesh(new THREE.BoxGeometry(10, 1.5, 3.4), hullMat);
+            hull.position.y = 0.75;
+            g.add(hull);
+
+            const shape = new THREE.Shape();
+            shape.moveTo(0, -1.7);
+            shape.lineTo(0, 1.7);
+            shape.lineTo(1.9, 0);
+            shape.lineTo(0, -1.7);
+            const bowGeo = new THREE.ExtrudeGeometry(shape, { depth: 1.5, bevelEnabled: false });
+            bowGeo.rotateX(-Math.PI / 2);
+            const bow = new THREE.Mesh(bowGeo, hullMat);
+            bow.position.set(5, 0, 0);
+            g.add(bow);
+
+            const stripe = new THREE.Mesh(
+                new THREE.BoxGeometry(10.02, 0.22, 3.44),
+                new THREE.MeshStandardMaterial({ color: 0xFFD166, roughness: 0.5 })
+            );
+            stripe.position.y = 1.32;
+            g.add(stripe);
+
+            const deck = new THREE.Mesh(new THREE.BoxGeometry(10.3, 0.22, 3.5), deckMat);
+            deck.position.y = 1.58;
+            g.add(deck);
+
+            const tower = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.2, 3.0), towerMat);
+            tower.position.set(-4.0, 2.79, 0);
+            g.add(tower);
+
+            const windows = new THREE.Mesh(new THREE.BoxGeometry(1.86, 0.45, 3.06), glassMat);
+            windows.position.set(-4.0, 3.35, 0);
+            g.add(windows);
+
+            const funnel = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.36, 1.0, 12), deckMat);
+            funnel.position.set(-4.4, 4.4, 0);
+            g.add(funnel);
+
+            const cColors = [0xF78C6B, 0x06D6A0, 0xE2B2FF, 0xFFD166, 0xEF476F, 0x4EA8DE];
+            let ci = 0;
+            for (let col = 0; col < 4; col++) {
+                for (let row = 0; row < 2; row++) {
+                    for (let lvl = 0; lvl < 2; lvl++) {
+                        if (lvl === 1 && ((col + row) % 2 === 1)) continue;
+                        const c = new THREE.Mesh(
+                            new THREE.BoxGeometry(0.95, 0.8, 0.95),
+                            new THREE.MeshStandardMaterial({ color: cColors[ci++ % cColors.length], roughness: 0.75 })
+                        );
+                        c.position.set(-3.0 + col * 1.05, 2.09 + lvl * 0.85, row === 0 ? -0.88 : 0.88);
+                        g.add(c);
+                    }
+                }
             }
-            if (item) {
-                item.position.set(-7.6, ITEM_Y, BELT_Z);
-                item.rotation.set(0, 0, 0);
-                item.scale.set(1, 1, 1);
-                item.visible = false;
+
+            g.position.set(SHIP_X, SHIP_Y, SHIP_Z);
+            scene.add(g);
+            return g;
+        }
+
+        function resetTransport() {
+            stagedBoxes.forEach(b => {
+                if (b.parent) b.parent.remove(b);
+                if (b.material && b.material.dispose) b.material.dispose();
+            });
+            stagedBoxes = [];
+            if (planeGroup) {
+                planeGroup.visible = false;
+                planeGroup.position.set(PLANE_X, 16, BELT_Z);
+                planeGroup.rotation.set(0, 0, 0);
             }
-            if (itemMat) {
-                itemMat.transparent = false;
-                itemMat.opacity = 1;
+            if (shipGroup) {
+                shipGroup.position.set(SHIP_X, SHIP_Y, SHIP_Z);
             }
-            planeGroup.visible = false;
-            planeGroup.position.set(20, 14, BELT_Z);
-            planeGroup.rotation.set(0, 0, 0);
         }
 
         function init() {
@@ -2356,9 +2541,9 @@
             try {
                 const container = $('#fs3d');
                 scene = new THREE.Scene();
-                scene.fog = new THREE.Fog(0x05051a, 20, 48);
-                camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 100);
-                camera.position.set(10, 8, 13);
+                scene.fog = new THREE.Fog(0x05051a, 26, 60);
+                camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 120);
+                camera.position.set(17, 12, 19);
                 renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
                 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
                 renderer.setSize(container.clientWidth, container.clientHeight);
@@ -2366,11 +2551,11 @@
 
                 if (THREE.OrbitControls) {
                     controls = new THREE.OrbitControls(camera, renderer.domElement);
-                    controls.target.set(0, 1, 0);
+                    controls.target.set(1.5, 1, 2.5);
                     controls.enableDamping = true; controls.dampingFactor = 0.08;
                     controls.maxPolarAngle = Math.PI / 2.05;
-                    controls.minDistance = 6; controls.maxDistance = 32;
-                    controls.autoRotate = !reducedMotion; controls.autoRotateSpeed = 0.5;
+                    controls.minDistance = 6; controls.maxDistance = 40;
+                    controls.autoRotate = !reducedMotion; controls.autoRotateSpeed = 0.45;
                     renderer.domElement.addEventListener('pointerdown', () => { controls.autoRotate = false; });
                 }
 
@@ -2381,13 +2566,26 @@
                 const pl2 = new THREE.PointLight(0x06D6A0, 0.7, 26); pl2.position.set(6, 4, -4); scene.add(pl2);
 
                 const floor = new THREE.Mesh(
-                    new THREE.PlaneGeometry(36, 26),
+                    new THREE.PlaneGeometry(40, 30),
                     new THREE.MeshStandardMaterial({ color: 0x0b0a2e, roughness: 0.95 })
                 );
                 floor.rotation.x = -Math.PI / 2; scene.add(floor);
-                const grid = new THREE.GridHelper(36, 36, 0xE2B2FF, 0x28245e);
+                const grid = new THREE.GridHelper(40, 40, 0xE2B2FF, 0x28245e);
                 grid.position.y = 0.02; scene.add(grid);
 
+                /* ---- harbour basin ---- */
+                const water = new THREE.Mesh(
+                    new THREE.PlaneGeometry(14, 9.5),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x0a2a55, roughness: 0.22, metalness: 0.65,
+                        transparent: true, opacity: 0.94
+                    })
+                );
+                water.rotation.x = -Math.PI / 2;
+                water.position.set(11, 0.05, 6.9);
+                scene.add(water);
+
+                /* ---- conveyor ---- */
                 const belt = new THREE.Mesh(
                     new THREE.BoxGeometry(17, 0.5, 2.3),
                     new THREE.MeshStandardMaterial({ color: 0x1c1c3e, roughness: 0.5, metalness: 0.5 })
@@ -2405,6 +2603,22 @@
                     leg.position.set(x, 0.27, BELT_Z); scene.add(leg);
                 });
 
+                /* ---- staging platform ---- */
+                const stagePad = new THREE.Mesh(
+                    new THREE.BoxGeometry(3.6, 0.5, 2.6),
+                    new THREE.MeshStandardMaterial({ color: 0x1a1a44, roughness: 0.7, metalness: 0.35 })
+                );
+                stagePad.position.set(9.8, 0.25, BELT_Z);
+                scene.add(stagePad);
+
+                const stageEdge = new THREE.Mesh(
+                    new THREE.BoxGeometry(3.7, 0.08, 2.7),
+                    new THREE.MeshStandardMaterial({ color: 0xFFD166, emissive: 0xFFD166, emissiveIntensity: 0.45 })
+                );
+                stageEdge.position.set(9.8, 0.52, BELT_Z);
+                scene.add(stageEdge);
+
+                /* ---- machines ---- */
                 SX.forEach((x, i) => {
                     const mat = new THREE.MeshStandardMaterial({ color: 0x14143c, roughness: 0.35, metalness: 0.55 });
                     const body = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.2, 2.2), mat);
@@ -2420,7 +2634,7 @@
                 });
 
                 const crateMat = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 0.85 });
-                [[-8, -4.5], [-7.2, -4.2], [7.6, -4.6], [8.2, 2.8], [-8.4, 3.2]].forEach(([x, z], i) => {
+                [[-8, -4.5], [-7.2, -4.2], [7.6, -4.6], [-8.4, 3.2]].forEach(([x, z], i) => {
                     const c = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), crateMat);
                     c.position.set(x, 0.45 + (i % 2) * 0.9, z);
                     c.rotation.y = i; scene.add(c);
@@ -2431,8 +2645,8 @@
                 item.position.set(-7.6, ITEM_Y, BELT_Z);
                 item.visible = false; scene.add(item);
 
-                // Build the cargo plane used for the shipping step
                 planeGroup = buildPlane();
+                shipGroup = buildShip();
 
                 clock = new THREE.Clock();
                 (function animate() {
@@ -2463,118 +2677,221 @@
                 apple:  { raw: 0x555577, product: 0xDDDDDD, box: 0xFFFFFF, sprites: ['⛏️', '🏭', '📦'] },
                 normal: { raw: 0x06D6A0, product: 0xEF476F, box: 0x8B4513, sprites: ['🌾', '🧵', '📦'] }
             };
-            const d = map[c];
+            const d = map[c] || map.amazon;
+            boxColor = d.box;
             setSprite(0, d.sprites[0]); setSprite(1, d.sprites[1]); setSprite(2, d.sprites[2]);
             itemMat.color.setHex(d.raw); itemMat.opacity = 1; itemMat.transparent = false;
             item.scale.set(1, 1, 1);
             item.position.set(-7.6, ITEM_Y, BELT_Z);
             item.visible = false;
-            resetPlane();
         }
 
-        async function run(action) {
+        /* action = 'source' | 'assemble' | 'pack' | 'ship',  slotIndex = 0..5 */
+        async function run(action, slotIndex) {
             if (!ok) return;
             item.visible = true;
+
             if (action === 'source') {
                 glow(0, true);
                 itemMat.color.setHex(0xFFD166);
+                itemMat.transparent = false;
+                itemMat.opacity = 1;
                 await tween(item.position, { x: SX[0] }, 1.5);
                 glow(0, false);
+
             } else if (action === 'assemble') {
                 glow(1, true);
                 const p = tween(item.position, { x: SX[1] }, 1.5);
                 setTimeout(() => itemMat.color.setHex(0x06D6A0), 600);
                 await p; glow(1, false);
+
             } else if (action === 'pack') {
                 glow(2, true);
                 const p = tween(item.position, { x: SX[2] }, 1.5);
-                setTimeout(() => { itemMat.color.setHex(0x8B4513); tween(item.scale, { x: 1.25, y: 0.8, z: 1.25 }, 0.6); }, 600);
+                setTimeout(() => {
+                    itemMat.color.setHex(boxColor);
+                    tween(item.scale, { x: 1.25, y: 0.8, z: 1.25 }, 0.6);
+                }, 600);
                 await p; glow(2, false);
+
             } else if (action === 'ship') {
-                /* ---------- 1. Slide the parcel to the loading bay ---------- */
                 glow(2, true);
-                await tween(item.position, { x: 8.4, y: ITEM_Y }, 1.2);
+                const slot = STAGE_SLOTS[Math.min(slotIndex || 0, STAGE_SLOTS.length - 1)];
+                await tween(item.position, { x: slot.x, y: slot.y, z: slot.z }, 1.1);
 
-                /* ---------- 2. The cargo plane descends from the sky ---------- */
-                planeGroup.position.set(9.6, 15, BELT_Z);
-                planeGroup.rotation.set(0, 0, 0);
-                planeGroup.visible = true;
-                await tween(planeGroup.position, { y: 3.3 }, 1.1);
+                /* freeze this box in the staging lane */
+                const box = new THREE.Mesh(item.geometry, itemMat.clone());
+                box.position.copy(item.position);
+                box.rotation.copy(item.rotation);
+                box.scale.copy(item.scale);
+                scene.add(box);
+                stagedBoxes.push(box);
 
-                /* ---------- 3. The parcel lifts up into the cargo bay ---------- */
-                await tween(item.position, { x: 9.6, y: 2.4 }, 0.6);
-
-                /* ---------- 4. Load it onto the plane ---------- */
-                scene.remove(item);
-                planeGroup.add(item);
-                item.position.set(0, -0.9, 0);
-                item.rotation.set(0, 0, 0);
-                item.scale.set(1.1, 0.8, 1.1);
-
-                /* ---------- 5. Bank and fly away! ---------- */
-                const flyPos = tween(planeGroup.position, { x: 34, y: 17 }, 2.0);
-                tween(planeGroup.rotation, { z: -0.5, y: 0.4 }, 2.0);
-                await flyPos;
-
-                /* ---------- 6. Tidy up ---------- */
-                planeGroup.remove(item);
-                scene.add(item);
+                /* reset the active item for the next cycle */
                 item.visible = false;
-                item.scale.set(1, 1, 1);
                 item.position.set(-7.6, ITEM_Y, BELT_Z);
                 item.rotation.set(0, 0, 0);
-                itemMat.transparent = false;
-                itemMat.opacity = 1;
-
-                planeGroup.visible = false;
-                planeGroup.position.set(20, 14, BELT_Z);
-                planeGroup.rotation.set(0, 0, 0);
+                item.scale.set(1, 1, 1);
                 glow(2, false);
             }
         }
-        return { init, setCompany, run, get ok() { return ok; } };
+
+        /* The big finale: 4 boxes by sea, 2 boxes by air. */
+        async function dispatch() {
+            if (!ok || stagedBoxes.length < BOX_TARGET) return;
+
+            const shipBoxes  = stagedBoxes.slice(0, BOXES_BY_SEA);
+            const planeBoxes = stagedBoxes.slice(BOXES_BY_SEA, BOXES_BY_SEA + BOXES_BY_AIR);
+
+            /* 1 — the four sea boxes arc across to the cargo ship */
+            await Promise.all(shipBoxes.map((b, i) =>
+                arcMove(b, SHIP_SLOTS[i], 3.6, 1.1)
+            ));
+            shipBoxes.forEach((b, i) => {
+                scene.remove(b);
+                shipGroup.add(b);
+                b.position.set(1.3 + i * 1.1, 2.05, 0);
+                b.rotation.set(0, 0, 0);
+            });
+
+            /* 2 — the cargo plane descends over the staging lane */
+            planeGroup.position.set(PLANE_X, 16, BELT_Z);
+            planeGroup.rotation.set(0, 0, 0);
+            planeGroup.visible = true;
+            await tween(planeGroup.position, { y: PLANE_Y }, 0.9);
+
+            /* 3 — the two air boxes rise into the plane */
+            await Promise.all(planeBoxes.map((b, i) => tween(b.position, {
+                x: planeGroup.position.x + 0.2,
+                y: planeGroup.position.y - 0.95,
+                z: planeGroup.position.z + (i === 0 ? -0.6 : 0.6)
+            }, 0.7)));
+
+            planeBoxes.forEach((b, i) => {
+                scene.remove(b);
+                planeGroup.add(b);
+                b.position.set(0.2, -0.95, i === 0 ? -0.6 : 0.6);
+                b.rotation.set(0, 0, 0);
+            });
+
+            /* 4 — both vehicles depart */
+            tween(planeGroup.position, { x: 36, y: 19 }, 2.2);
+            tween(planeGroup.rotation, { z: -0.5, y: 0.4 }, 2.2);
+            tween(shipGroup.position, { x: 46 }, 2.6);
+
+            await new Promise(r => setTimeout(r, 2800));
+            resetTransport();
+        }
+
+        return {
+            init, setCompany, run, dispatch, resetTransport,
+            get ok() { return ok; },
+            get boxCount() { return stagedBoxes.length; }
+        };
     })();
 
     /* ---------- CSS 3D fallback driver ---------- */
     const FactoryCSS = (() => {
         const wait = ms => new Promise(r => setTimeout(r, ms));
-        async function run(action) {
+
+        function clearSlots() {
+            $$('.fs-stage-slot').forEach(s => {
+                s.classList.remove('filled');
+                s.textContent = '';
+                s.style.transition = '';
+                s.style.transform = '';
+                s.style.opacity = '';
+            });
+        }
+
+        async function run(action, slotIndex) {
             const m1 = $('#fs-machine1'), m2 = $('#fs-machine2'), m3 = $('#fs-machine3');
             const w1 = $('#fs-worker1'), w2 = $('#fs-worker2'), w3 = $('#fs-worker3');
             const objRaw = $('#fs-obj-raw'), objProd = $('#fs-obj-product'), objBox = $('#fs-obj-box');
+
             if (action === 'source') {
                 m1.classList.add('active'); w1.classList.add('working');
                 objRaw.style.left = '15%'; objRaw.style.top = '70%'; objRaw.classList.add('visible');
-                await wait(2200);
+                await wait(1800);
                 m1.classList.remove('active'); w1.classList.remove('working');
+
             } else if (action === 'assemble') {
                 m2.classList.add('active'); w2.classList.add('working');
                 objRaw.style.left = '45%'; w2.style.left = '45%';
-                await wait(1000);
+                await wait(900);
                 objRaw.classList.remove('visible');
                 objProd.style.left = '45%'; objProd.style.top = '70%'; objProd.classList.add('visible');
-                await wait(1200);
+                await wait(900);
                 m2.classList.remove('active'); w2.classList.remove('working');
+
             } else if (action === 'pack') {
                 m3.classList.add('active'); w3.classList.add('working');
                 objProd.style.left = '75%'; w3.style.left = '75%';
-                await wait(1000);
+                await wait(900);
                 objProd.classList.remove('visible');
                 objBox.style.left = '75%'; objBox.style.top = '70%'; objBox.classList.add('visible');
-                await wait(1200);
+                await wait(900);
                 m3.classList.remove('active'); w3.classList.remove('working');
+
             } else if (action === 'ship') {
-                objBox.style.left = '100%'; objBox.style.top = '40%';
-                objBox.style.transform = 'scale(0.1) rotateZ(45deg) translateZ(400px)';
-                objBox.style.opacity = '0';
-                await wait(1800);
+                const slots = $$('.fs-stage-slot');
+                const slot = slots[Math.min(slotIndex || 0, slots.length - 1)];
+                objBox.style.left = '92%';
+                objBox.style.top = '50%';
+                objBox.style.transform = 'scale(0.4)';
+                await wait(600);
+                objBox.classList.remove('visible');
+                objBox.style.transform = 'none';
+                objBox.style.opacity = '1';
+                if (slot) { slot.classList.add('filled'); slot.textContent = '📦'; }
+                await wait(400);
             }
         }
-        return { run };
+
+        async function dispatch() {
+            const slots = $$('.fs-stage-slot');
+            const ship = $('#fs-ship');
+
+            /* two boxes lift up towards the aircraft */
+            slots.slice(BOXES_BY_SEA).forEach(s => {
+                s.style.transition = 'transform 1s ease-in, opacity 1s';
+                s.style.transform = 'translateY(-140px)';
+                s.style.opacity = '0';
+            });
+            await wait(1000);
+
+            /* the ship sails away with the other four */
+            if (ship) {
+                ship.style.transition = 'transform 2.2s ease-in, opacity 2.2s';
+                ship.style.transform = 'translateZ(15px) translateX(760px)';
+                ship.style.opacity = '0';
+            }
+            await wait(2200);
+
+            clearSlots();
+
+            if (ship) {
+                ship.style.transition = 'none';
+                ship.style.transform = 'translateZ(15px) translateX(-760px)';
+                ship.style.opacity = '0';
+                void ship.offsetWidth;
+                ship.style.transition = 'transform 1s ease-out, opacity 1s';
+                ship.style.transform = 'translateZ(15px) translateX(0)';
+                ship.style.opacity = '1';
+            }
+            await wait(1000);
+        }
+
+        return { run, dispatch, resetTransport: clearSlots };
     })();
 
-    /* ---------- Factory game state ---------- */
-    let fsGameState = 0, fsCurrentCompany = 'amazon', fsBusy = false;
+    /* ============================================================
+       FACTORY GAME STATE
+       ============================================================ */
+    let fsGameState = 0;
+    let fsCurrentCompany = 'amazon';
+    let fsBusy = false;
+    let boxesStaged = 0;
 
     const fsCompanies = {
         amazon: {
@@ -2616,6 +2933,17 @@
 
     function fsSetStatus(html) { $('#fs-status-log').innerHTML = html; }
 
+    function updateBoxCounter() {
+        const el = $('#fs-box-count');
+        if (el) el.textContent = boxesStaged;
+        $$('#fs-pips span').forEach((p, i) => {
+            const filled = i < boxesStaged;
+            p.classList.toggle('on', filled);
+            p.classList.toggle('sea', filled && i < BOXES_BY_SEA);
+            p.classList.toggle('air', filled && i >= BOXES_BY_SEA);
+        });
+    }
+
     function fsSelectProduct(type, btn) {
         if (fsBusy) return;
         if (fsGameState > 0 && fsGameState < 4) { Sound.fail(); toast('Factory busy!', 'Finish the current product first.', '🏭'); return; }
@@ -2635,39 +2963,70 @@
         $('#fs-obj-raw').setAttribute('data-type', type);
         $('#fs-obj-product').setAttribute('data-type', type);
         Factory3D.setCompany(type);
-        if (fsGameState === 4) fsResetGame(true);
     }
 
     async function fsGameAction(action) {
         if (fsBusy) return;
         const order = ['source', 'assemble', 'pack', 'ship'];
         if (order.indexOf(action) !== fsGameState || fsGameState >= 4) return;
-        fsBusy = true; Sound.click();
+
+        fsBusy = true;
+        Sound.click();
+
         const p = fsCompanies[fsCurrentCompany];
         fsSetStatus(`<span>[STEP ${fsGameState + 1}]</span> ${p.steps[action]}...<br><small style="color:var(--secondary)">${p.facts[action]}</small>`);
 
-        if (Factory3D.ok) await Factory3D.run(action);
-        else await FactoryCSS.run(action);
+        const engine = Factory3D.ok ? Factory3D : FactoryCSS;
+        await engine.run(action, boxesStaged);
 
         const doneBtn = $('#' + fsButtons[fsGameState]);
         doneBtn.disabled = true;
         doneBtn.classList.remove('active-step');
         fsGameState++;
+
         if (fsGameState < 4) {
             const nextBtn = $('#' + fsButtons[fsGameState]);
             nextBtn.disabled = false;
             nextBtn.classList.add('active-step');
-        } else {
-            Sound.success(); Confetti.burst(120);
-            fsSetStatus('<span>[SUCCESS]</span> Product shipped! The cargo plane has taken off. +30 XP — select a new company.');
-            addXP(30, 'Supply chain completed!');
-            award('factory');
+            fsBusy = false;
+            return;
         }
+
+        /* ---------- one complete box finished ---------- */
+        boxesStaged++;
+        updateBoxCounter();
+        addXP(5);
+
+        if (boxesStaged >= BOX_TARGET) {
+            fsSetStatus('<span>[DISPATCH]</span> 6 boxes ready! Loading <strong>2 onto the cargo plane ✈️</strong> and <strong>4 onto the cargo ship 🚢</strong>…');
+            Sound.pop();
+            await engine.dispatch();
+            Sound.fanfare();
+            Confetti.burst(220);
+            addXP(60, 'Full shipment dispatched — 2 by air, 4 by sea!');
+            award('factory');
+            boxesStaged = 0;
+            updateBoxCounter();
+            fsSetStatus('<span>[COMPLETE]</span> Shipment delivered — ✈️ 2 boxes by air and 🚢 4 boxes by sea! +60 XP. Start a new shipment.');
+        } else {
+            Sound.pop();
+            fsSetStatus(`<span>[STAGED]</span> Box ${boxesStaged}/${BOX_TARGET} packed and waiting on the dock. Make ${BOX_TARGET - boxesStaged} more!`);
+        }
+
+        /* ---------- reset the step buttons for the next cycle ---------- */
+        fsGameState = 0;
+        fsButtons.forEach((id, i) => {
+            const b = $('#' + id);
+            b.disabled = i !== 0;
+            b.classList.remove('active-step');
+        });
         fsBusy = false;
     }
 
     function fsResetGame(silent) {
         fsGameState = 0;
+        boxesStaged = 0;
+        updateBoxCounter();
         fsSetStatus('<span>[SYSTEM]</span> Resetting factory...');
         fsButtons.forEach((id, i) => {
             const b = $('#' + id);
@@ -2684,6 +3043,8 @@
         $('#fs-worker2').style.left = '45%';
         $('#fs-worker3').style.left = '75%';
         Factory3D.setCompany(fsCurrentCompany);
+        Factory3D.resetTransport();
+        FactoryCSS.resetTransport();
         if (!silent) Sound.click();
         setTimeout(() => fsSetStatus('<span>[SYSTEM]</span> Ready. Waiting for Operations Manager.'), 800);
     }
@@ -3025,6 +3386,7 @@
             Factory3D.setCompany('amazon');
         }
 
+        updateBoxCounter();
         renderQuiz();
         syncBadges();
         lockReflectionIfDone();
