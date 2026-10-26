@@ -9,7 +9,6 @@
 <link rel="icon" type="image/svg+xml" href="https://app-uploads.krea.ai/public/f44d0e5b-9914-42df-b995-c07cb3732bc8.svg">
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/kokoro-js/dist/kokoro.web.js"></script>
 <style>
 /* ============================================
@@ -31,11 +30,9 @@ body{font-family:var(--font-main);background:var(--primary);color:var(--white);l
 :focus-visible{outline:3px solid var(--yellow);outline-offset:3px;border-radius:6px;}
 h1,h2,h3,h4{font-family:var(--font-display);font-weight:bold;}
 
-/* --- BACKGROUND PARTICLES --- */
 #bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;}
 .hero,.section,.fs-section,.guide-section,footer,nav{position:relative;z-index:1;}
 
-/* --- BOOT SCREEN --- */
 #boot{position:fixed;inset:0;z-index:5000;background:radial-gradient(circle at 50% 40%,#1a1854 0%,#05051a 70%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1.2rem;transition:opacity .7s ease,visibility .7s;cursor:pointer;}
 #boot.done{opacity:0;visibility:hidden;}
 #boot .boot-logo{font-family:var(--font-display);font-size:3rem;color:var(--secondary);letter-spacing:2px;}
@@ -45,10 +42,8 @@ h1,h2,h3,h4{font-family:var(--font-display);font-weight:bold;}
 #boot .boot-msg{font-family:monospace;font-size:.85rem;color:var(--secondary);opacity:.85;min-height:1.4em;}
 #boot .boot-hint{font-size:.75rem;color:var(--accent);opacity:.7;}
 
-/* --- PROGRESS BAR --- */
 #progress-bar{position:fixed;top:0;left:0;height:5px;background:linear-gradient(90deg,var(--yellow),var(--accent),var(--green));width:0%;z-index:2000;transition:width .1s ease;}
 
-/* --- NAV --- */
 nav{position:fixed;top:0;width:100%;padding:.8rem 3%;display:flex;justify-content:space-between;align-items:center;background:rgba(14,13,60,.97);backdrop-filter:blur(10px);z-index:1000;border-bottom:3px solid var(--accent);}
 .logo{font-family:var(--font-display);font-size:1.5rem;color:var(--secondary);text-decoration:none;}
 .logo span{color:var(--accent);}
@@ -66,7 +61,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 #mobile-menu a{color:var(--secondary);text-decoration:none;font-weight:bold;padding:.5rem;border-radius:8px;}
 #mobile-menu a:hover{background:var(--yellow);color:var(--primary);}
 
-/* --- HERO --- */
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:90px 5% 40px;background:radial-gradient(circle at center,rgba(226,178,255,.25) 0%,transparent 70%);position:relative;}
 .hero h1{font-size:4rem;margin-bottom:.5rem;color:var(--yellow);text-shadow:4px 4px 0 var(--accent);}
 .hero h2{font-size:2.2rem;color:var(--secondary);margin-bottom:1.5rem;}
@@ -85,14 +79,12 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
 .reveal.visible{opacity:1;transform:none;}
 
-/* --- SECTIONS --- */
 .section{padding:5rem 4%;display:flex;flex-direction:column;align-items:center;position:relative;min-height:70vh;}
 .section-alt{background:rgba(226,178,255,.05);}
 .section-title{font-size:2.5rem;color:var(--secondary);margin-bottom:.5rem;text-align:center;}
 .section-subtitle{text-align:center;color:var(--white);opacity:.9;margin-bottom:2.5rem;max-width:800px;font-size:1.1rem;}
 .highlight{color:var(--yellow);font-weight:bold;}
 
-/* --- GUIDE --- */
 .guide-section{padding:4rem 4% 3rem;background:linear-gradient(180deg,rgba(226,178,255,.06) 0%,rgba(14,13,60,0) 100%);}
 .guide-progress-bar{background:rgba(255,209,102,.12);border:2px solid var(--yellow);border-radius:50px;padding:.55rem 1.4rem;margin-bottom:1.8rem;font-weight:bold;color:var(--yellow);font-size:.95rem;box-shadow:0 0 20px rgba(255,209,102,.2);}
 .guide-progress-bar b{color:var(--white);}
@@ -121,7 +113,7 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .hero-arrow{font-size:1.6rem;animation:bounceDown 1.4s infinite;}
 
 /* ============================================
-   3D CINEMATIC FACTORY
+   3D FACTORY
    ============================================ */
 #factory{position:relative;width:100%;height:100vh;height:100dvh;min-height:700px;background:#000;overflow:hidden;border-top:3px solid var(--accent);border-bottom:3px solid var(--accent);}
 #factory #c{display:block;position:absolute;inset:0;width:100%;height:100%;}
@@ -160,18 +152,38 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 #factory #fp-hud{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .4s ease;z-index:12;}
 #factory #fp-hud.show{opacity:1;}
 #factory #fp-crosshair{position:absolute;top:50%;left:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border:2px solid rgba(255,209,102,.9);border-radius:50%;box-shadow:0 0 14px rgba(255,209,102,.9),inset 0 0 8px rgba(255,209,102,.5);}
-#factory #fp-stats{position:absolute;top:2.5vh;left:50%;transform:translateX(-50%);background:rgba(14,13,60,.9);border:2px solid #06D6A0;border-radius:50px;padding:.4rem 1.1rem;font-weight:bold;font-size:.85rem;color:#D3F7FD;letter-spacing:.08em;}
-#factory #fp-stats b{color:#06D6A0;font-size:1rem;}
-#factory #fp-progress{position:absolute;top:calc(50% + 26px);left:50%;transform:translateX(-50%);width:130px;height:8px;background:rgba(0,0,0,.6);border:1px solid #FFD166;border-radius:10px;overflow:hidden;opacity:0;transition:opacity .2s;}
+#factory #fp-crosshair.active{border-color:#06D6A0;box-shadow:0 0 20px #06D6A0,inset 0 0 10px rgba(6,214,160,.7);}
+#factory #fp-crosshair.working{border-color:#FFD166;box-shadow:0 0 22px #FFD166;animation:pulse-reader .5s infinite alternate;}
+
+#factory #career-hud{position:absolute;top:2.5vh;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;z-index:12;max-width:88vw;}
+#factory #career-phase{background:rgba(14,13,60,.92);border:2px solid #06D6A0;border-radius:50px;padding:.35rem 1.1rem;font-weight:900;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#06D6A0;box-shadow:0 0 20px rgba(6,214,160,.3);}
+#factory #career-task{background:rgba(14,13,60,.92);border:2px solid #FFD166;border-radius:50px;padding:.5rem 1.3rem;font-weight:bold;font-size:.85rem;color:#FFD166;text-align:center;box-shadow:0 0 20px rgba(255,209,102,.25);max-width:88vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#factory #career-progress{width:220px;height:8px;background:rgba(0,0,0,.6);border:1px solid #FFD166;border-radius:10px;overflow:hidden;}
+#factory #career-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#FFD166,#06D6A0);transition:width .15s linear;}
+
+#factory #fp-stats{position:absolute;bottom:14vh;left:50%;transform:translateX(-50%);background:rgba(14,13,60,.9);border:2px solid #06D6A0;border-radius:50px;padding:.4rem 1.1rem;font-weight:bold;font-size:.8rem;color:#D3F7FD;letter-spacing:.08em;white-space:nowrap;}
+#factory #fp-stats b{color:#06D6A0;font-size:.95rem;}
+
+#factory #fp-progress{position:absolute;top:calc(50% + 28px);left:50%;transform:translateX(-50%);width:150px;height:9px;background:rgba(0,0,0,.7);border:1px solid #FFD166;border-radius:10px;overflow:hidden;opacity:0;transition:opacity .15s;}
 #factory #fp-progress.show{opacity:1;}
 #factory #fp-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#FFD166,#06D6A0);transition:width .05s linear;}
-#factory #fp-prompt{position:absolute;bottom:15vh;left:50%;transform:translateX(-50%);background:rgba(14,13,60,.92);border:2px dashed #FFD166;border-radius:50px;padding:.55rem 1.3rem;font-size:.82rem;font-weight:bold;color:#FFD166;text-align:center;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;}
 
-/* --- FLIGHT OVERLAY --- */
+#factory #fp-prompt{position:absolute;bottom:11vh;left:50%;transform:translateX(-50%);background:rgba(14,13,60,.95);border:2px dashed #FFD166;border-radius:50px;padding:.55rem 1.3rem;font-size:.8rem;font-weight:bold;color:#FFD166;text-align:center;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;z-index:13;}
+#factory #fp-prompt.holding{border-color:#06D6A0;color:#06D6A0;box-shadow:0 0 22px rgba(6,214,160,.5);}
+
+#factory #carry-indicator{position:absolute;bottom:calc(11vh + 3rem);left:50%;transform:translateX(-50%);background:rgba(226,178,255,.94);color:#0E0D3C;border-radius:50px;padding:.4rem 1rem;font-weight:900;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;display:none;z-index:13;}
+#factory #carry-indicator.show{display:block;animation:pulse-reader 1s infinite alternate;}
+
 #factory #flight-overlay{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .8s ease;z-index:14;}
 #factory #flight-overlay.show{opacity:1;}
 #factory .plane-window{position:absolute;top:50%;left:50%;width:min(60vw,640px);height:min(48vh,430px);transform:translate(-50%,-50%);border-radius:70px;border:18px solid #14142e;outline:2px solid rgba(211,247,253,.22);box-shadow:0 0 0 9999px rgba(3,3,16,.965),inset 0 0 90px rgba(0,0,0,.55);}
 #factory .flight-caption{position:absolute;bottom:9vh;left:50%;transform:translateX(-50%);color:#FFD166;font-weight:bold;letter-spacing:.2em;text-transform:uppercase;font-size:.8rem;text-shadow:0 0 16px #FFD166,0 3px 10px #000;}
+
+/* --- VEHICLE HUD --- */
+#factory #vehicle-hud{position:absolute;bottom:6vh;left:50%;transform:translateX(-50%);background:rgba(14,13,60,.94);border:2px solid #FFD166;border-radius:16px;padding:.6rem 1.4rem;font-weight:bold;color:#D3F7FD;font-size:.85rem;letter-spacing:.1em;display:none;text-align:center;z-index:13;box-shadow:0 0 30px rgba(255,209,102,.4);}
+#factory #vehicle-hud.show{display:block;}
+#factory #vehicle-hud .vh-speed{color:#06D6A0;font-size:1.3rem;font-family:var(--font-display);}
+#factory #vehicle-hud .vh-hint{display:block;margin-top:.2rem;font-size:.68rem;opacity:.75;letter-spacing:.05em;text-transform:none;}
 
 /* ============================================
    REAL-WORLD GIANTS
@@ -185,9 +197,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .giant-card li{padding:.4rem 0;border-bottom:1px solid rgba(211,247,253,.1);font-size:.9rem;}
 .giant-card li:last-child{border-bottom:none;}
 
-/* ============================================
-   JOURNEY
-   ============================================ */
 .journey-container{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;max-width:1000px;margin-bottom:2rem;}
 .journey-step{background:var(--primary);border:3px solid var(--secondary);border-radius:var(--radius);padding:1.2rem;width:140px;text-align:center;cursor:pointer;transition:var(--transition);position:relative;}
 .journey-step:hover{transform:translateY(-4px);}
@@ -205,9 +214,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .arrow-chain span:nth-child(5){animation-delay:.25s;}
 @keyframes chainPop{from{transform:scale(.5);opacity:0;}to{transform:scale(1);opacity:1;}}
 
-/* ============================================
-   MAP
-   ============================================ */
 .map-wrapper{position:relative;width:100%;max-width:900px;background:url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg') no-repeat center center;background-size:contain;aspect-ratio:16/9;border:4px solid var(--secondary);border-radius:var(--radius);background-color:rgba(211,247,253,.05);}
 .map-arcs{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
 .map-arcs path{fill:none;stroke-width:3;stroke-linecap:round;stroke-dasharray:12 10;animation:arcFlow 1.2s linear infinite;opacity:0;transition:opacity .5s;}
@@ -225,9 +231,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .company-btn{padding:.6rem 1.2rem;background:var(--primary);color:var(--secondary);border:2px solid var(--secondary);border-radius:50px;cursor:pointer;font-weight:bold;font-family:var(--font-main);transition:var(--transition);}
 .company-btn:hover,.company-btn.active{background:var(--secondary);color:var(--primary);}
 
-/* ============================================
-   FOOD
-   ============================================ */
 .food-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;width:100%;max-width:900px;margin-bottom:1.5rem;}
 .food-card{background:rgba(211,247,253,.05);border:3px solid var(--secondary);padding:1.2rem;border-radius:var(--radius);text-align:center;cursor:pointer;transition:var(--transition);}
 .food-card:hover{transform:translateY(-5px);border-color:var(--yellow);}
@@ -236,9 +239,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .food-card h4{color:var(--secondary);font-size:1rem;}
 .food-detail{width:100%;max-width:900px;background:rgba(0,0,0,.3);padding:1.5rem;border-radius:var(--radius);border:2px solid var(--accent);min-height:130px;}
 
-/* ============================================
-   MEDIA
-   ============================================ */
 .media-container{display:flex;flex-direction:column;align-items:center;width:100%;max-width:900px;}
 .media-network{display:flex;justify-content:space-around;align-items:center;width:100%;margin:1.5rem 0;flex-wrap:wrap;gap:1rem;}
 .media-node{width:90px;height:90px;border-radius:50%;background:var(--primary);border:3px solid var(--secondary);display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:.7rem;text-align:center;transition:var(--transition);cursor:pointer;}
@@ -248,9 +248,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .media-node .m-label{font-weight:bold;font-size:.65rem;}
 .media-arrow{color:var(--yellow);font-size:1.3rem;}
 
-/* ============================================
-   IDENTITY
-   ============================================ */
 .identity-layers{position:relative;width:100%;max-width:500px;height:350px;margin:1.5rem auto;display:flex;justify-content:center;align-items:center;}
 .layer-circle{position:absolute;border-radius:50%;display:flex;justify-content:center;align-items:center;text-align:center;transition:var(--transition);cursor:pointer;border:2px solid var(--secondary);}
 .layer-circle:hover{transform:scale(1.05);box-shadow:0 0 20px var(--yellow);}
@@ -260,9 +257,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .layer-global{width:340px;height:340px;background:rgba(6,214,160,.1);border:2px solid var(--green);z-index:1;}
 .layer-label{position:absolute;font-size:.7rem;font-weight:bold;color:var(--secondary);}
 
-/* ============================================
-   DOMINO
-   ============================================ */
 .domino-container{width:100%;max-width:1000px;display:flex;flex-direction:column;align-items:center;}
 .mood-meter{display:flex;justify-content:space-around;width:100%;max-width:600px;background:rgba(0,0,0,.4);padding:1rem;border-radius:var(--radius);margin-bottom:1.5rem;border:2px solid var(--secondary);}
 .mood-card{text-align:center;}
@@ -278,17 +272,11 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
 .game-msg{font-size:1rem;text-align:center;color:var(--yellow);font-weight:bold;min-height:30px;}
 
-/* ============================================
-   X-FACTOR
-   ============================================ */
 .xfactor-visual{display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap;margin:1.5rem 0;}
 .xfactor-bubble{background:var(--primary);border:3px solid var(--secondary);padding:.8rem 1.2rem;border-radius:50px;font-weight:bold;cursor:pointer;transition:var(--transition);font-size:.9rem;}
 .xfactor-bubble:hover{background:var(--secondary);color:var(--primary);transform:scale(1.05);}
 .xfactor-bubble.active{background:var(--accent);border-color:var(--accent);color:var(--primary);}
 
-/* ============================================
-   WHAT IF
-   ============================================ */
 .whatif-toggle{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;justify-content:center;}
 .toggle-btn{padding:.8rem 1.5rem;background:var(--primary);border:3px solid var(--secondary);color:var(--secondary);border-radius:50px;cursor:pointer;font-weight:bold;font-family:var(--font-main);font-size:.9rem;transition:var(--transition);}
 .toggle-btn.active{background:var(--secondary);color:var(--primary);}
@@ -298,9 +286,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .whatif-card .w-icon{font-size:2rem;margin-bottom:.3rem;}
 .whatif-card h4{color:var(--yellow);font-size:1rem;margin-bottom:.3rem;}
 
-/* ============================================
-   QUIZ
-   ============================================ */
 .quiz-toolbar{display:flex;gap:.8rem;align-items:center;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap;}
 .xp-badge{background:rgba(255,209,102,.15);border:2px solid var(--yellow);color:var(--yellow);border-radius:50px;padding:.4rem 1rem;font-weight:bold;font-size:.85rem;}
 .quiz-container{width:100%;max-width:800px;display:flex;flex-direction:column;gap:1rem;}
@@ -316,9 +301,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .option-btn.wrong{background:var(--red);color:var(--white);border-color:var(--red);}
 .quiz-feedback{margin-top:.6rem;font-weight:bold;font-size:.9rem;color:var(--yellow);}
 
-/* ============================================
-   BADGES
-   ============================================ */
 .badges-row{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem;}
 .badge{width:74px;text-align:center;opacity:.3;filter:grayscale(1);transition:var(--transition);cursor:pointer;}
 .badge.unlocked{opacity:1;filter:none;}
@@ -327,9 +309,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .badge.unlocked .b-icon{animation:badgeGlow 2s infinite alternate;}
 @keyframes badgeGlow{from{transform:scale(1);}to{transform:scale(1.12);}}
 
-/* ============================================
-   REFLECTION
-   ============================================ */
 .reflection-box{width:100%;max-width:800px;background:rgba(211,247,253,.05);border:3px solid var(--secondary);padding:1.5rem;border-radius:var(--radius);text-align:center;}
 .reflection-box textarea{width:100%;height:130px;padding:.8rem;border-radius:10px;border:2px solid var(--accent);background:var(--primary);color:var(--white);font-family:var(--font-main);font-size:1rem;resize:vertical;margin-bottom:.8rem;}
 .reflection-box button{padding:.8rem 2rem;background:var(--accent);color:var(--primary);border:none;border-radius:50px;font-weight:bold;font-family:var(--font-display);font-size:1rem;cursor:pointer;transition:var(--transition);}
@@ -337,9 +316,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .word-count{font-size:.8rem;color:var(--secondary);margin-bottom:.8rem;text-align:right;}
 .reflection-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;}
 
-/* ============================================
-   GLOSSARY
-   ============================================ */
 .glossary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem;width:100%;max-width:1000px;}
 .glossary-card{background:rgba(211,247,253,.05);border:2px solid var(--secondary);padding:.8rem;border-radius:10px;cursor:pointer;transition:var(--transition);}
 .glossary-card:hover,.glossary-card.open{border-color:var(--yellow);background:rgba(255,209,102,.1);}
@@ -347,7 +323,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .glossary-card p{font-size:.8rem;opacity:0;max-height:0;transition:all .3s ease;overflow:hidden;}
 .glossary-card:hover p,.glossary-card.open p{opacity:1;max-height:100px;margin-top:.4rem;}
 
-/* --- COMMAND PALETTE --- */
 .palette-overlay{position:fixed;inset:0;z-index:4000;background:rgba(5,5,26,.7);backdrop-filter:blur(4px);display:none;justify-content:center;padding-top:12vh;}
 .palette-overlay.open{display:flex;}
 .palette{width:min(560px,92vw);height:fit-content;max-height:60vh;overflow:hidden;background:rgba(14,13,60,.98);border:3px solid var(--accent);border-radius:var(--radius);box-shadow:0 30px 80px rgba(0,0,0,.6),var(--glow-accent);display:flex;flex-direction:column;}
@@ -358,7 +333,6 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 .palette li .p-icon{font-size:1.1rem;}
 .palette .p-hint{padding:.5rem 1.2rem;font-size:.7rem;color:var(--secondary);opacity:.6;border-top:1px solid rgba(211,247,253,.15);}
 
-/* --- TOASTS --- */
 #toasts{position:fixed;bottom:1.5rem;left:1.5rem;z-index:4500;display:flex;flex-direction:column;gap:.6rem;max-width:320px;}
 .toast{background:rgba(14,13,60,.97);border:2px solid var(--accent);border-left:6px solid var(--yellow);border-radius:12px;padding:.7rem 1rem;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:toastIn .4s ease;font-size:.85rem;}
 .toast b{color:var(--yellow);display:block;}
@@ -366,27 +340,22 @@ nav a:hover,nav a.active{color:var(--primary);background:var(--yellow);}
 @keyframes toastIn{from{transform:translateX(-120%);opacity:0;}to{transform:none;opacity:1;}}
 @keyframes toastOut{to{transform:translateX(-120%);opacity:0;}}
 
-/* --- CONFETTI --- */
 #confetti-canvas{position:fixed;inset:0;z-index:4600;pointer-events:none;}
 
-/* --- BACK TO TOP --- */
 #back-to-top{position:fixed;bottom:1.5rem;right:1.5rem;width:45px;height:45px;background:var(--accent);color:var(--primary);border:none;border-radius:50%;font-size:1.3rem;cursor:pointer;display:none;z-index:999;box-shadow:0 4px 15px rgba(0,0,0,.3);transition:var(--transition);}
 #back-to-top:hover{transform:scale(1.1);}
 #back-to-top.show{display:block;}
 
-/* --- FOOTER --- */
 footer{padding:2rem;text-align:center;border-top:4px solid var(--accent);background:rgba(0,0,0,.35);}
 footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
 .footer-actions{display:flex;gap:.8rem;justify-content:center;margin:1rem 0;flex-wrap:wrap;}
 .footer-actions .btn{font-size:.8rem;padding:.6rem 1.3rem;}
 
-/* --- STARTUP VIDEO --- */
 #startup-video-screen{position:fixed;inset:0;z-index:6000;background:#000;display:flex;justify-content:center;align-items:center;cursor:pointer;transition:opacity .7s ease,visibility .7s;}
 #startup-video-screen.done{opacity:0;visibility:hidden;pointer-events:none;}
 #startup-video{width:100%;height:100%;object-fit:cover;display:block;}
 #startup-video-screen .sv-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);color:var(--secondary);font-size:.75rem;opacity:.7;background:rgba(0,0,0,.45);padding:.3rem .9rem;border-radius:50px;border:1px dashed var(--yellow);pointer-events:none;}
 
-/* --- RESPONSIVE --- */
 @media (max-width:900px){nav ul{display:none;}#hamburger{display:block;}}
 @media (max-width:768px){
   .hero h1{font-size:2.5rem;}
@@ -404,9 +373,9 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
   #factory .mode-btn{padding:6px 10px;font-size:.6rem;}
   #factory #map-overlay{display:none;}
   #factory .plane-window{width:78vw;height:42vh;border-width:12px;border-radius:44px;}
+  #factory #career-task{font-size:.72rem;padding:.4rem 1rem;}
+  #factory #career-progress{width:180px;}
 }
-
-/* --- REDUCED MOTION --- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
   html{scroll-behavior:auto;}
@@ -415,13 +384,11 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
 </head>
 <body>
 
-<!-- STARTUP VIDEO -->
 <div id="startup-video-screen" aria-label="Startup video">
   <video id="startup-video" src="Untitled design.mp4" autoplay muted playsinline preload="auto"></video>
   <div class="sv-hint">Click to skip</div>
 </div>
 
-<!-- BOOT SCREEN -->
 <div id="boot" role="status" aria-label="Loading Alezify OS">
   <div class="boot-logo">Alezify<span>OS</span></div>
   <div class="boot-bar-wrap"><div class="boot-bar" id="boot-bar"></div></div>
@@ -429,14 +396,10 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
   <div class="boot-hint">click anywhere to skip</div>
 </div>
 
-<!-- BACKGROUND PARTICLES -->
 <canvas id="bg-canvas" aria-hidden="true"></canvas>
 <canvas id="confetti-canvas" aria-hidden="true"></canvas>
-
-<!-- PROGRESS BAR -->
 <div id="progress-bar"></div>
 
-<!-- NAVIGATION -->
 <nav>
   <a href="#home" class="logo">Alezify<span>OS</span></a>
   <ul>
@@ -479,7 +442,6 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
   <a href="#glossary">📖 Glossary</a>
 </div>
 
-<!-- HERO -->
 <section class="hero" id="home">
   <div class="floating-emoji" style="top:15%;left:8%;animation-delay:0s;">📱</div>
   <div class="floating-emoji" style="top:25%;right:10%;animation-delay:1s;">🚢</div>
@@ -489,7 +451,7 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
   <div class="floating-emoji" style="top:60%;right:5%;animation-delay:2.5s;">🚚</div>
   <h1>My Global Life:</h1>
   <h2>24 Hours Around the World</h2>
-  <p>Watch the 3D cinematic supply chain, play as the factory leader in first-person, and discover how 5 moments in your day connect you with the whole world!</p>
+  <p>Mine resources in first-person, box iPhones one by one, tape them up, load the truck, then drive and fly your own delivery!</p>
   <div class="hero-stats" aria-label="Your progress">
     <div class="stat-chip">⚡ <b id="xp-val">0</b> XP</div>
     <div class="stat-chip">🏅 <b id="badge-val">0</b>/5 Badges</div>
@@ -497,7 +459,7 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
   </div>
   <div class="hero-actions">
     <button class="btn" onclick="scrollToId('start-here')">Start the Mission! 🎯</button>
-    <button class="btn btn-secondary" onclick="scrollToId('factory')">Skip to Factory 🏭</button>
+    <button class="btn btn-secondary" onclick="scrollToId('factory')">Play the Factory 🏭</button>
   </div>
   <div class="hero-scroll-hint">
     <span>Scroll to see your mission guide</span>
@@ -505,22 +467,19 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
   </div>
 </section>
 
-<!-- START HERE — MISSION GUIDE -->
 <section id="start-here" class="section guide-section reveal">
   <h2 class="section-title">🎯 Start Here — Your Mission Guide</h2>
   <p class="section-subtitle">Here's <strong>exactly what to do</strong> on every part of this page. Follow the arrows from top to bottom. You can also <strong>click any card</strong> below to jump straight to that section!</p>
-
   <div class="guide-progress-bar">
     🎯 Progress: <b id="guide-progress-val">0</b> / <span id="guide-progress-total">14</span> sections visited
   </div>
-
   <div class="guide-grid">
     <div class="guide-card" data-target="factory">
       <div class="guide-num">1</div>
       <div class="guide-icon">🏭</div>
       <div class="guide-body">
-        <h3>3D Factory</h3>
-        <p><strong>What to do:</strong> Watch the cinematic, or switch to <strong>🕹️ Play</strong> to mine resources in first-person, board the plane, and land at the factory. Try <strong>🎥 Broadcast</strong> and <strong>🖱️ Explore</strong> too!</p>
+        <h3>3D Factory — Career Mode</h3>
+        <p><strong>What to do:</strong> Click <strong>🕹️ Play</strong>. Mine 3 crystals, board the plane, then in the factory: box an iPhone, tape it, carry it to the truck. Repeat 3×. Then <strong>drive the truck</strong> and <strong>fly the plane</strong> yourself!</p>
       </div>
     </div>
     <div class="guide-card" data-target="giants">
@@ -628,16 +587,12 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
       </div>
     </div>
   </div>
-
   <div class="bouncing-arrow">
     <span>Ready? Let's begin!</span>
-    <button class="btn" onclick="scrollToId('factory')">Start with the 3D Factory → 🏭</button>
+    <button class="btn" onclick="scrollToId('factory')">Play the Factory → 🏭</button>
   </div>
 </section>
 
-<!-- ============================================
-     3D CINEMATIC FACTORY
-     ============================================ -->
 <section id="factory" class="fs-section">
   <canvas id="c"></canvas>
   <div id="hud">
@@ -672,9 +627,22 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
 
     <div id="fp-hud">
       <div id="fp-crosshair"></div>
-      <div id="fp-stats">⛏️ <b id="fp-mined">0</b> / 6 resources</div>
+
+      <div id="career-hud">
+        <div id="career-phase">MINING</div>
+        <div id="career-task">⛏️ Walk to a glowing crystal and press E to mine</div>
+        <div id="career-progress"><div id="career-progress-fill"></div></div>
+      </div>
+
+      <div id="fp-stats">⛏️ <b id="fp-mined">0</b> / 3 · 📦 <b id="fp-boxed">0</b> / 3</div>
       <div id="fp-progress"><div id="fp-progress-fill"></div></div>
+      <div id="carry-indicator">✋ Carrying</div>
       <div id="fp-prompt">Click the scene to look around · WASD to move</div>
+    </div>
+
+    <div id="vehicle-hud">
+      <div>🚚 <span class="vh-speed" id="vh-speed">0</span> km/h</div>
+      <div class="vh-hint" id="vh-hint">W/S = throttle · A/D = steer · E = exit</div>
     </div>
 
     <div id="flight-overlay">
@@ -692,7 +660,7 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
   </a>
 </div>
 
-<!-- 2. REAL-WORLD GIANTS -->
+<!-- Sections 2..14 unchanged from prior version -->
 <section id="giants" class="section section-alt reveal">
   <h2 class="section-title">Real-World Giants</h2>
   <p class="section-subtitle">See how the principles you just simulated are used by the world's largest companies.</p>
@@ -730,50 +698,31 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
   </a>
 </section>
 
-<!-- 3. SMARTPHONE JOURNEY -->
 <section id="journey" class="section reveal">
   <h2 class="section-title">The Journey of a Smartphone</h2>
   <p class="section-subtitle">Click each step to see how a phone is built around the world. Every object has a passport!</p>
   <div class="instruction-banner">
     <span class="ib-arrow">👉</span>
-    <span><strong>Click each of the 5 steps below IN ORDER</strong> from left to right. The detail box will update after each click!</span>
+    <span><strong>Click each of the 5 steps below IN ORDER</strong> from left to right.</span>
     <span class="ib-arrow">👈</span>
   </div>
   <div class="journey-container">
-    <div class="journey-step" onclick="showJourney('materials', this)" tabindex="0" role="button">
-      <div class="step-icon">⛏️</div><div class="step-label">1. Materials</div>
-    </div>
-    <div class="journey-step" onclick="showJourney('components', this)" tabindex="0" role="button">
-      <div class="step-icon">🔌</div><div class="step-label">2. Components</div>
-    </div>
-    <div class="journey-step" onclick="showJourney('assembly', this)" tabindex="0" role="button">
-      <div class="step-icon">🏭</div><div class="step-label">3. Assembly</div>
-    </div>
-    <div class="journey-step" onclick="showJourney('transport', this)" tabindex="0" role="button">
-      <div class="step-icon">🚚</div><div class="step-label">4. Transport</div>
-    </div>
-    <div class="journey-step" onclick="showJourney('you', this)" tabindex="0" role="button">
-      <div class="step-icon">🤳</div><div class="step-label">5. You!</div>
-    </div>
+    <div class="journey-step" onclick="showJourney('materials', this)" tabindex="0" role="button"><div class="step-icon">⛏️</div><div class="step-label">1. Materials</div></div>
+    <div class="journey-step" onclick="showJourney('components', this)" tabindex="0" role="button"><div class="step-icon">🔌</div><div class="step-label">2. Components</div></div>
+    <div class="journey-step" onclick="showJourney('assembly', this)" tabindex="0" role="button"><div class="step-icon">🏭</div><div class="step-label">3. Assembly</div></div>
+    <div class="journey-step" onclick="showJourney('transport', this)" tabindex="0" role="button"><div class="step-icon">🚚</div><div class="step-label">4. Transport</div></div>
+    <div class="journey-step" onclick="showJourney('you', this)" tabindex="0" role="button"><div class="step-icon">🤳</div><div class="step-label">5. You!</div></div>
   </div>
   <div class="detail-box" id="journey-detail">
     <h3>👆 Click a step above!</h3>
     <p>See how a simple object becomes a global story.</p>
   </div>
-  <a href="#map" class="next-section-cta">
-    <span>Next Stop</span><strong>The Global Map</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <a href="#map" class="next-section-cta"><span>Next Stop</span><strong>The Global Map</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 4. INTERACTIVE MAP -->
 <section id="map" class="section section-alt reveal">
   <h2 class="section-title">Where Does Our Stuff Come From?</h2>
   <p class="section-subtitle">Click the glowing dots on the map to see what different continents make. <span class="highlight">Asia makes the most (50%)!</span></p>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Click the glowing dots</strong> on the map. Then try the <strong>Amazon</strong> and <strong>Apple</strong> journey buttons below!</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="map-wrapper">
     <svg class="map-arcs" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
       <path id="arc-amazon" class="arc-amazon" d="M 1120 405 Q 800 80 400 315"/>
@@ -786,30 +735,18 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
     <div class="map-dot" style="top:75%;left:85%;" data-label="Australia (1%)" onclick="updateMapInfo('Australia','1%','Supplies raw materials like iron and wool.')">AU</div>
     <div class="map-dot" style="top:70%;left:30%;" data-label="South America (6%)" onclick="updateMapInfo('South America','6%','Grows lots of food like coffee and supplies metals like copper.')">SA</div>
   </div>
-  <div class="map-info" id="map-info">
-    <h3>Click a dot!</h3><p>Discover who makes what.</p>
-  </div>
+  <div class="map-info" id="map-info"><h3>Click a dot!</h3><p>Discover who makes what.</p></div>
   <div class="company-paths">
     <button class="company-btn" onclick="showCompanyPath('amazon', this)">📦 Amazon Journey</button>
     <button class="company-btn" onclick="showCompanyPath('apple', this)">📱 Apple Journey</button>
   </div>
-  <div class="map-info" id="company-path-info" style="margin-top:1rem;">
-    <p style="opacity:.7;">Click a company to see its supply chain journey.</p>
-  </div>
-  <a href="#food" class="next-section-cta">
-    <span>Next Stop</span><strong>Your Breakfast's Journey</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <div class="map-info" id="company-path-info" style="margin-top:1rem;"><p style="opacity:.7;">Click a company to see its supply chain journey.</p></div>
+  <a href="#food" class="next-section-cta"><span>Next Stop</span><strong>Your Breakfast's Journey</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 5. FOOD JOURNEY -->
 <section id="food" class="section reveal">
   <h2 class="section-title">Your Breakfast's Global Journey</h2>
   <p class="section-subtitle">Pick a breakfast item to see how it travels from farm to plate!</p>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Click any food item below</strong> to see where it comes from and how it reaches your plate!</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="food-grid">
     <div class="food-card" onclick="showFood('banana', this)" tabindex="0" role="button"><div class="food-icon">🍌</div><h4>Banana</h4></div>
     <div class="food-card" onclick="showFood('chocolate', this)" tabindex="0" role="button"><div class="food-icon">🍫</div><h4>Chocolate</h4></div>
@@ -820,20 +757,12 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
     <h3 style="color:var(--yellow);text-align:center;margin-bottom:.8rem;">👆 Click a breakfast item!</h3>
     <p style="text-align:center;opacity:.7;">See the journey from farm to your plate.</p>
   </div>
-  <a href="#media" class="next-section-cta">
-    <span>Next Stop</span><strong>How Trends Spread</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <a href="#media" class="next-section-cta"><span>Next Stop</span><strong>How Trends Spread</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 6. MEDIA SPREAD -->
 <section id="media" class="section section-alt reveal">
   <h2 class="section-title">How Trends Spread Globally</h2>
   <p class="section-subtitle">A song, game, or dance trend can travel around the world in days. Click a node to see how it spreads!</p>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Click each circle IN ORDER</strong> from left to right: 🇰🇷 South Korea → 📱 Social Media → 🌍 Global Fans → 🏠 Your Home</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="media-container">
     <div class="media-network">
       <div class="media-node" id="mn-1" onclick="activateMediaNode(1)" tabindex="0" role="button"><span class="m-icon">🇰🇷</span><span class="m-label">South Korea</span></div>
@@ -849,20 +778,12 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
       <p>From local artists to global fans, media connects us all.</p>
     </div>
   </div>
-  <a href="#identity" class="next-section-cta">
-    <span>Next Stop</span><strong>Overlapping Identities</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <a href="#identity" class="next-section-cta"><span>Next Stop</span><strong>Overlapping Identities</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 7. IDENTITY LAYERS -->
 <section id="identity" class="section reveal">
   <h2 class="section-title">Overlapping Identities</h2>
   <p class="section-subtitle">We all have different layers of identity. Global connections help shape who we are. Hover over the circles!</p>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Hover over (or tap)</strong> each circle below to explore your Personal, Local, National &amp; Global identity layers!</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="identity-layers">
     <div class="layer-circle layer-global"><span class="layer-label" style="top:5%;">🌐 Global</span></div>
     <div class="layer-circle layer-national"><span class="layer-label" style="top:8%;">🌍 National</span></div>
@@ -870,22 +791,14 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
     <div class="layer-circle layer-personal"><span>🏠 Personal</span></div>
   </div>
   <div style="width:100%;max-width:700px;background:rgba(211,247,253,.1);padding:1rem;border-radius:var(--radius);margin-top:1rem;text-align:center;">
-    <p style="font-size:.9rem;"><strong>Teacher Tip:</strong> One world does not mean one culture. Connection helps us share differences as well as similarities. Think about how a global trend has changed how you express your <em>own</em> identity.</p>
+    <p style="font-size:.9rem;"><strong>Teacher Tip:</strong> One world does not mean one culture. Connection helps us share differences as well as similarities.</p>
   </div>
-  <a href="#domino" class="next-section-cta">
-    <span>Next Stop</span><strong>The Domino Effect</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <a href="#domino" class="next-section-cta"><span>Next Stop</span><strong>The Domino Effect</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 8. DOMINO EFFECT -->
 <section id="domino" class="section section-alt reveal">
   <h2 class="section-title">The Domino Effect</h2>
   <p class="section-subtitle">A global system is connected. If one link breaks, it changes lives and moods! <strong>Click any box to break the chain!</strong></p>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Click any of the 5 boxes below to BREAK the chain</strong> and watch what happens. Then click "🔄 Fix the Chain" to repair it!</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="domino-container">
     <div class="mood-meter">
       <div class="mood-card" id="mood-shop"><span class="mood-emoji">😃</span><span class="mood-label">Shop Owner</span></div>
@@ -901,20 +814,12 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
     <div class="game-msg" id="game-msg">Everything is running smoothly! Everyone is happy.</div>
     <button class="btn" onclick="resetDomino()" style="margin-top:.8rem;font-size:.9rem;">Fix the Chain! 🔄</button>
   </div>
-  <a href="#xfactor" class="next-section-cta">
-    <span>Next Stop</span><strong>X-Factor: Small Choices</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <a href="#xfactor" class="next-section-cta"><span>Next Stop</span><strong>X-Factor: Small Choices</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 9. X-FACTOR -->
 <section id="xfactor" class="section reveal">
   <h2 class="section-title">X-Factor: Small Choices, Big Effects</h2>
   <p class="section-subtitle">The network changes when people make one tiny decision. Click a choice to see its ripple effect!</p>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Click each choice bubble below</strong> to see how one small action can ripple through the whole global network!</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="xfactor-visual" id="xfactor-visual">
     <div class="xfactor-bubble" onclick="showXFactor('repair', this)" tabindex="0" role="button">🔧 Repair instead of replace</div>
     <div class="xfactor-bubble" onclick="showXFactor('recycle', this)" tabindex="0" role="button">♻️ Recycle old devices</div>
@@ -925,20 +830,12 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
     <h3>👆 Click a choice above!</h3>
     <p>See how your small decisions ripple through the global network.</p>
   </div>
-  <a href="#whatif" class="next-section-cta">
-    <span>Next Stop</span><strong>What If Global Connections Disappeared?</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <a href="#whatif" class="next-section-cta"><span>Next Stop</span><strong>What If Global Connections Disappeared?</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 10. WHAT IF -->
 <section id="whatif" class="section section-alt reveal">
   <h2 class="section-title">What If Global Connections Disappeared?</h2>
   <p class="section-subtitle">Imagine your day without global links. Toggle the connections on and off to see what would change!</p>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Click "🚫 Global OFF" below</strong> to see what would disappear from your day. Then click "🌐 Global ON" to bring it back!</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="whatif-toggle">
     <button class="toggle-btn active" id="btn-global-on" onclick="setGlobalStatus(true)">🌐 Global ON</button>
     <button class="toggle-btn" id="btn-global-off" onclick="setGlobalStatus(false)">🚫 Global OFF</button>
@@ -952,20 +849,12 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
     <div class="whatif-card" data-global="true"><div class="w-icon">🏫</div><h4>Knowledge &amp; Learning</h4><p>No internet, no global news, no online learning.</p></div>
   </div>
   <div class="game-msg" id="whatif-msg" style="margin-top:1.5rem;font-size:1rem;">With global connections, your day is rich and full of variety.</div>
-  <a href="#quiz" class="next-section-cta">
-    <span>Next Stop</span><strong>The Big Global Quiz!</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <a href="#quiz" class="next-section-cta"><span>Next Stop</span><strong>The Big Global Quiz!</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 11. QUIZ -->
 <section id="quiz" class="section reveal">
   <h2 class="section-title">The Big Global Quiz!</h2>
   <p class="section-subtitle">Let's see if you understand how the global chain works. Answer these 5 questions!</p>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Answer all 5 questions below.</strong> Turn ON "⏱️ Challenge Mode" for a 15-second timer per question!</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="quiz-toolbar">
     <div class="xp-badge">⚡ <span id="quiz-xp">0</span> XP earned</div>
     <button class="toggle-btn" id="challenge-toggle" onclick="toggleChallenge()">⏱️ Challenge Mode: OFF</button>
@@ -973,43 +862,27 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
   </div>
   <div class="quiz-container" id="quiz-container"></div>
   <div class="game-msg" id="quiz-score" style="margin-top:1.5rem;"></div>
-  <a href="#badges" class="next-section-cta">
-    <span>Next Stop</span><strong>Achievement Badges</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <a href="#badges" class="next-section-cta"><span>Next Stop</span><strong>Achievement Badges</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 12. BADGES -->
 <section id="badges" class="section section-alt reveal">
   <h2 class="section-title">Achievement Badges</h2>
   <p class="section-subtitle">Unlock all 5 badges by exploring the site!</p>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Complete tasks around the site</strong> (factory, quiz, domino, reflection, exploring every section) to unlock all 5 badges!</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="badges-row" id="badges-row">
-    <div class="badge" id="badge-factory" title="Watch the full cinematic or finish a first-person run"><span class="b-icon">🏭</span><span class="b-name">Factory Operator</span></div>
+    <div class="badge" id="badge-factory" title="Complete the factory career run"><span class="b-icon">🏭</span><span class="b-name">Factory Operator</span></div>
     <div class="badge" id="badge-quiz" title="Score 5/5 on the quiz"><span class="b-icon">🧠</span><span class="b-name">Quiz Master</span></div>
     <div class="badge" id="badge-chain" title="Break the domino chain"><span class="b-icon">🁡</span><span class="b-name">Chain Breaker</span></div>
     <div class="badge" id="badge-reflect" title="Submit your reflection"><span class="b-icon">✍️</span><span class="b-name">Deep Thinker</span></div>
     <div class="badge" id="badge-explorer" title="Visit every section"><span class="b-icon">🧭</span><span class="b-name">Globe Explorer</span></div>
   </div>
-  <a href="#reflection" class="next-section-cta">
-    <span>Next Stop</span><strong>Final Reflection</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <a href="#reflection" class="next-section-cta"><span>Next Stop</span><strong>Final Reflection</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 13. REFLECTION -->
 <section id="reflection" class="section reveal">
   <h2 class="section-title">Final Reflection</h2>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Type your answer in the box below</strong> (at least 30 words). Then click <strong>"Submit Answer 🚀"</strong> and <strong>"📄 Export My Report"</strong>!</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="reflection-box">
     <h3>"If global connections disappeared from my day, what would change most, and why?"</h3>
-    <p style="color:var(--secondary);margin-bottom:1rem;font-size:.95rem;">Type your answer below. Think about your shoes, your food, or the media you enjoy. Your draft is saved automatically.</p>
+    <p style="color:var(--secondary);margin-bottom:1rem;font-size:.95rem;">Type your answer below. Your draft is saved automatically.</p>
     <textarea id="reflection-text" placeholder="If global connections disappeared, I would miss..." oninput="updateWordCount()"></textarea>
     <div class="word-count" id="word-count">0 words</div>
     <div class="reflection-actions">
@@ -1018,20 +891,11 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
     </div>
     <div id="reflection-msg" style="margin-top:.8rem;color:var(--green);font-weight:bold;"></div>
   </div>
-  <a href="#glossary" class="next-section-cta">
-    <span>Last Stop</span><strong>Glossary of Global Terms</strong><span class="nsc-arrow">⬇️</span>
-  </a>
+  <a href="#glossary" class="next-section-cta"><span>Last Stop</span><strong>Glossary of Global Terms</strong><span class="nsc-arrow">⬇️</span></a>
 </section>
 
-<!-- 14. GLOSSARY -->
 <section id="glossary" class="section section-alt reveal">
   <h2 class="section-title">Glossary of Global Terms</h2>
-  <p class="section-subtitle">Hover (or tap) a card to reveal its definition!</p>
-  <div class="instruction-banner">
-    <span class="ib-arrow">👉</span>
-    <span><strong>Hover over or tap each card below</strong> to reveal the definition of key global terms!</span>
-    <span class="ib-arrow">👈</span>
-  </div>
   <div class="glossary-grid">
     <div class="glossary-card"><h4>Supply Chain</h4><p>The steps a product goes through from raw materials to your hands.</p></div>
     <div class="glossary-card"><h4>Redundancy</h4><p>Having more than one path or backup so the system can recover from problems.</p></div>
@@ -1048,22 +912,18 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
   </div>
 </section>
 
-<!-- TOASTS -->
 <div id="toasts" aria-live="polite"></div>
 
-<!-- COMMAND PALETTE -->
 <div class="palette-overlay" id="palette-overlay">
   <div class="palette" role="dialog" aria-label="Command palette">
-    <input id="palette-input" type="text" placeholder="Type a command... (e.g. 'quiz', 'factory', 'sound')" autocomplete="off" spellcheck="false">
+    <input id="palette-input" type="text" placeholder="Type a command..." autocomplete="off" spellcheck="false">
     <ul id="palette-list"></ul>
     <div class="p-hint">↑↓ navigate · Enter run · Esc close · Ctrl+K anywhere to open</div>
   </div>
 </div>
 
-<!-- BACK TO TOP -->
 <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-actions">
     <button class="btn" onclick="exportReport()">📄 Export Report</button>
@@ -1075,31 +935,19 @@ footer p{color:var(--secondary);opacity:.7;font-size:.9rem;}
 </footer>
 
 <script>
-/* ============================================================
-   ALEZIFY OS CORE
-   ============================================================ */
 'use strict';
 const $  = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function scrollToId(id) { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' }); }
 
-function scrollToId(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
-}
-
-/* ---------- Persistent store ---------- */
 const store = {
-  get(k, d) {
-    try { const v = localStorage.getItem('alezify_' + k); return v === null ? d : JSON.parse(v); }
-    catch (e) { return d; }
-  },
+  get(k, d) { try { const v = localStorage.getItem('alezify_' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('alezify_' + k, JSON.stringify(v)); } catch (e) {} },
   del(k) { try { localStorage.removeItem('alezify_' + k); } catch (e) {} }
 };
 
-/* ---------- Audio engine ---------- */
 const Sound = (() => {
   let ctx = null;
   let enabled = store.get('sound', true);
@@ -1124,21 +972,13 @@ const Sound = (() => {
     get enabled() { return enabled; }
   };
 })();
+function syncSoundBtn() { $('#sound-toggle').textContent = Sound.enabled ? '🔊' : '🔇'; }
 
-function syncSoundBtn() {
-  $('#sound-toggle').textContent = Sound.enabled ? '🔊' : '🔇';
-}
-
-/* ---------- Reader (Kokoro-82M with speechSynthesis fallback) ---------- */
 const Reader = (() => {
   let enabled = store.get('reader', true);
-  let speaking = false, tts = null, loading = false;
-
-  function stripEmoji(t) {
-    return String(t || '').replace(/[^\w\s.,!?'"\-:;()\/]/g, ' ').replace(/\s+/g, ' ').trim();
-  }
+  let tts = null, loading = false;
+  function stripEmoji(t) { return String(t || '').replace(/[^\w\s.,!?'"\-:;()\/]/g, ' ').replace(/\s+/g, ' ').trim(); }
   function setSpeakingIndicator(on) {
-    speaking = on;
     const btn = document.getElementById('reader-toggle');
     if (btn) btn.classList.toggle('speaking', on && enabled);
   }
@@ -1147,10 +987,8 @@ const Reader = (() => {
     if (loading) return false;
     if (typeof KokoroTTS === 'undefined') return false;
     loading = true;
-    try {
-      tts = await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', { dtype: 'q8', device: 'wasm' });
-      return true;
-    } catch (e) { tts = null; return false; }
+    try { tts = await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', { dtype: 'q8', device: 'wasm' }); return true; }
+    catch (e) { tts = null; return false; }
     finally { loading = false; }
   }
   async function speakWithKokoro(text) {
@@ -1171,19 +1009,12 @@ const Reader = (() => {
     } catch (e) { setSpeakingIndicator(false); return false; }
   }
   let fallbackVoice = null;
-  const MALE_PATTERNS = [
-    /Microsoft Guy/i, /Microsoft David/i, /Microsoft Mark/i,
-    /Google UK English Male/i, /\bDaniel\b/i, /\bAlex\b/i,
-    /English.*Male/i, /^en-US/i, /^en-GB/i, /^en-/i
-  ];
+  const MALE_PATTERNS = [/Microsoft Guy/i,/Microsoft David/i,/Microsoft Mark/i,/Google UK English Male/i,/\bDaniel\b/i,/\bAlex\b/i,/English.*Male/i,/^en-US/i,/^en-GB/i,/^en-/i];
   function pickMaleVoice() {
     if (!('speechSynthesis' in window)) return null;
     const voices = speechSynthesis.getVoices();
     if (!voices.length) return null;
-    for (const p of MALE_PATTERNS) {
-      const v = voices.find(vo => p.test(vo.name) || p.test(vo.lang));
-      if (v) return v;
-    }
+    for (const p of MALE_PATTERNS) { const v = voices.find(vo => p.test(vo.name) || p.test(vo.lang)); if (v) return v; }
     return voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
   }
   function initFallbackVoice() {
@@ -1207,41 +1038,17 @@ const Reader = (() => {
     u.onerror = () => setSpeakingIndicator(false);
     try { speechSynthesis.speak(u); } catch (e) {}
   }
-  async function speak(text) {
-    if (!enabled) return;
-    const kokoroOk = await speakWithKokoro(text);
-    if (!kokoroOk) speakWithFallback(text);
-  }
-  function speakElement(el) {
-    if (!el) return;
-    const text = el.getAttribute('aria-label') || el.getAttribute('data-label') || el.textContent || '';
-    speak(text);
-  }
-  function toggle() {
-    enabled = !enabled;
-    store.set('reader', enabled);
-    if (!enabled) {
-      try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {}
-      setSpeakingIndicator(false);
-    }
-    return enabled;
-  }
+  async function speak(text) { if (!enabled) return; const ok = await speakWithKokoro(text); if (!ok) speakWithFallback(text); }
+  function speakElement(el) { if (!el) return; const text = el.getAttribute('aria-label') || el.getAttribute('data-label') || el.textContent || ''; speak(text); }
+  function toggle() { enabled = !enabled; store.set('reader', enabled); if (!enabled) { try { if ('speechSynthesis' in window) speechSynthesis.cancel(); } catch (e) {} setSpeakingIndicator(false); } return enabled; }
   return { init: initFallbackVoice, speak, speakElement, toggle, get enabled() { return enabled; } };
 })();
-
 function updateReaderBtn() {
-  const btn = $('#reader-toggle');
-  if (!btn) return;
+  const btn = $('#reader-toggle'); if (!btn) return;
   btn.textContent = Reader.enabled ? '🗣️' : '🤐';
-  const title = Reader.enabled
-    ? 'Voice reader ON — Kokoro‑82M male (am_adam), slow & clear (click to mute)'
-    : 'Voice reader OFF (click to enable Kokoro‑82M male voice)';
-  btn.title = title;
-  btn.setAttribute('aria-label', title);
   btn.classList.remove('speaking');
 }
 
-/* ---------- Toasts ---------- */
 function toast(title, msg, icon) {
   const box = $('#toasts');
   const el = document.createElement('div');
@@ -1251,7 +1058,6 @@ function toast(title, msg, icon) {
   setTimeout(() => { el.classList.add('gone'); setTimeout(() => el.remove(), 450); }, 4200);
 }
 
-/* ---------- Confetti ---------- */
 const Confetti = (() => {
   const canvas = $('#confetti-canvas');
   const ctx2 = canvas.getContext('2d');
@@ -1262,17 +1068,7 @@ const Confetti = (() => {
     if (reducedMotion) return;
     const colors = ['#FFD166', '#E2B2FF', '#06D6A0', '#EF476F', '#D3F7FD', '#F78C6B'];
     for (let i = 0; i < (n || 140); i++) {
-      parts.push({
-        x: innerWidth / 2 + (Math.random() - 0.5) * 240,
-        y: innerHeight * 0.35,
-        vx: (Math.random() - 0.5) * 13,
-        vy: -Math.random() * 13 - 4,
-        s: Math.random() * 7 + 4,
-        c: colors[(Math.random() * colors.length) | 0],
-        r: Math.random() * Math.PI,
-        vr: (Math.random() - 0.5) * 0.3,
-        life: 1
-      });
+      parts.push({ x: innerWidth / 2 + (Math.random() - 0.5) * 240, y: innerHeight * 0.35, vx: (Math.random() - 0.5) * 13, vy: -Math.random() * 13 - 4, s: Math.random() * 7 + 4, c: colors[(Math.random() * colors.length) | 0], r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3, life: 1 });
     }
     if (!running) { running = true; requestAnimationFrame(loop); }
   }
@@ -1286,13 +1082,11 @@ const Confetti = (() => {
       ctx2.fillStyle = p.c; ctx2.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * 0.6);
       ctx2.restore();
     }
-    if (parts.length) requestAnimationFrame(loop);
-    else { running = false; ctx2.clearRect(0, 0, canvas.width, canvas.height); }
+    if (parts.length) requestAnimationFrame(loop); else { running = false; ctx2.clearRect(0, 0, canvas.width, canvas.height); }
   }
   return { burst };
 })();
 
-/* ---------- XP ---------- */
 let XP = store.get('xp', 0);
 function addXP(n, why) {
   XP += n; store.set('xp', XP);
@@ -1303,7 +1097,6 @@ function addXP(n, why) {
   if (why) toast('+' + n + ' XP', why, '⚡');
 }
 
-/* ---------- Badges ---------- */
 const BADGE_META = {
   factory:  ['🏭', 'Factory Operator'],
   quiz:     ['🧠', 'Quiz Master'],
@@ -1315,8 +1108,7 @@ let badges = store.get('badges', {});
 function award(id) {
   if (badges[id]) return;
   badges[id] = Date.now(); store.set('badges', badges);
-  const el = $('#badge-' + id);
-  if (el) el.classList.add('unlocked');
+  const el = $('#badge-' + id); if (el) el.classList.add('unlocked');
   const meta = BADGE_META[id];
   toast('Badge unlocked!', meta[0] + ' ' + meta[1], '🏅');
   Sound.fanfare(); Confetti.burst(90);
@@ -1327,13 +1119,8 @@ function syncBadges() {
   $('#badge-val').textContent = Object.keys(badges).length;
 }
 
-/* ---------- Boot ---------- */
 (function boot() {
-  const msgs = [
-    'Initializing kernel...', 'Loading 3D engine...', 'Calibrating conveyor belts...',
-    'Waking up the robots...', 'Mapping supply chains...', 'Brewing hot chocolate...',
-    'Alezify OS ready!'
-  ];
+  const msgs = ['Initializing kernel...','Loading 3D engine...','Calibrating conveyor belts...','Waking up the robots...','Mapping supply chains...','Brewing hot chocolate...','Alezify OS ready!'];
   const bar = $('#boot-bar'), msg = $('#boot-msg'), screen = $('#boot');
   let i = 0, done = false;
   const iv = setInterval(() => {
@@ -1353,7 +1140,6 @@ function syncBadges() {
   screen.addEventListener('click', finish);
 })();
 
-/* ---------- Startup video ---------- */
 (function startupVideo() {
   const screen = document.getElementById('startup-video-screen');
   const video = document.getElementById('startup-video');
@@ -1373,7 +1159,6 @@ function syncBadges() {
   setTimeout(() => { if (video.readyState < 2) finish(); }, 8000);
 })();
 
-/* ---------- Background particles ---------- */
 (function particles() {
   if (reducedMotion) return;
   const canvas = $('#bg-canvas'), ctx = canvas.getContext('2d');
@@ -1381,11 +1166,7 @@ function syncBadges() {
   function resize() {
     W = canvas.width = innerWidth; H = canvas.height = innerHeight;
     const n = Math.min(90, Math.floor(W * H / 22000));
-    dots = Array.from({ length: n }, () => ({
-      x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
-      r: Math.random() * 2 + 0.6
-    }));
+    dots = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35, r: Math.random() * 2 + 0.6 }));
   }
   window.addEventListener('resize', resize); resize();
   (function loop() {
@@ -1397,71 +1178,47 @@ function syncBadges() {
       ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(211,247,253,0.5)'; ctx.fill();
     }
-    for (let i = 0; i < dots.length; i++) {
-      for (let j = i + 1; j < dots.length; j++) {
-        const a = dots[i], b = dots[j];
-        const dx = a.x - b.x, dy = a.y - b.y, dist = dx * dx + dy * dy;
-        if (dist < 13000) {
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(226,178,255,${0.14 * (1 - dist / 13000)})`;
-          ctx.lineWidth = 1; ctx.stroke();
-        }
+    for (let i = 0; i < dots.length; i++) for (let j = i + 1; j < dots.length; j++) {
+      const a = dots[i], b = dots[j];
+      const dx = a.x - b.x, dy = a.y - b.y, dist = dx * dx + dy * dy;
+      if (dist < 13000) {
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(226,178,255,${0.14 * (1 - dist / 13000)})`;
+        ctx.lineWidth = 1; ctx.stroke();
       }
     }
     requestAnimationFrame(loop);
   })();
 })();
 
-/* ---------- Scroll / progress / guide ---------- */
 const visited = new Set(store.get('visited', []));
 const SECTION_IDS = ['start-here','factory','giants','journey','map','food','media','identity','domino','xfactor','whatif','quiz','badges','reflection','glossary'];
-
 function syncGuideCards() {
   let count = 0;
-  $$('.guide-card').forEach(card => {
-    const target = card.dataset.target;
-    const v = visited.has(target);
-    card.classList.toggle('visited', v);
-    if (v) count++;
-  });
-  const val = $('#guide-progress-val');
-  if (val) val.textContent = count;
-  const totalEl = $('#guide-progress-total');
-  if (totalEl) totalEl.textContent = $$('.guide-card').length;
+  $$('.guide-card').forEach(card => { const v = visited.has(card.dataset.target); card.classList.toggle('visited', v); if (v) count++; });
+  const val = $('#guide-progress-val'); if (val) val.textContent = count;
+  const totalEl = $('#guide-progress-total'); if (totalEl) totalEl.textContent = $$('.guide-card').length;
 }
-function checkExplorer() {
-  if (SECTION_IDS.every(id => visited.has(id))) award('explorer');
-}
+function checkExplorer() { if (SECTION_IDS.every(id => visited.has(id))) award('explorer'); }
 window.addEventListener('scroll', () => {
   const st = document.documentElement.scrollTop;
   const sh = document.documentElement.scrollHeight - document.documentElement.clientHeight;
   $('#progress-bar').style.width = (st / sh * 100) + '%';
   $('#back-to-top').classList.toggle('show', st > 500);
-
   let current = 'home';
-  SECTION_IDS.concat(['home']).forEach(id => {
-    const el = document.getElementById(id);
-    if (el && st >= el.offsetTop - 120) current = id;
-  });
-  if (SECTION_IDS.includes(current) && !visited.has(current)) {
-    visited.add(current); store.set('visited', [...visited]);
-    checkExplorer();
-    syncGuideCards();
-  }
+  SECTION_IDS.concat(['home']).forEach(id => { const el = document.getElementById(id); if (el && st >= el.offsetTop - 120) current = id; });
+  if (SECTION_IDS.includes(current) && !visited.has(current)) { visited.add(current); store.set('visited', [...visited]); checkExplorer(); syncGuideCards(); }
   $$('nav a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
 }, { passive: true });
 
-/* ---------- Hamburger ---------- */
 $('#hamburger').addEventListener('click', () => { Sound.click(); $('#mobile-menu').classList.toggle('open'); });
 $$('#mobile-menu a').forEach(a => a.addEventListener('click', () => $('#mobile-menu').classList.remove('open')));
 
-/* ---------- Reveal ---------- */
 const revealIO = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealIO.unobserve(e.target); } });
 }, { threshold: 0.12 });
 $$('.reveal').forEach(el => revealIO.observe(el));
 
-/* ---------- Count-up ---------- */
 const countIO = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (!e.isIntersecting) return;
@@ -1477,37 +1234,27 @@ const countIO = new IntersectionObserver(entries => {
 }, { threshold: 0.5 });
 $$('.count-up').forEach(el => countIO.observe(el));
 
-/* ---------- Guide card clicks ---------- */
-$$('.guide-card').forEach(card => {
-  card.addEventListener('click', () => { Sound.click(); scrollToId(card.dataset.target); });
-});
+$$('.guide-card').forEach(card => card.addEventListener('click', () => { Sound.click(); scrollToId(card.dataset.target); }));
 
-/* ---------- Command palette ---------- */
 const Palette = (() => {
   const overlay = $('#palette-overlay'), input = $('#palette-input'), list = $('#palette-list');
   let sel = 0, filtered = [];
   const icons = { 'start-here':'🎯', factory:'🏭', giants:'🌐', journey:'📱', map:'🗺️', food:'🍌', media:'📡', identity:'🧭', domino:'🁡', xfactor:'⚡', whatif:'🌐', quiz:'🧠', badges:'🏅', reflection:'✍️', glossary:'📖' };
-  const actions = SECTION_IDS.map(id => ({
-    icon: icons[id] || '📌',
-    label: 'Go to: ' + id.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase()),
-    run: () => scrollToId(id)
-  })).concat([
-    { icon: '🕹️', label: 'Factory: enter first-person mode', run: () => { scrollToId('factory'); if (window.FactorySetMode) window.FactorySetMode('fp'); } },
-    { icon: '🎥', label: 'Factory: broadcast camera', run: () => { scrollToId('factory'); if (window.FactorySetMode) window.FactorySetMode('broadcast'); } },
-    { icon: '🔊', label: 'Toggle sound', run: () => { Sound.toggle(); syncSoundBtn(); } },
-    { icon: '🗣️', label: 'Toggle voice reader', run: () => { Reader.toggle(); updateReaderBtn(); } },
-    { icon: '📄', label: 'Export my report', run: exportReport },
-    { icon: '🗑️', label: 'Reset all progress', run: resetAllProgress },
-    { icon: '🏠', label: 'Back to top', run: () => window.scrollTo({ top: 0, behavior: 'smooth' }) }
-  ]);
-
+  const actions = SECTION_IDS.map(id => ({ icon: icons[id] || '📌', label: 'Go to: ' + id.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase()), run: () => scrollToId(id) }))
+    .concat([
+      { icon: '🕹️', label: 'Factory: play in first-person', run: () => { scrollToId('factory'); if (window.FactorySetMode) window.FactorySetMode('fp'); } },
+      { icon: '🎥', label: 'Factory: broadcast camera', run: () => { scrollToId('factory'); if (window.FactorySetMode) window.FactorySetMode('broadcast'); } },
+      { icon: '🔊', label: 'Toggle sound', run: () => { Sound.toggle(); syncSoundBtn(); } },
+      { icon: '🗣️', label: 'Toggle voice reader', run: () => { Reader.toggle(); updateReaderBtn(); } },
+      { icon: '📄', label: 'Export my report', run: exportReport },
+      { icon: '🗑️', label: 'Reset all progress', run: resetAllProgress },
+      { icon: '🏠', label: 'Back to top', run: () => window.scrollTo({ top: 0, behavior: 'smooth' }) }
+    ]);
   function render() {
     const q = input.value.trim().toLowerCase();
     filtered = actions.filter(a => a.label.toLowerCase().includes(q));
     sel = clamp(sel, 0, Math.max(filtered.length - 1, 0));
-    list.innerHTML = filtered.map((a, i) =>
-      `<li class="${i === sel ? 'selected' : ''}" data-i="${i}"><span class="p-icon">${a.icon}</span>${a.label}</li>`
-    ).join('') || '<li><em>No matches...</em></li>';
+    list.innerHTML = filtered.map((a, i) => `<li class="${i === sel ? 'selected' : ''}" data-i="${i}"><span class="p-icon">${a.icon}</span>${a.label}</li>`).join('') || '<li><em>No matches...</em></li>';
     $$('li', list).forEach(li => li.addEventListener('click', () => pick(+li.dataset.i)));
   }
   function pick(i) { const a = filtered[i]; if (!a) return; close(); a.run(); Sound.click(); }
@@ -1528,17 +1275,14 @@ const Palette = (() => {
   return { open };
 })();
 
-/* ---------- Keyboard role=button ---------- */
 document.addEventListener('keydown', e => {
   if ((e.key === 'Enter' || e.key === ' ') && e.target.getAttribute && e.target.getAttribute('role') === 'button') {
     e.preventDefault(); e.target.click();
   }
 });
 
-/* ---------- Glossary toggle ---------- */
 $$('.glossary-card').forEach(c => c.addEventListener('click', () => { Sound.pop(); c.classList.toggle('open'); }));
 
-/* ---------- Sound toggle ---------- */
 $('#sound-toggle').addEventListener('click', () => {
   const on = Sound.toggle(); syncSoundBtn();
   if (on) Sound.click();
@@ -1546,32 +1290,18 @@ $('#sound-toggle').addEventListener('click', () => {
 });
 syncSoundBtn();
 
-/* ---------- Reader toggle ---------- */
 Reader.init();
 updateReaderBtn();
 $('#reader-toggle').addEventListener('click', async () => {
   const on = Reader.toggle();
   updateReaderBtn();
-  if (on) {
-    toast('Voice reader ON 🗣️', 'Loading Kokoro‑82M male voice… first use may take a moment.', '🗣️');
-    Reader.speak('Voice reader is on. I am using a professional male voice. I will speak slowly and clearly.');
-  } else {
-    toast('Voice reader OFF 🤐', 'Silent mode.', '🗣️');
-  }
+  if (on) { toast('Voice reader ON 🗣️', 'Loading Kokoro-82M male voice…', '🗣️'); Reader.speak('Voice reader is on. I am using a professional male voice.'); }
+  else { toast('Voice reader OFF 🤐', 'Silent mode.', '🗣️'); }
 });
 
-/* ---------- Auto reader ---------- */
 (function bindReaderClicks() {
-  const CLICK_SELECTOR = [
-    '.btn', '.tool-btn', '.journey-step', '.food-card', '.media-node',
-    '.xfactor-bubble', '.domino-box', '.glossary-card', '.company-btn',
-    '.map-dot', '.toggle-btn', '.option-btn', '.badge', '.layer-circle',
-    'nav a', '#mobile-menu a', '[role="button"]', '.guide-card'
-  ].join(',');
-  const TRIGGER_SELECTOR = [
-    '.journey-step', '.food-card', '.media-node', '.xfactor-bubble',
-    '.company-btn', '.map-dot', '.domino-box', '#btn-global-on', '#btn-global-off', '.guide-card'
-  ].join(',');
+  const CLICK_SELECTOR = ['.btn','.tool-btn','.journey-step','.food-card','.media-node','.xfactor-bubble','.domino-box','.glossary-card','.company-btn','.map-dot','.toggle-btn','.option-btn','.badge','.layer-circle','nav a','#mobile-menu a','[role="button"]','.guide-card'].join(',');
+  const TRIGGER_SELECTOR = ['.journey-step','.food-card','.media-node','.xfactor-bubble','.company-btn','.map-dot','.domino-box','#btn-global-on','#btn-global-off','.guide-card'].join(',');
   document.addEventListener('click', (e) => {
     if (e.target.closest('#startup-video-screen, #boot, #reader-toggle, #factory')) return;
     const el = e.target.closest(CLICK_SELECTOR);
@@ -1579,42 +1309,19 @@ $('#reader-toggle').addEventListener('click', async () => {
     if (el.matches(TRIGGER_SELECTOR)) return;
     if (el.matches('.option-btn')) {
       const box = el.closest('.quiz-question-box');
-      if (box) {
-        setTimeout(() => {
-          const fb = box.querySelector('.quiz-feedback');
-          if (fb && fb.textContent.trim()) Reader.speak(fb.textContent);
-        }, 150);
-      }
+      if (box) { setTimeout(() => { const fb = box.querySelector('.quiz-feedback'); if (fb && fb.textContent.trim()) Reader.speak(fb.textContent); }, 150); }
       return;
     }
     Reader.speakElement(el);
   });
 })();
 
-(function observeDetailBoxes() {
-  const ids = ['journey-detail','food-detail','media-detail','xfactor-detail','map-info','company-path-info','whatif-msg','game-msg','reflection-msg'];
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    let last = (el.textContent || '').replace(/\s+/g, ' ').trim();
-    try {
-      new MutationObserver(() => {
-        const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
-        if (text && text !== last) { last = text; setTimeout(() => Reader.speak(text), 80); }
-      }).observe(el, { childList: true, subtree: true, characterData: true });
-    } catch (e) {}
-  });
-})();
-
-/* ============================================================
-   CONTENT SECTIONS
-   ============================================================ */
 const journeyData = {
-  materials: { icon: '⛏️', title: '1. Raw Materials', text: 'It starts with digging! We mine metals like lithium and cobalt from the earth in places like Africa and South America. This is the "Resource Stage".', chain: ['Mine in Africa', 'Raw Metal', 'Ship to Factory'] },
+  materials: { icon: '⛏️', title: '1. Raw Materials', text: 'It starts with digging! We mine metals like lithium and cobalt from the earth in places like Africa and South America.', chain: ['Mine in Africa', 'Raw Metal', 'Ship to Factory'] },
   components: { icon: '🔌', title: '2. Components', text: 'The raw materials are turned into tiny parts! The screens come from Japan and the computer chips are made in Taiwan.', chain: ['Japan (Screens)', 'Taiwan (Chips)', 'South Korea (Memory)'] },
-  assembly: { icon: '🏭', title: '3. Assembly', text: 'All the parts are brought together in giant factories in Asia (like China and Vietnam) where workers and robots put the phone together. This is "Specialization" - places doing what they do best!', chain: ['China', 'Vietnam', 'India'] },
-  transport: { icon: '🚚', title: '4. Transport', text: 'The finished phones are packed into boxes and put on massive cargo ships or airplanes to travel across the ocean! 90% of world trade is carried by sea.', chain: ['Cargo Ship', 'Airplane', 'Delivery Truck'] },
-  you: { icon: '🤳', title: '5. You!', text: 'Finally, the phone arrives at a store or your door. You unbox it and start using it, completing the global journey! Now it\'s your turn to reuse and recycle it when you\'re done.', chain: ['Shop', 'Your Door', 'You!'] }
+  assembly: { icon: '🏭', title: '3. Assembly', text: 'All the parts are brought together in giant factories in Asia (like China and Vietnam).', chain: ['China', 'Vietnam', 'India'] },
+  transport: { icon: '🚚', title: '4. Transport', text: 'The finished phones are packed into boxes and put on massive cargo ships or airplanes! 90% of world trade is carried by sea.', chain: ['Cargo Ship', 'Airplane', 'Delivery Truck'] },
+  you: { icon: '🤳', title: '5. You!', text: 'Finally, the phone arrives at a store or your door. Now it is your turn to reuse and recycle it when you are done.', chain: ['Shop', 'Your Door', 'You!'] }
 };
 function chainHTML(chain) {
   let h = '<div class="arrow-chain">';
@@ -1639,14 +1346,14 @@ function showCompanyPath(company, btn) {
   $('#arc-amazon').classList.toggle('show', company === 'amazon');
   $('#arc-apple').classList.toggle('show', company === 'apple');
   $('#company-path-info').innerHTML = company === 'amazon'
-    ? '<h3 style="color:var(--accent);">📦 Amazon Supply Chain</h3><p style="font-size:.9rem;margin-top:.5rem;">Inventory from Asia → US Fulfillment Centers → Robots pick items → Packed → Delivered to You by truck or plane. Watch the glowing arc cross the map!</p>'
-    : '<h3 style="color:var(--accent);">📱 Apple iPhone Supply Chain</h3><p style="font-size:.9rem;margin-top:.5rem;">Designed in California → Components from Taiwan/South Korea/Japan → Assembled in China &amp; India → Shipped globally to You. Watch the glowing arc cross the map!</p>';
+    ? '<h3 style="color:var(--accent);">📦 Amazon Supply Chain</h3><p style="font-size:.9rem;margin-top:.5rem;">Inventory from Asia → US Fulfillment Centers → Robots pick items → Packed → Delivered to You.</p>'
+    : '<h3 style="color:var(--accent);">📱 Apple iPhone Supply Chain</h3><p style="font-size:.9rem;margin-top:.5rem;">Designed in California → Components from Taiwan/South Korea/Japan → Assembled in China &amp; India → Shipped globally to You.</p>';
 }
 const foodData = {
-  banana: { icon: '🍌', title: 'The Banana Journey', text: 'Bananas grow in tropical climates like Ecuador and Costa Rica. Workers pick them green, they travel in refrigerated ships, and they ripen on the way to your supermarket!', chain: ['Ecuador', 'Refrigerated Ship', 'Supermarket', 'You'] },
-  chocolate: { icon: '🍫', title: 'The Chocolate Journey', text: 'Cocoa beans come from Ghana and Ivory Coast. They are dried, shipped to Europe or Asia, roasted, and turned into chocolate. Sugar comes from Brazil!', chain: ['Ghana (Cocoa)', 'Europe (Roasting)', 'Factory', 'You'] },
-  cereal: { icon: '🥣', title: 'The Cereal Journey', text: 'Wheat is grown in the USA, Canada, or Europe. It is processed into flakes, vitamins are added, and the box is printed with materials from forests!', chain: ['Farm', 'Processing Plant', 'Box Factory', 'You'] },
-  tea: { icon: '🍵', title: 'The Tea Journey', text: 'Tea leaves come from Kenya, India, or Sri Lanka. They are dried, blended, and shipped around the world. Every cup has a global story!', chain: ['Kenya (Leaves)', 'Sri Lanka', 'Blending', 'You'] }
+  banana: { icon: '🍌', title: 'The Banana Journey', text: 'Bananas grow in Ecuador and Costa Rica. They travel in refrigerated ships.', chain: ['Ecuador', 'Refrigerated Ship', 'Supermarket', 'You'] },
+  chocolate: { icon: '🍫', title: 'The Chocolate Journey', text: 'Cocoa beans come from Ghana and Ivory Coast.', chain: ['Ghana (Cocoa)', 'Europe (Roasting)', 'Factory', 'You'] },
+  cereal: { icon: '🥣', title: 'The Cereal Journey', text: 'Wheat is grown in the USA, Canada, or Europe.', chain: ['Farm', 'Processing Plant', 'Box Factory', 'You'] },
+  tea: { icon: '🍵', title: 'The Tea Journey', text: 'Tea leaves come from Kenya, India, or Sri Lanka.', chain: ['Kenya (Leaves)', 'Sri Lanka', 'Blending', 'You'] }
 };
 function showFood(type, element) {
   Sound.pop();
@@ -1656,10 +1363,10 @@ function showFood(type, element) {
   $('#food-detail').innerHTML = `<h3>${d.icon} ${d.title}</h3><p>${d.text}</p>${chainHTML(d.chain)}`;
 }
 const mediaData = {
-  1: { title: 'Where It Starts', text: 'An artist or creator in South Korea makes a song, game, or video. This is the creative origin point.' },
-  2: { title: 'Spreading Online', text: 'Social media algorithms push the content to global audiences. Fans share, remix, and make their own versions.' },
-  3: { title: 'Global Fans', text: 'People in the USA, Brazil, Europe, and Africa become fans. They create fan art, dance covers, and translations.' },
-  4: { title: 'Your Home', text: 'The trend reaches you through streaming, TikTok, YouTube, or games. You become part of a global community of fans!' }
+  1: { title: 'Where It Starts', text: 'An artist or creator in South Korea makes a song, game, or video.' },
+  2: { title: 'Spreading Online', text: 'Social media algorithms push the content to global audiences.' },
+  3: { title: 'Global Fans', text: 'People in the USA, Brazil, Europe, and Africa become fans.' },
+  4: { title: 'Your Home', text: 'The trend reaches you through streaming, TikTok, YouTube, or games.' }
 };
 function activateMediaNode(id) {
   Sound.pop();
@@ -1671,7 +1378,7 @@ function activateMediaNode(id) {
 function triggerDomino(index) {
   Sound.fail();
   award('chain');
-  const chain = ['d1', 'd2', 'd3', 'd4', 'd5'];
+  const chain = ['d1','d2','d3','d4','d5'];
   const msg = $('#game-msg');
   const shopMood = $('#mood-shop .mood-emoji');
   const youMood = $('#mood-you .mood-emoji');
@@ -1681,19 +1388,9 @@ function triggerDomino(index) {
   msg.style.color = 'var(--yellow)';
   $('#' + chain[index]).classList.add('broken');
   let delay = 600;
-  for (let i = index + 1; i < chain.length; i++) {
-    setTimeout(() => { $('#' + chain[i]).classList.add('delayed'); Sound.pop(); }, delay);
-    delay += 600;
-  }
-  setTimeout(() => {
-    shopMood.innerText = '😟';
-    msg.innerText = 'The Shop has no products to sell! The Shop Owner is sad.';
-  }, delay);
-  setTimeout(() => {
-    youMood.innerText = '😡';
-    msg.innerText = "The Shop has no products, so YOU can't buy what you want! Everyone is upset! This is why we need redundancy (backup paths).";
-    msg.style.color = 'var(--red)';
-  }, delay + 800);
+  for (let i = index + 1; i < chain.length; i++) { setTimeout(() => { $('#' + chain[i]).classList.add('delayed'); Sound.pop(); }, delay); delay += 600; }
+  setTimeout(() => { shopMood.innerText = '😟'; msg.innerText = 'The Shop has no products to sell! The Shop Owner is sad.'; }, delay);
+  setTimeout(() => { youMood.innerText = '😡'; msg.innerText = "The Shop has no products, so YOU can't buy what you want!"; msg.style.color = 'var(--red)'; }, delay + 800);
 }
 function resetDomino() {
   Sound.click();
@@ -1705,10 +1402,10 @@ function resetDomino() {
   msg.style.color = 'var(--yellow)';
 }
 const xfactorData = {
-  repair: { title: '🔧 Repair Instead of Replace', text: 'If you repair a broken phone, you reduce demand for new materials. This means less mining, less shipping, and less waste. Small choice → Big effect!' },
-  recycle: { title: '♻️ Recycle Old Devices', text: 'Recycling metals like gold and copper from old phones means fewer new mines are needed. Communities in Ghana and Chile benefit from less pollution.' },
-  local: { title: '🏪 Buy From Local Shops', text: 'Buying locally can reduce the shipping distance. It supports local jobs and cuts down on transport emissions.' },
-  transport: { title: '🚲 Use Greener Transport', text: 'Walking, cycling, or taking public transport reduces the carbon footprint of your daily commute. This helps global climate goals!' }
+  repair: { title: '🔧 Repair Instead of Replace', text: 'If you repair a broken phone, you reduce demand for new materials.' },
+  recycle: { title: '♻️ Recycle Old Devices', text: 'Recycling metals like gold and copper from old phones means fewer new mines.' },
+  local: { title: '🏪 Buy From Local Shops', text: 'Buying locally can reduce the shipping distance.' },
+  transport: { title: '🚲 Use Greener Transport', text: 'Walking, cycling, or taking public transport reduces the carbon footprint.' }
 };
 function showXFactor(type, element) {
   Sound.pop();
@@ -1723,27 +1420,18 @@ function setGlobalStatus(isOn) {
   $('#btn-global-off').classList.toggle('active', !isOn);
   $$('.whatif-card').forEach(c => c.classList.toggle('lost', !isOn));
   const msg = $('#whatif-msg');
-  if (isOn) {
-    msg.innerText = 'With global connections, your day is rich and full of variety.';
-    msg.style.color = 'var(--green)';
-  } else {
-    msg.innerText = 'Without global connections, your day would be VERY different. Most things you use come from far away!';
-    msg.style.color = 'var(--red)';
-  }
+  if (isOn) { msg.innerText = 'With global connections, your day is rich and full of variety.'; msg.style.color = 'var(--green)'; }
+  else { msg.innerText = 'Without global connections, your day would be VERY different.'; msg.style.color = 'var(--red)'; }
 }
 
-/* ============================================================
-   QUIZ
-   ============================================================ */
 const quizData = [
-  { q: 'What is the "Secret Weapon" that makes a supply chain strong?', options: ['Having only one path', 'Having more than one path (Redundancy)', 'Using only airplanes'], correct: 1 },
-  { q: 'If a port closes, what happens to the shop and the customer?', options: ['Nothing changes', 'The shop gets more products', 'The shop gets fewer products and the customer notices'], correct: 2 },
-  { q: 'Which continent has the biggest share of the global supply chain (about 50%)?', options: ['North America', 'Asia', 'Europe'], correct: 1 },
-  { q: 'Where do cocoa beans (for chocolate) often come from?', options: ['Ghana and Ivory Coast', 'Canada and Norway', 'Japan and Australia'], correct: 0 },
-  { q: 'What does "X-Factor" mean in the global network?', options: ['The biggest factory in the world', 'Small choices that have big effects', 'The fastest ship'], correct: 1 }
+  { q: 'What is the "Secret Weapon" that makes a supply chain strong?', options: ['Having only one path','Having more than one path (Redundancy)','Using only airplanes'], correct: 1 },
+  { q: 'If a port closes, what happens to the shop and the customer?', options: ['Nothing changes','The shop gets more products','The shop gets fewer products and the customer notices'], correct: 2 },
+  { q: 'Which continent has the biggest share of the global supply chain (about 50%)?', options: ['North America','Asia','Europe'], correct: 1 },
+  { q: 'Where do cocoa beans (for chocolate) often come from?', options: ['Ghana and Ivory Coast','Canada and Norway','Japan and Australia'], correct: 0 },
+  { q: 'What does "X-Factor" mean in the global network?', options: ['The biggest factory in the world','Small choices that have big effects','The fastest ship'], correct: 1 }
 ];
 let quizScore = 0, quizAnswered = 0, streak = 0, quizXPRun = 0, challengeMode = false;
-
 function toggleChallenge() {
   Sound.click();
   challengeMode = !challengeMode;
@@ -1812,9 +1500,7 @@ function answerQuiz(qIndex, optIndex, btn, parentDiv) {
     Sound.fail();
     streak = 0;
     if (btn) btn.classList.add('wrong');
-    feedback.innerText = optIndex === -1
-      ? '⏰ Time is up! The correct answer was: ' + item.options[item.correct]
-      : '❌ Not quite. The correct answer was: ' + item.options[item.correct];
+    feedback.innerText = optIndex === -1 ? '⏰ Time is up! Correct: ' + item.options[item.correct] : '❌ Not quite. Correct: ' + item.options[item.correct];
     feedback.style.color = 'var(--red)';
     allBtns.forEach((b, i) => { if (i === item.correct) b.classList.add('correct'); });
   }
@@ -1823,7 +1509,7 @@ function answerQuiz(qIndex, optIndex, btn, parentDiv) {
   if (quizAnswered === quizData.length) {
     const best = store.get('quiz_best', 0);
     const scoreMsg = `You scored ${quizScore} out of ${quizData.length}! ${quizScore === 5 ? '🏆 Perfect!' : quizScore >= 3 ? 'Nice work!' : 'Keep exploring!'}`;
-    $('#quiz-score').innerText = scoreMsg + (quizScore > best ? ' 🎉 New personal best!' : '');
+    $('#quiz-score').innerText = scoreMsg + (quizScore > best ? ` 🎉 New personal best!` : '');
     $('#quiz-score').style.color = 'var(--yellow)';
     $('#quiz-val').textContent = Math.max(quizScore, best);
     store.set('quiz_best', Math.max(quizScore, best));
@@ -1831,9 +1517,6 @@ function answerQuiz(qIndex, optIndex, btn, parentDiv) {
   }
 }
 
-/* ============================================================
-   REFLECTION + REPORT
-   ============================================================ */
 let saveDraftTimer = null;
 function updateWordCount() {
   const text = $('#reflection-text').value;
@@ -1846,16 +1529,11 @@ function submitReflection() {
   Sound.click();
   const text = $('#reflection-text').value;
   const msg = $('#reflection-msg');
-  if (text.trim().length < 30) {
-    Sound.fail();
-    msg.style.color = 'var(--red)';
-    msg.innerText = 'Please write a bit more! Try to explain what would change most and why.';
-    return;
-  }
+  if (text.trim().length < 30) { Sound.fail(); msg.style.color = 'var(--red)'; msg.innerText = 'Please write a bit more!'; return; }
   Sound.success();
   store.set('reflection_done', text);
   msg.style.color = 'var(--green)';
-  msg.innerText = '✅ Excellent reflection! You have successfully explained how your day depends on global connections.';
+  msg.innerText = '✅ Excellent reflection!';
   const ta = $('#reflection-text'), btn = $('#reflection button');
   ta.disabled = true; btn.disabled = true;
   btn.innerText = 'Submitted!'; btn.style.background = 'var(--green)';
@@ -1881,18 +1559,14 @@ function exportReport() {
     '==============================================',
     '  ALEZIFY OS — GLOBAL INTERCONNECTION REPORT',
     '  Omar Sanad | Year 7 Global Project',
-    '==============================================',
-    '',
+    '==============================================','',
     '⚡ Total XP: ' + XP,
     '🧠 Quiz best: ' + store.get('quiz_best', 0) + '/5',
-    '🏅 Badges (' + badgeList.length + '/5): ' + (badgeList.join(', ') || 'none yet'),
-    '',
+    '🏅 Badges (' + badgeList.length + '/5): ' + (badgeList.join(', ') || 'none yet'),'',
     '✍️ FINAL REFLECTION',
     'Q: If global connections disappeared from my day, what would change most, and why?',
-    'A: ' + reflection,
-    '',
-    'Sections visited: ' + [...visited].sort().join(', '),
-    '',
+    'A: ' + reflection,'',
+    'Sections visited: ' + [...visited].sort().join(', '),'',
     'Generated by Alezify OS on ' + new Date().toLocaleString()
   ];
   const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
@@ -1910,7 +1584,7 @@ function resetAllProgress() {
 }
 
 /* ============================================================
-   3D CINEMATIC FACTORY — FULL MODULE
+   3D FACTORY — FULL CAREER MODE
    ============================================================ */
 (function FactoryModule() {
   const section = document.getElementById('factory');
@@ -1921,13 +1595,10 @@ function resetAllProgress() {
     return;
   }
 
-  let W = section.clientWidth || 1;
-  let H = section.clientHeight || 1;
-
   /* ---------- Renderer ---------- */
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(W, H);
+  renderer.setSize(section.clientWidth || 1, section.clientHeight || 1);
   renderer.setScissorTest(true);
   renderer.setClearColor(0x05051a, 1);
   renderer.autoClear = false;
@@ -1939,12 +1610,12 @@ function resetAllProgress() {
 
   const clock = new THREE.Clock();
 
-  /* ---------- Shared geometry / materials ---------- */
+  /* ---------- Geometry / materials ---------- */
   const GEO = {
     humanBody: THREE.CapsuleGeometry ? new THREE.CapsuleGeometry(0.16, 0.28, 3, 6) : new THREE.CylinderGeometry(0.16, 0.16, 0.6, 6),
     humanHead: new THREE.SphereGeometry(0.14, 6, 5),
     box: new THREE.BoxGeometry(0.7, 0.7, 0.7),
-    wheel: new THREE.CylinderGeometry(0.25, 0.25, 0.18, 8)
+    wheel: new THREE.CylinderGeometry(0.3, 0.3, 0.2, 10)
   };
   const MAT = {
     humanBody: new THREE.MeshStandardMaterial({ color: 0x4a6fa5, roughness: 0.75 }),
@@ -1954,13 +1625,13 @@ function resetAllProgress() {
     dark: new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.8 })
   };
 
-  /* ---------- Phases ---------- */
+  /* ---------- Phases (cinematic) ---------- */
   const PHASES = [
-    { title: 'Global Material Gathering', sub: '16 regions · 16 sources', dur: 11.0 },
+    { title: 'Global Material Gathering', sub: '16 regions · 16 sources', dur: 9.0 },
     { title: 'Convergence', sub: 'The world becomes one network', dur: 3.2 },
-    { title: 'Assembly Line', sub: '14 boxes · one synchronised ride', dur: 10.0 },
-    { title: 'Fleet Loading', sub: 'Air · Sea · Road', dur: 8.0 },
-    { title: 'Regional Distribution', sub: 'Cairo · Giza · Delta', dur: 12.0 }
+    { title: 'Assembly Line', sub: '14 boxes · one synchronised ride', dur: 8.0 },
+    { title: 'Fleet Loading', sub: 'Air · Sea · Road', dur: 7.0 },
+    { title: 'Regional Distribution', sub: 'Cairo · Giza · Delta', dur: 10.0 }
   ];
   const TOTAL_DURATION = PHASES.reduce((s, p) => s + p.dur, 0);
   let phaseIndex = 0, phaseTime = 0, globalTime = 0;
@@ -1971,28 +1642,27 @@ function resetAllProgress() {
   /* ---------- Main scene ---------- */
   const mainScene = new THREE.Scene();
   mainScene.background = new THREE.Color(0x0a0a1e);
-  mainScene.fog = new THREE.Fog(0x0a0a1e, 80, 220);
+  mainScene.fog = new THREE.Fog(0x0a0a1e, 90, 240);
 
-  const mainCamera = new THREE.PerspectiveCamera(50, W / H, 0.1, 600);
+  const mainCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 800);
   mainCamera.position.set(0, 28, 55);
   mainCamera.lookAt(0, 2, 0);
 
-  const fpCamera = new THREE.PerspectiveCamera(70, W / H, 0.1, 500);
-  const flightCamera = new THREE.PerspectiveCamera(55, W / H, 0.1, 800);
+  const fpCamera = new THREE.PerspectiveCamera(72, 1, 0.08, 700);
 
   mainScene.add(new THREE.AmbientLight(0x8899cc, 0.55));
   const sun = new THREE.DirectionalLight(0xfff0d0, 1.15);
   sun.position.set(35, 60, 25);
   sun.castShadow = true;
   sun.shadow.mapSize.set(1024, 1024);
-  sun.shadow.camera.left = -70; sun.shadow.camera.right = 70;
-  sun.shadow.camera.top = 70; sun.shadow.camera.bottom = -70;
+  sun.shadow.camera.left = -80; sun.shadow.camera.right = 80;
+  sun.shadow.camera.top = 80; sun.shadow.camera.bottom = -80;
   sun.shadow.camera.far = 220;
   mainScene.add(sun);
   const pl1 = new THREE.PointLight(0xE2B2FF, 0.9, 100); pl1.position.set(-30, 18, 30); mainScene.add(pl1);
   const pl2 = new THREE.PointLight(0xFFD166, 0.7, 100); pl2.position.set(30, 14, -25); mainScene.add(pl2);
 
-  /* ---------- Environment map (PMREM) ---------- */
+  /* ---------- Environment (PMREM) ---------- */
   try {
     const envScene = new THREE.Scene();
     const envGeo = new THREE.SphereGeometry(60, 32, 16);
@@ -2016,21 +1686,14 @@ function resetAllProgress() {
     const envRT = pmrem.fromScene(envScene, 0.04);
     mainScene.environment = envRT.texture;
     pmrem.dispose();
-  } catch (e) { /* environment is optional */ }
+  } catch (e) {}
 
   /* ---------- Ground ---------- */
-  const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(300, 300),
-    new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.95 })
-  );
-  ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
-  mainScene.add(ground);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.95 }));
+  ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; mainScene.add(ground);
 
-  const mainGrid = new THREE.GridHelper(300, 150, 0x3a3a6e, 0x252550);
-  mainGrid.position.y = 0.02;
-  mainGrid.material.transparent = true;
-  mainGrid.material.opacity = 0.35;
+  const mainGrid = new THREE.GridHelper(400, 200, 0x3a3a6e, 0x252550);
+  mainGrid.position.y = 0.02; mainGrid.material.transparent = true; mainGrid.material.opacity = 0.35;
   mainScene.add(mainGrid);
 
   /* ---------- Factory building ---------- */
@@ -2041,33 +1704,26 @@ function resetAllProgress() {
     new THREE.BoxGeometry(28, 11, 18),
     new THREE.MeshStandardMaterial({ color: 0x2a2a4e, metalness: 0.4, roughness: 0.6 })
   );
-  factoryMain.position.set(0, 5.5, -22);
-  factoryMain.castShadow = true;
-  factoryMain.receiveShadow = true;
+  factoryMain.position.set(0, 5.5, -32);
+  factoryMain.castShadow = true; factoryMain.receiveShadow = true;
   factoryGroup.add(factoryMain);
 
-  const roof = new THREE.Mesh(
-    new THREE.BoxGeometry(30, 1.2, 20),
-    new THREE.MeshStandardMaterial({ color: 0x1a1a3e, metalness: 0.5, roughness: 0.5 })
-  );
-  roof.position.set(0, 11.6, -22);
-  roof.castShadow = true;
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(30, 1.2, 20), new THREE.MeshStandardMaterial({ color: 0x1a1a3e, metalness: 0.5, roughness: 0.5 }));
+  roof.position.set(0, 11.6, -32);
   factoryGroup.add(roof);
 
   const winMat = new THREE.MeshStandardMaterial({ color: 0xFFD166, emissive: 0xFFD166, emissiveIntensity: 0.7 });
   for (let x = -12; x <= 12; x += 4) {
     const w = new THREE.Mesh(new THREE.BoxGeometry(2, 1.6, 0.25), winMat);
-    w.position.set(x, 7.5, -13);
+    w.position.set(x, 7.5, -23);
     factoryGroup.add(w);
   }
 
   function makeBannerTexture(text) {
-    const c = document.createElement('canvas');
-    c.width = 1024; c.height = 256;
+    const c = document.createElement('canvas'); c.width = 1024; c.height = 256;
     const ctx = c.getContext('2d');
     ctx.fillStyle = '#0E0D3C'; ctx.fillRect(0, 0, c.width, c.height);
-    ctx.strokeStyle = '#FFD166'; ctx.lineWidth = 14;
-    ctx.strokeRect(8, 8, c.width - 16, c.height - 16);
+    ctx.strokeStyle = '#FFD166'; ctx.lineWidth = 14; ctx.strokeRect(8, 8, c.width - 16, c.height - 16);
     ctx.font = 'bold 128px "Arial Black", sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.shadowColor = '#E2B2FF'; ctx.shadowBlur = 34;
@@ -2075,19 +1731,15 @@ function resetAllProgress() {
     ctx.fillText(text, c.width / 2, c.height / 2 + 8);
     return new THREE.CanvasTexture(c);
   }
-  const banner = new THREE.Mesh(
-    new THREE.PlaneGeometry(20, 5),
-    new THREE.MeshBasicMaterial({ map: makeBannerTexture('Alezify.com') })
-  );
-  banner.position.set(0, 13.5, -13);
+  const banner = new THREE.Mesh(new THREE.PlaneGeometry(20, 5), new THREE.MeshBasicMaterial({ map: makeBannerTexture('Alezify.com') }));
+  banner.position.set(0, 13.5, -23);
   factoryGroup.add(banner);
   const bannerGlow = new THREE.PointLight(0xFFD166, 1.4, 28);
-  bannerGlow.position.set(0, 13, -9);
+  bannerGlow.position.set(0, 13, -19);
   factoryGroup.add(bannerGlow);
 
-  /* ---------- Rail + boxes (8m rail scaled) ---------- */
+  /* ---------- Conveyor / staging for cinematic boxes ---------- */
   const RAIL_START = -8, RAIL_END = 8;
-  const RAIL_LENGTH = RAIL_END - RAIL_START;
   const RAIL_Y = 1.0;
   const BOX_COUNT = 14;
   const BOX_SPACING = 1.1;
@@ -2095,33 +1747,19 @@ function resetAllProgress() {
   const BOX_TRAVEL = 5.5;
 
   const rail = new THREE.Mesh(
-    new THREE.BoxGeometry(RAIL_LENGTH, 0.3, 1.5),
+    new THREE.BoxGeometry(RAIL_END - RAIL_START, 0.3, 1.5),
     new THREE.MeshStandardMaterial({ color: 0x3a3a6e, metalness: 0.7, roughness: 0.35 })
   );
-  rail.position.set((RAIL_START + RAIL_END) / 2, RAIL_Y, 0);
+  rail.position.set((RAIL_START + RAIL_END) / 2, RAIL_Y, -14);
   rail.castShadow = true; rail.receiveShadow = true;
   mainScene.add(rail);
-
-  const stripeMat = new THREE.MeshStandardMaterial({ color: 0x5a5a9e, metalness: 0.5, roughness: 0.4 });
-  for (let x = RAIL_START; x < RAIL_END; x += 0.85) {
-    const s = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.32, 1.52), stripeMat);
-    s.position.set(x, RAIL_Y, 0);
-    mainScene.add(s);
-  }
-  const supportMat = new THREE.MeshStandardMaterial({ color: 0x252550, metalness: 0.6, roughness: 0.5 });
-  for (let x = RAIL_START + 1; x <= RAIL_END - 1; x += 3) {
-    const sup = new THREE.Mesh(new THREE.BoxGeometry(0.32, 1.0, 0.32), supportMat);
-    sup.position.set(x, RAIL_Y / 2, 0);
-    sup.castShadow = true;
-    mainScene.add(sup);
-  }
 
   const boxes = [];
   const boxEdgeGeo = new THREE.EdgesGeometry(GEO.box);
   for (let i = 0; i < BOX_COUNT; i++) {
     const startX = BOX_START_X + i * BOX_SPACING;
     const b = new THREE.Mesh(GEO.box, MAT.box.clone());
-    b.position.set(startX, RAIL_Y + 0.5, 0);
+    b.position.set(startX, RAIL_Y + 0.5, -14);
     b.userData.startX = startX;
     b.castShadow = true;
     mainScene.add(b);
@@ -2130,54 +1768,43 @@ function resetAllProgress() {
     boxes.push(b);
   }
 
-  /* ---------- Workers ---------- */
   function makeHuman(bodyColor) {
     const g = new THREE.Group();
-    const bodyMat = bodyColor
-      ? new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.75 })
-      : MAT.humanBody;
+    const bodyMat = bodyColor ? new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.75 }) : MAT.humanBody;
     const body = new THREE.Mesh(GEO.humanBody, bodyMat);
-    body.position.y = 0.42; body.castShadow = true;
-    g.add(body);
+    body.position.y = 0.42; body.castShadow = true; g.add(body);
     const head = new THREE.Mesh(GEO.humanHead, MAT.humanHead);
-    head.position.y = 0.9; head.castShadow = true;
-    g.add(head);
+    head.position.y = 0.9; head.castShadow = true; g.add(head);
     return g;
   }
+
   const workers = [];
   for (let i = 0; i < BOX_COUNT; i++) {
     const w = makeHuman();
     const bx = BOX_START_X + i * BOX_SPACING;
-    w.position.set(bx, 0, 0.95);
+    w.position.set(bx, 0, -13.05);
     w.userData.baseX = bx;
-    w.userData.phase = i * 0.35;
     mainScene.add(w);
     workers.push(w);
   }
 
-  /* ---------- Transport fleet ---------- */
+  /* ---------- Distant transport (cinematic) ---------- */
   function makeCargoPlane(scale) {
     scale = scale || 1;
     const g = new THREE.Group();
     const bodyMat = new THREE.MeshStandardMaterial({ color: 0xE2B2FF, metalness: 0.4, roughness: 0.4 });
     const wingMat = new THREE.MeshStandardMaterial({ color: 0xc080d0, metalness: 0.3, roughness: 0.5 });
-    const engMat  = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.85, roughness: 0.3 });
-
+    const engMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.85, roughness: 0.3 });
     const fuse = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 2.8, 12), bodyMat);
     fuse.rotation.z = Math.PI / 2; fuse.position.y = 0.4; fuse.castShadow = true; g.add(fuse);
-
     const nose = new THREE.Mesh(new THREE.ConeGeometry(0.42, 0.8, 12), bodyMat);
-    nose.rotation.z = -Math.PI / 2; nose.position.set(1.85, 0.4, 0); nose.castShadow = true; g.add(nose);
-
+    nose.rotation.z = -Math.PI / 2; nose.position.set(1.85, 0.4, 0); g.add(nose);
     const wings = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.12, 4.2), wingMat);
-    wings.position.set(0.1, 0.4, 0); wings.castShadow = true; g.add(wings);
-
+    wings.position.set(0.1, 0.4, 0); g.add(wings);
     const tail = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.12), wingMat);
-    tail.position.set(-1.3, 0.95, 0); tail.castShadow = true; g.add(tail);
-
+    tail.position.set(-1.3, 0.95, 0); g.add(tail);
     const stab = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.09, 1.4), wingMat);
     stab.position.set(-1.3, 0.45, 0); g.add(stab);
-
     [-0.85, 0.85].forEach(z => {
       const eng = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.45, 8), engMat);
       eng.rotation.z = Math.PI / 2; eng.position.set(0.4, 0.4, z); g.add(eng);
@@ -2185,228 +1812,204 @@ function resetAllProgress() {
     g.scale.setScalar(scale);
     return g;
   }
-  function makeTruck() {
+
+  /* ---------- Mining area ---------- */
+  const oreNodes = [];
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2;
+    const x = -30 + Math.cos(a) * 6.2;
+    const z = 25 + Math.sin(a) * 6.2;
+    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(1.0, 0), new THREE.MeshStandardMaterial({ color: 0x6a5a8a, roughness: 0.9, metalness: 0.15 }));
+    rock.position.set(x, 0.85, z);
+    rock.rotation.set(Math.random(), Math.random(), Math.random());
+    rock.castShadow = true; rock.receiveShadow = true;
+    mainScene.add(rock);
+    const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.42, 0), new THREE.MeshStandardMaterial({ color: 0x06D6A0, emissive: 0x06D6A0, emissiveIntensity: 1.4, metalness: 0.6, roughness: 0.2 }));
+    crystal.position.set(x, 2.0, z);
+    crystal.castShadow = true;
+    mainScene.add(crystal);
+    const light = new THREE.PointLight(0x06D6A0, 0.7, 8);
+    light.position.set(x, 2.2, z);
+    mainScene.add(light);
+    oreNodes.push({ rock, crystal, light, x, z, mined: false, shrink: 0 });
+  }
+
+  /* ---------- Landing area & cargo plane for boarding ---------- */
+  const boardingPlane = makeCargoPlane(2);
+  boardingPlane.position.set(-22, 0.6, 14);
+  boardingPlane.rotation.y = Math.PI * 0.15;
+  mainScene.add(boardingPlane);
+
+  /* ---------- Career mode station: factory floor ---------- */
+  // Workstation positions (all near each other so player walks short distances)
+  const STATION = {
+    iphone: new THREE.Vector3(-3, 0.95, 6),
+    box:    new THREE.Vector3(0, 0.95, 6),
+    tape:   new THREE.Vector3(3, 0.95, 6),
+    pickup: new THREE.Vector3(6, 0.95, 6),
+    truck:  new THREE.Vector3(11, 0, 4)
+  };
+
+  // Work tables
+  function makeWorkTable(color) {
     const g = new THREE.Group();
-    const cabMat = new THREE.MeshStandardMaterial({ color: 0xcc4444, metalness: 0.4, roughness: 0.5 });
-    const trailMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.3, roughness: 0.65 });
+    const top = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.1, 1.4), new THREE.MeshStandardMaterial({ color: color || 0x3a3a6e, metalness: 0.4, roughness: 0.5 }));
+    top.position.y = 0.9; top.castShadow = true; top.receiveShadow = true; g.add(top);
+    [[-0.6, -0.6], [0.6, -0.6], [-0.6, 0.6], [0.6, 0.6]].forEach(([x, z]) => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.9, 6), new THREE.MeshStandardMaterial({ color: 0x22223e, metalness: 0.6, roughness: 0.4 }));
+      leg.position.set(x, 0.45, z); leg.castShadow = true; g.add(leg);
+    });
+    // Station glow pad
+    const pad = new THREE.Mesh(
+      new THREE.CircleGeometry(1.1, 24),
+      new THREE.MeshBasicMaterial({ color: 0xFFD166, transparent: true, opacity: 0.25 })
+    );
+    pad.rotation.x = -Math.PI / 2; pad.position.y = 0.01; g.add(pad);
+    return g;
+  }
 
-    const cab = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 1.8), cabMat);
-    cab.position.set(0, 0.8, 1.5); cab.castShadow = true; g.add(cab);
+  const iPhoneStation = makeWorkTable(0x3a3a6e); iPhoneStation.position.copy(STATION.iphone); mainScene.add(iPhoneStation);
+  const boxStation = makeWorkTable(0x3a3a6e); boxStation.position.copy(STATION.box); mainScene.add(boxStation);
+  const tapeStation = makeWorkTable(0x3a3a6e); tapeStation.position.copy(STATION.tape); mainScene.add(tapeStation);
+  const pickupStation = makeWorkTable(0x06D6A0); pickupStation.position.copy(STATION.pickup); mainScene.add(pickupStation);
 
-    const trailer = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.8, 3.2), trailMat);
-    trailer.position.set(0, 1.1, -0.8); trailer.castShadow = true; g.add(trailer);
+  // Conveyor belt with iPhones
+  function makeiPhone() {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.04, 0.6), new THREE.MeshStandardMaterial({ color: 0x22222e, metalness: 0.8, roughness: 0.3 }));
+    body.castShadow = true; g.add(body);
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.26, 0.54), new THREE.MeshStandardMaterial({ color: 0x06D6A0, emissive: 0x06D6A0, emissiveIntensity: 0.7, metalness: 0.9, roughness: 0.15 }));
+    screen.rotation.x = -Math.PI / 2; screen.position.y = 0.021; g.add(screen);
+    return g;
+  }
+  const iPhone1 = makeiPhone(); iPhone1.position.set(STATION.iphone.x, STATION.iphone.y + 0.25, STATION.iphone.z); mainScene.add(iPhone1);
 
-    [[-0.75, 1.5], [0.75, 1.5], [-0.75, -1.8], [0.75, -1.8], [-0.75, -0.8], [0.75, -0.8]].forEach(([x, z]) => {
+  // Empty box on work table
+  function makeShippingBox() {
+    const g = new THREE.Group();
+    const box = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.5, 0.5), new THREE.MeshStandardMaterial({ color: 0xb07040, roughness: 0.75, metalness: 0.1 }));
+    box.castShadow = true; g.add(box);
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(box.geometry), new THREE.LineBasicMaterial({ color: 0xFFD166 }));
+    box.add(edges);
+    // Tape strip on top (initially hidden)
+    const tape = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.008, 0.12), new THREE.MeshStandardMaterial({ color: 0xfff0d0, roughness: 0.5 }));
+    tape.position.y = 0.256; tape.visible = false; g.add(tape);
+    g.userData.tape = tape;
+    return g;
+  }
+  const emptyBox = makeShippingBox();
+  emptyBox.position.set(STATION.box.x, STATION.box.y + 0.3, STATION.box.z);
+  mainScene.add(emptyBox);
+
+  // Tape dispenser
+  function makeTapeDispenser() {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.15, 12), new THREE.MeshStandardMaterial({ color: 0xFFD166, metalness: 0.5, roughness: 0.4 }));
+    body.position.y = 0.1; body.castShadow = true; g.add(body);
+    const roll = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.08, 12), new THREE.MeshStandardMaterial({ color: 0xfff0d0, roughness: 0.6 }));
+    roll.position.y = 0.19; roll.castShadow = true; g.add(roll);
+    return g;
+  }
+  const tapeDispenser = makeTapeDispenser();
+  tapeDispenser.position.set(STATION.tape.x, STATION.tape.y + 0.25, STATION.tape.z);
+  mainScene.add(tapeDispenser);
+
+  /* ---------- Truck (player-drivable) ---------- */
+  function makeDrivableTruck() {
+    const g = new THREE.Group();
+    const cabMat = new THREE.MeshStandardMaterial({ color: 0xcc4444, metalness: 0.5, roughness: 0.4 });
+    const trailerMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.35, roughness: 0.6 });
+
+    const cab = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.8, 2.4), cabMat);
+    cab.position.set(0, 1.2, 1.7); cab.castShadow = true; cab.receiveShadow = true; g.add(cab);
+
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.6, 0.15), new THREE.MeshStandardMaterial({ color: 0x0b0a2e, metalness: 0.9, roughness: 0.1, emissive: 0x06D6A0, emissiveIntensity: 0.4 }));
+    glass.position.set(0, 1.65, 2.82); g.add(glass);
+
+    const trailer = new THREE.Mesh(new THREE.BoxGeometry(2.0, 2.3, 4.0), trailerMat);
+    trailer.position.set(0, 1.5, -1.3); trailer.castShadow = true; trailer.receiveShadow = true; g.add(trailer);
+
+    [[-1.0, 1.9], [1.0, 1.9], [-1.0, -2.1], [1.0, -2.1], [-1.0, -1.0], [1.0, -1.0]].forEach(([x, z]) => {
       const w = new THREE.Mesh(GEO.wheel, MAT.dark);
-      w.rotation.z = Math.PI / 2; w.position.set(x, 0.3, z); g.add(w);
+      w.rotation.z = Math.PI / 2; w.position.set(x, 0.35, z); w.castShadow = true; g.add(w);
     });
     return g;
   }
-  function makeShip() {
-    const g = new THREE.Group();
-    const hullMat = new THREE.MeshStandardMaterial({ color: 0x7A2233, roughness: 0.75 });
-    const deckMat = new THREE.MeshStandardMaterial({ color: 0x23233c, roughness: 0.6 });
-    const towerMat = new THREE.MeshStandardMaterial({ color: 0xD3F7FD, roughness: 0.4 });
+  const truck = makeDrivableTruck();
+  truck.position.copy(STATION.truck);
+  truck.rotation.y = -Math.PI / 2;
+  mainScene.add(truck);
 
-    const hull = new THREE.Mesh(new THREE.BoxGeometry(6.5, 1.3, 2.4), hullMat);
-    hull.position.y = 0.65; hull.castShadow = true; g.add(hull);
-
-    const stripe = new THREE.Mesh(new THREE.BoxGeometry(6.52, 0.22, 2.42), new THREE.MeshStandardMaterial({ color: 0xFFD166 }));
-    stripe.position.y = 1.15; g.add(stripe);
-
-    const deck = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.18, 2.5), deckMat);
-    deck.position.y = 1.4; g.add(deck);
-
-    const tower = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.8, 2.0), towerMat);
-    tower.position.set(-2.5, 2.4, 0); tower.castShadow = true; g.add(tower);
-    return g;
-  }
-
-  const trucks = [makeTruck(), makeTruck()];
-  trucks[0].position.set(12, 0, 6); trucks[1].position.set(16, 0, 6);
-  trucks.forEach(t => { t.rotation.y = Math.PI; mainScene.add(t); });
-
-  const planes = [makeCargoPlane(2.2), makeCargoPlane(2.2)];
-  planes[0].position.set(5, 0.6, -12); planes[1].position.set(0, 0.6, -18);
-  planes.forEach(p => mainScene.add(p));
-
-  const ship = makeShip();
-  ship.position.set(25, 0.2, 8);
-  mainScene.add(ship);
-
-  const water = new THREE.Mesh(
-    new THREE.PlaneGeometry(30, 18),
-    new THREE.MeshStandardMaterial({ color: 0x0a2a55, metalness: 0.75, roughness: 0.22, transparent: true, opacity: 0.94 })
+  // Truck cab entry point (interactable)
+  const truckCabMarker = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.5, 0.5, 0.06, 20),
+    new THREE.MeshBasicMaterial({ color: 0xFFD166, transparent: true, opacity: 0.5 })
   );
-  water.rotation.x = -Math.PI / 2; water.position.set(25, 0.02, 8); mainScene.add(water);
+  truckCabMarker.position.copy(STATION.truck).add(new THREE.Vector3(-1.4, 0.03, 0));
+  mainScene.add(truckCabMarker);
 
-  const landingPlane = makeCargoPlane(2);
-  landingPlane.position.set(0, 32, -45); landingPlane.rotation.z = -0.15;
-  mainScene.add(landingPlane);
+  // Truck loaded cargo indicator
+  let truckLoadedBoxes = [];
 
-  /* ---------- Destinations ---------- */
-  function makeCar() {
+  /* ---------- Plane (player-flyable) ---------- */
+  const flyPlane = makeCargoPlane(2.4);
+  flyPlane.position.set(18, 0.6, 20);
+  flyPlane.rotation.y = -Math.PI / 3;
+  mainScene.add(flyPlane);
+  const planeCabMarker = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.2, 1.2, 0.06, 24),
+    new THREE.MeshBasicMaterial({ color: 0x06D6A0, transparent: true, opacity: 0.4 })
+  );
+  planeCabMarker.position.set(18, 0.03, 20);
+  mainScene.add(planeCabMarker);
+
+  /* ---------- Delivery markers ---------- */
+  function makeBeacon(color, x, z, label) {
     const g = new THREE.Group();
-    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x06D6A0, metalness: 0.4, roughness: 0.4 });
-    const body = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.5, 1.5), bodyMat);
-    body.position.y = 0.38; body.castShadow = true; g.add(body);
-    const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.75), bodyMat);
-    cabin.position.set(0, 0.78, -0.1); cabin.castShadow = true; g.add(cabin);
-    [[-0.42, 0.55], [0.42, 0.55], [-0.42, -0.55], [0.42, -0.55]].forEach(([x, z]) => {
-      const w = new THREE.Mesh(GEO.wheel, MAT.dark);
-      w.rotation.z = Math.PI / 2; w.position.set(x, 0.25, z); g.add(w);
-    });
-    return g;
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 4, 8), new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.6, roughness: 0.4 }));
+    pole.position.y = 2; g.add(pole);
+    const glow = new THREE.Mesh(new THREE.SphereGeometry(0.6, 16, 12), new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 1.5 }));
+    glow.position.y = 4.2; g.add(glow);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(2.5, 3, 32), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.35, side: THREE.DoubleSide }));
+    ring.rotation.x = -Math.PI / 2; ring.position.y = 0.05; g.add(ring);
+    g.position.set(x, 0, z);
+    mainScene.add(g);
+    return { group: g, glow, ring, x, z, label, color };
   }
-  function makeHouse(color) {
-    const g = new THREE.Group();
-    const wall = new THREE.Mesh(
-      new THREE.BoxGeometry(2.2, 1.6, 2.2),
-      new THREE.MeshStandardMaterial({ color: 0xD3F7FD, roughness: 0.85 })
-    );
-    wall.position.y = 0.8; wall.castShadow = true; g.add(wall);
-    const roof = new THREE.Mesh(
-      new THREE.ConeGeometry(1.7, 1.1, 4),
-      new THREE.MeshStandardMaterial({ color: color, roughness: 0.7 })
-    );
-    roof.position.y = 2.15; roof.rotation.y = Math.PI / 4; roof.castShadow = true; g.add(roof);
-    return g;
-  }
-  const destinations = [
-    { name: 'Cairo', pos: new THREE.Vector3(-22, 0, 46), color: 0xEF476F },
-    { name: 'Giza',  pos: new THREE.Vector3(6, 0, 58), color: 0xFFD166 },
-    { name: 'Delta', pos: new THREE.Vector3(-38, 0, 38), color: 0x06D6A0 }
-  ];
-  destinations.forEach(d => {
-    const h = makeHouse(d.color);
-    h.position.copy(d.pos);
-    mainScene.add(h);
-  });
+  const deliveryA = makeBeacon(0xEF476F, 40, -10, 'Cairo');
+  const deliveryB = makeBeacon(0x06D6A0, 55, 30, 'Giza');
+  const deliveryC = makeBeacon(0xFFD166, 70, -40, 'Delta');
 
-  function makeRoute(from, to, out) {
-    const mid = from.clone().lerp(to, 0.5); mid.x += out;
-    return new THREE.CatmullRomCurve3([from, mid, to]);
-  }
-  const factoryExit = new THREE.Vector3(0, 0, 14);
-  const routes = [
-    makeRoute(factoryExit, destinations[0].pos, -12),
-    makeRoute(factoryExit, destinations[1].pos, 6),
-    makeRoute(factoryExit, destinations[2].pos, -22)
-  ];
-  routes.forEach(r => {
-    const pts = r.getPoints(60);
-    const geo = new THREE.BufferGeometry().setFromPoints(pts);
-    const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xFFD166, transparent: true, opacity: 0.3 }));
-    line.position.y = 0.04;
-    mainScene.add(line);
-  });
-
-  let convoy = [];
-  function spawnConvoy() {
-    const configs = [
-      { route: routes[0], truckColor: 0xcc4444, dest: 0, key: 'cairo' },
-      { route: routes[1], truckColor: 0x44cc88, dest: 1, key: 'giza' },
-      { route: routes[2], truckColor: 0x4488cc, dest: 2, key: 'delta' }
-    ];
-    convoy = [];
-    configs.forEach(cfg => {
-      const truck = makeTruck();
-      truck.children[0].material = new THREE.MeshStandardMaterial({ color: cfg.truckColor, metalness: 0.4, roughness: 0.5 });
-      truck.scale.setScalar(1.1);
-      mainScene.add(truck);
-      const car = makeCar();
-      mainScene.add(car);
-      const worker = makeHuman(0xffffff);
-      worker.visible = false;
-      mainScene.add(worker);
-      convoy.push({ truck, car, worker, route: cfg.route, progress: 0, delivererProgress: 0, dest: destinations[cfg.dest], key: cfg.key });
-    });
-  }
-
-  /* ---------- 16 regional scenes (split screen) ---------- */
-  const REGION_NAMES = [
-    'Egypt','China','Brazil','India','USA','Japan','Germany','Australia',
-    'Nigeria','Canada','Mexico','S. Korea','Vietnam','S. Africa','Turkey','Indonesia'
-  ];
-  const REGION_COLORS = [
-    0xc9a227, 0xd94f4f, 0x3fbf5f, 0xff9a3d, 0x4d7fff, 0xff69b4, 0x8b8b8b, 0xff7f3f,
-    0x36a846, 0xcc3333, 0x2e8b57, 0x7f00ff, 0xffd166, 0xcc7700, 0xcc0000, 0x009966
-  ];
-
+  /* ---------- Split-screen scenes for cinematic Phase 1 ---------- */
+  const REGION_NAMES = ['Egypt','China','Brazil','India','USA','Japan','Germany','Australia','Nigeria','Canada','Mexico','S. Korea','Vietnam','S. Africa','Turkey','Indonesia'];
+  const REGION_COLORS = [0xc9a227, 0xd94f4f, 0x3fbf5f, 0xff9a3d, 0x4d7fff, 0xff69b4, 0x8b8b8b, 0xff7f3f, 0x36a846, 0xcc3333, 0x2e8b57, 0x7f00ff, 0xffd166, 0xcc7700, 0xcc0000, 0x009966];
   const regions = [];
   function buildRegion(idx) {
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a1e);
     scene.fog = new THREE.Fog(0x0a0a1e, 14, 40);
     scene.add(new THREE.AmbientLight(0xaabbee, 0.75));
-    const dir = new THREE.DirectionalLight(0xfff5d0, 1.1);
-    dir.position.set(6, 12, 6);
-    scene.add(dir);
-
-    const groundMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(24, 24),
-      new THREE.MeshStandardMaterial({ color: REGION_COLORS[idx], roughness: 0.9 })
-    );
-    groundMesh.rotation.x = -Math.PI / 2;
-    scene.add(groundMesh);
-
+    const dir = new THREE.DirectionalLight(0xfff5d0, 1.1); dir.position.set(6, 12, 6); scene.add(dir);
+    const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(24, 24), new THREE.MeshStandardMaterial({ color: REGION_COLORS[idx], roughness: 0.9 }));
+    groundMesh.rotation.x = -Math.PI / 2; scene.add(groundMesh);
     const grid = new THREE.GridHelper(24, 24, 0xffffff, 0x333333);
-    grid.position.y = 0.01;
-    grid.material.transparent = true;
-    grid.material.opacity = 0.18;
-    scene.add(grid);
-
-    const piles = [];
-    [[-3.2, 0, -1.8], [-1.6, 0, -2.2], [0, 0, -2.0], [1.6, 0, -2.2], [3.2, 0, -1.8]].forEach(([x, , z]) => {
-      const pile = new THREE.Mesh(
-        new THREE.DodecahedronGeometry(0.55, 0),
-        new THREE.MeshStandardMaterial({ color: 0xb08050, roughness: 0.85 })
-      );
-      pile.position.set(x, 0.45, z);
-      scene.add(pile);
-      piles.push(pile);
+    grid.position.y = 0.01; grid.material.transparent = true; grid.material.opacity = 0.18; scene.add(grid);
+    [[-3.2, -1.8], [-1.6, -2.2], [0, -2.0], [1.6, -2.2], [3.2, -1.8]].forEach(([x, z]) => {
+      const pile = new THREE.Mesh(new THREE.DodecahedronGeometry(0.55, 0), new THREE.MeshStandardMaterial({ color: 0xb08050, roughness: 0.85 }));
+      pile.position.set(x, 0.45, z); scene.add(pile);
     });
-
-    const plane = makeCargoPlane(1.4);
-    plane.position.set(4.5, 0.1, 3.5);
-    plane.rotation.y = -Math.PI / 4;
-    scene.add(plane);
-
+    const plane = makeCargoPlane(1.4); plane.position.set(4.5, 0.1, 3.5); plane.rotation.y = -Math.PI / 4; scene.add(plane);
     const humans = [];
     for (let i = 0; i < 5; i++) {
-      const h = makeHuman();
-      h.position.set(-3.2 + i * 1.6, 0, 1.6);
-      scene.add(h);
-      humans.push({
-        mesh: h,
-        startX: -3.2 + i * 1.6, startZ: 1.6,
-        pileX: -3.2 + i * 1.6, pileZ: -1.0,
-        planeX: 3.4 + i * 0.35, planeZ: 2.8,
-        phaseOffset: i * 0.12
-      });
+      const h = makeHuman(); h.position.set(-3.2 + i * 1.6, 0, 1.6); scene.add(h);
+      humans.push({ mesh: h, startX: -3.2 + i * 1.6, startZ: 1.6, pileX: -3.2 + i * 1.6, pileZ: -1.0, planeX: 3.4 + i * 0.35, planeZ: 2.8, phaseOffset: i * 0.12 });
     }
-
     const cam = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    cam.position.set(0, 7.5, 10.5);
-    cam.lookAt(0, 0.6, 0);
-    return { scene, camera: cam, plane, humans, label: REGION_NAMES[idx] };
+    cam.position.set(0, 7.5, 10.5); cam.lookAt(0, 0.6, 0);
+    return { scene, camera: cam, plane, humans };
   }
   for (let i = 0; i < 16; i++) regions.push(buildRegion(i));
 
-  function resetRegions() {
-    regions.forEach(r => {
-      r.plane.visible = true;
-      r.plane.position.set(4.5, 0.1, 3.5);
-      r.plane.rotation.set(0, -Math.PI / 4, 0);
-      r.humans.forEach(h => {
-        h.mesh.visible = true;
-        h.mesh.scale.setScalar(1);
-        h.mesh.position.set(h.startX, 0, h.startZ);
-      });
-    });
-  }
-
-  /* ---------- Split-screen rendering ---------- */
   function renderSplitScreen(collapse) {
     const w = section.clientWidth, h = section.clientHeight;
     const cellW = w / 4, cellH = h / 4;
@@ -2420,62 +2023,13 @@ function resetAllProgress() {
       const newCY = cellCY + (cy - cellCY) * collapse;
       const newW = cw * (1 - collapse) + 2 * collapse;
       const newH = ch * (1 - collapse) + 2 * collapse;
-      x = newCX - newW / 2; y = newCY - newH / 2;
-      cw = newW; ch = newH;
+      x = newCX - newW / 2; y = newCY - newH / 2; cw = newW; ch = newH;
       if (cw < 1 || ch < 1) continue;
-      renderer.setViewport(x, y, cw, ch);
-      renderer.setScissor(x, y, cw, ch);
-      const r = regions[i];
-      r.camera.aspect = cw / ch;
-      r.camera.updateProjectionMatrix();
-      renderer.clearDepth();
-      renderer.render(r.scene, r.camera);
+      renderer.setViewport(x, y, cw, ch); renderer.setScissor(x, y, cw, ch);
+      const r = regions[i]; r.camera.aspect = cw / ch; r.camera.updateProjectionMatrix();
+      renderer.clearDepth(); renderer.render(r.scene, r.camera);
     }
   }
-
-  /* ---------- Camera paths ---------- */
-  const camCurve2 = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(-2, 14, 24), new THREE.Vector3(-4, 8, 14),
-    new THREE.Vector3(0, 5.5, 8), new THREE.Vector3(4, 6.5, 12),
-    new THREE.Vector3(1, 7, 16)
-  ]);
-  const lookCurve2 = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(-2, 2, 0), new THREE.Vector3(0, 2, 0),
-    new THREE.Vector3(2, 1.5, 0), new THREE.Vector3(0, 1.5, 0),
-    new THREE.Vector3(-1, 2, 0)
-  ]);
-  const camCurve3 = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(8, 22, 24), new THREE.Vector3(20, 16, 14),
-    new THREE.Vector3(28, 12, 14), new THREE.Vector3(18, 15, 22),
-    new THREE.Vector3(4, 22, 30)
-  ]);
-  const lookCurve3 = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(2, 2, 0), new THREE.Vector3(12, 2, 4),
-    new THREE.Vector3(24, 1, 8), new THREE.Vector3(12, 1.5, 4),
-    new THREE.Vector3(2, 2, 0)
-  ]);
-  const camCurve4 = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 22, 30), new THREE.Vector3(-12, 18, 38),
-    new THREE.Vector3(-22, 18, 48), new THREE.Vector3(-10, 22, 55),
-    new THREE.Vector3(0, 26, 70)
-  ]);
-  const lookCurve4 = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 1, 14), new THREE.Vector3(-10, 1, 28),
-    new THREE.Vector3(-18, 1, 42), new THREE.Vector3(-8, 1, 52),
-    new THREE.Vector3(0, 1, 55)
-  ]);
-
-  /* ---------- Broadcast camera ---------- */
-  const broadcastCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(46, 34, 46),
-    new THREE.Vector3(0, 28, 58),
-    new THREE.Vector3(-46, 26, 34),
-    new THREE.Vector3(-40, 24, -22),
-    new THREE.Vector3(12, 28, -46),
-    new THREE.Vector3(50, 32, 10)
-  ]);
-  const broadcastLook = new THREE.Vector3(0, 3, 0);
-  let broadcastT = 0;
 
   /* ---------- HUD elements ---------- */
   const phaseTitleEl = document.getElementById('phase-title');
@@ -2486,10 +2040,19 @@ function resetAllProgress() {
   const tlLabel = document.getElementById('timeline-label');
   const fpHud = document.getElementById('fp-hud');
   const fpMinedEl = document.getElementById('fp-mined');
+  const fpBoxedEl = document.getElementById('fp-boxed');
   const fpPromptEl = document.getElementById('fp-prompt');
+  const fpCrosshair = document.getElementById('fp-crosshair');
   const fpProgressEl = document.getElementById('fp-progress');
   const fpProgressFill = document.getElementById('fp-progress-fill');
   const flightOverlay = document.getElementById('flight-overlay');
+  const careerPhaseEl = document.getElementById('career-phase');
+  const careerTaskEl = document.getElementById('career-task');
+  const careerProgressFill = document.getElementById('career-progress-fill');
+  const carryIndicator = document.getElementById('carry-indicator');
+  const vehicleHud = document.getElementById('vehicle-hud');
+  const vhSpeedEl = document.getElementById('vh-speed');
+  const vhHintEl = document.getElementById('vh-hint');
 
   function showTitleCard(idx) {
     const p = PHASES[idx];
@@ -2497,22 +2060,17 @@ function resetAllProgress() {
     phaseSubEl.textContent = p.sub;
     phaseTitleEl.classList.add('show');
     phaseSubEl.classList.add('show');
-    setTimeout(() => {
-      phaseTitleEl.classList.remove('show');
-      phaseSubEl.classList.remove('show');
-    }, 2600);
+    setTimeout(() => { phaseTitleEl.classList.remove('show'); phaseSubEl.classList.remove('show'); }, 2600);
   }
   function updateTimeline() {
     const p = PHASES[phaseIndex];
-    const pct = (globalTime / TOTAL_DURATION) * 100;
-    tlFill.style.width = pct + '%';
+    tlFill.style.width = (globalTime / TOTAL_DURATION) * 100 + '%';
     tlLabel.textContent = `Phase ${phaseIndex + 1} / 5 — ${p.title}`;
   }
 
-  /* ---------- Map overlay ---------- */
+  /* Map overlay */
   const mapSvg = document.getElementById('map-svg');
   mapSvg.innerHTML = `
-    <rect x="0" y="0" width="240" height="140" fill="transparent"/>
     <circle cx="26" cy="116" r="5" fill="#E2B2FF"/>
     <text x="36" y="120" font-size="6" fill="#E2B2FF" font-family="monospace">FACTORY</text>
     <path d="M 26 116 Q 110 30 200 32" stroke="#EF476F" stroke-width="1.6" fill="none" stroke-dasharray="3 3" opacity="0.7"/>
@@ -2523,90 +2081,18 @@ function resetAllProgress() {
     <circle id="d-delta" cx="26" cy="116" r="3" fill="#06D6A0"/>
     <text x="185" y="24" font-size="6" fill="#EF476F" font-family="monospace">CAIRO</text>
     <text x="130" y="22" font-size="6" fill="#FFD166" font-family="monospace">GIZA</text>
-    <text x="58"  y="50" font-size="6" fill="#06D6A0" font-family="monospace">DELTA</text>
-  `;
+    <text x="58"  y="50" font-size="6" fill="#06D6A0" font-family="monospace">DELTA</text>`;
 
-  /* ---------- Phase resets ---------- */
-  function resetPhase2() {
-    boxes.forEach(b => {
-      b.position.x = b.userData.startX;
-      b.position.y = RAIL_Y + 0.5;
-      b.position.z = 0;
-      b.rotation.set(0, 0, 0);
-      b.scale.setScalar(1);
-      b.visible = true;
-    });
-    workers.forEach(w => {
-      w.position.set(w.userData.baseX, 0, 0.95);
-      w.visible = true;
-    });
-  }
-  function resetPhase3() {
-    trucks[0].position.set(12, 0, 6); trucks[0].rotation.set(0, Math.PI, 0);
-    trucks[1].position.set(16, 0, 6); trucks[1].rotation.set(0, Math.PI, 0);
-    planes[0].position.set(5, 0.6, -12); planes[0].rotation.set(0, 0, 0);
-    planes[1].position.set(0, 0.6, -18); planes[1].rotation.set(0, 0, 0);
-    ship.position.set(25, 0.2, 8);
-    boxes.forEach(b => {
-      b.position.set(b.userData.startX + BOX_TRAVEL, RAIL_Y + 0.5, 0);
-      b.visible = true;
-    });
-  }
-  function resetPhase4() {
-    convoy.forEach(c => {
-      mainScene.remove(c.truck);
-      mainScene.remove(c.car);
-      mainScene.remove(c.worker);
-    });
-    convoy = [];
-    ['cairo', 'giza', 'delta'].forEach(k => {
-      const dot = document.getElementById('d-' + k);
-      if (dot) { dot.setAttribute('cx', 26); dot.setAttribute('cy', 116); }
-    });
-  }
-  function onPhaseEnter(idx) {
-    showTitleCard(idx);
-    if (idx === 0) {
-      resetRegions();
-      brandEl.classList.remove('show');
-      mapOverlay.classList.remove('show');
-      document.getElementById('lb-top').classList.add('show');
-      document.getElementById('lb-bottom').classList.add('show');
-    }
-    if (idx === 1) {
-      brandEl.classList.add('show');
-      landingPlane.position.set(0, 32, -45);
-      landingPlane.rotation.set(0, 0, -0.15);
-    }
-    if (idx === 2) { resetPhase2(); mapOverlay.classList.remove('show'); }
-    if (idx === 3) { resetPhase3(); }
-    if (idx === 4) { resetPhase4(); spawnConvoy(); mapOverlay.classList.add('show'); }
-  }
-
-  /* ---------- Phase animations ---------- */
+  /* ---------- Cinematic phase logic ---------- */
   function animatePhase1(t) {
     regions.forEach(r => {
       r.humans.forEach(h => {
         const ht = t + h.phaseOffset;
-        if (ht < 3) {
-          const p = ht / 3;
-          h.mesh.position.x = h.startX + (h.pileX - h.startX) * p;
-          h.mesh.position.z = h.startZ + (h.pileZ - h.startZ) * p;
-          h.mesh.position.y = Math.abs(Math.sin(ht * 12)) * 0.08;
-        } else if (ht < 5) {
-          h.mesh.position.x = h.pileX;
-          h.mesh.position.z = h.pileZ;
-          h.mesh.position.y = Math.abs(Math.sin(ht * 10)) * 0.12;
-        } else if (ht < 7) {
-          const p = (ht - 5) / 2;
-          h.mesh.position.x = h.pileX + (h.planeX - h.pileX) * p;
-          h.mesh.position.z = h.pileZ + (h.planeZ - h.pileZ) * p;
-          h.mesh.position.y = Math.abs(Math.sin(ht * 12)) * 0.08;
-        } else if (ht < 8) {
-          h.mesh.scale.setScalar(Math.max(0.05, 1 - (ht - 7)));
-        } else {
-          h.mesh.visible = false;
-        }
+        if (ht < 3) { const p = ht / 3; h.mesh.position.x = h.startX + (h.pileX - h.startX) * p; h.mesh.position.z = h.startZ + (h.pileZ - h.startZ) * p; h.mesh.position.y = Math.abs(Math.sin(ht * 12)) * 0.08; }
+        else if (ht < 5) { h.mesh.position.x = h.pileX; h.mesh.position.z = h.pileZ; h.mesh.position.y = Math.abs(Math.sin(ht * 10)) * 0.12; }
+        else if (ht < 7) { const p = (ht - 5) / 2; h.mesh.position.x = h.pileX + (h.planeX - h.pileX) * p; h.mesh.position.z = h.pileZ + (h.planeZ - h.pileZ) * p; h.mesh.position.y = Math.abs(Math.sin(ht * 12)) * 0.08; }
+        else if (ht < 8) { h.mesh.scale.setScalar(Math.max(0.05, 1 - (ht - 7))); }
+        else h.mesh.visible = false;
       });
       if (t > 6) {
         const p = Math.min((t - 6) / 4, 1);
@@ -2615,17 +2101,8 @@ function resetAllProgress() {
         r.plane.position.z = 3.5 - eased * 4;
         r.plane.position.x = 4.5 + eased * 2;
         r.plane.rotation.z = eased * 0.25;
-        r.plane.rotation.x = eased * 0.1;
       }
     });
-  }
-  function animateTransition(t) {
-    const p = Math.min(t / 2.4, 1);
-    const eased = p * p * (3 - 2 * p);
-    landingPlane.position.y = 32 - eased * 30.5;
-    landingPlane.position.z = -45 + eased * 18;
-    landingPlane.rotation.z = -0.15 + eased * 0.15;
-    if (t > 2.4) landingPlane.position.x += 0.05;
   }
   function animatePhase2(t) {
     if (t < 4) {
@@ -2633,427 +2110,819 @@ function resetAllProgress() {
         w.position.y = Math.abs(Math.sin(t * 9 + i * 0.4)) * 0.14;
         w.rotation.z = Math.sin(t * 7 + i) * 0.15;
       });
-    } else if (t < 8.5) {
-      const p = Math.min((t - 4) / 4.5, 1);
+    } else {
+      const p = Math.min((t - 4) / 4, 1);
       const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
       const offset = eased * BOX_TRAVEL;
-      boxes.forEach(b => {
-        b.position.x = b.userData.startX + offset;
-        b.rotation.y = offset * 0.05;
-      });
-      workers.forEach((w, i) => {
-        w.rotation.z = 0;
-        w.position.x = w.userData.baseX + offset;
-        w.position.y = Math.abs(Math.sin(t * 14 + i)) * 0.06;
-      });
-    } else {
-      workers.forEach(w => w.position.y = 0);
+      boxes.forEach(b => { b.position.x = b.userData.startX + offset; b.rotation.y = offset * 0.05; });
+      workers.forEach(w => { w.position.x = w.userData.baseX + offset; });
     }
   }
-  function animatePhase3(t) {
-    if (t > 2) {
-      const p = Math.min((t - 2) / 4, 1);
-      const eased = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-      const dests = [
-        { pos: new THREE.Vector3(11.6, 2.0, 6.4), boxCount: [0, 1] },
-        { pos: new THREE.Vector3(12.4, 2.0, 6.4), boxCount: [2, 3] },
-        { pos: new THREE.Vector3(15.6, 2.0, 6.4), boxCount: [4, 5] },
-        { pos: new THREE.Vector3(16.4, 2.0, 6.4), boxCount: [6, 7] },
-        { pos: new THREE.Vector3(5.0, 2.2, -12),  boxCount: [8, 9] },
-        { pos: new THREE.Vector3(5.5, 2.2, -12),  boxCount: [10] },
-        { pos: new THREE.Vector3(25.0, 2.4, 8),   boxCount: [11, 12] },
-        { pos: new THREE.Vector3(25.6, 2.4, 8),   boxCount: [13] }
-      ];
-      const targets = new Array(BOX_COUNT).fill(null);
-      dests.forEach(d => d.boxCount.forEach(i => targets[i] = d.pos));
-      boxes.forEach((b, i) => {
-        const target = targets[i];
-        if (!target) return;
-        const startX = b.userData.startX + BOX_TRAVEL;
-        const startY = RAIL_Y + 0.5;
-        b.position.x = startX + (target.x - startX) * eased;
-        b.position.z = 0 + (target.z - 0) * eased;
-        const arcY = Math.sin(eased * Math.PI) * 3.5;
-        b.position.y = startY + (target.y - startY) * eased + arcY;
-        b.rotation.y = eased * Math.PI * 0.5;
-        b.scale.setScalar(1 - eased * 0.25);
-      });
-    }
-  }
-  function animatePhase4(t) {
-    if (!convoy.length) return;
-    const mapEndpoints = {
-      cairo: { x: 200, y: 32 },
-      giza:  { x: 140, y: 28 },
-      delta: { x: 65,  y: 55 }
-    };
-    convoy.forEach((c, idx) => {
-      c.progress = Math.min(c.progress + 0.0045, 1);
-      const pos = c.route.getPoint(c.progress);
-      c.truck.position.copy(pos); c.truck.position.y = 0;
-      const ahead = c.route.getPoint(Math.min(c.progress + 0.01, 1));
-      c.truck.lookAt(ahead.x, 0, ahead.z); c.truck.rotateY(Math.PI);
-
-      const carPos = c.route.getPoint(Math.max(0, c.progress - 0.035));
-      c.car.position.copy(carPos); c.car.position.y = 0;
-      c.car.lookAt(pos.x, 0, pos.z); c.car.rotateY(Math.PI);
-
-      const end = mapEndpoints[c.key];
-      if (end) {
-        const dot = document.getElementById('d-' + c.key);
-        if (dot) {
-          dot.setAttribute('cx', 26 + (end.x - 26) * c.progress);
-          dot.setAttribute('cy', 116 + (end.y - 116) * c.progress);
-        }
-      }
-      if (c.progress > 0.92) {
-        c.worker.visible = true;
-        c.delivererProgress = Math.min(c.delivererProgress + 0.02, 1);
-        const house = c.dest.pos;
-        c.worker.position.set(
-          c.truck.position.x + (house.x - c.truck.position.x) * c.delivererProgress + 1.5 * (1 - c.delivererProgress),
-          0,
-          c.truck.position.z + (house.z - c.truck.position.z) * c.delivererProgress
-        );
-        c.worker.rotation.z = Math.sin(t * 12) * 0.1;
-      }
-    });
-  }
+  function animatePhase3(t) { /* cinematic-only placeholder */ }
 
   /* ============================================================
-     FIRST-PERSON MINING MINI-GAME
+     CAREER MODE — Full first-person sequence
      ============================================================ */
-  const fp = {
-    pos: new THREE.Vector3(-30, 1.7, 36),
-    yaw: 0,
-    pitch: -0.08,
-    keys: Object.create(null),
-    mouseDown: false,
-    speed: 7,
-    mining: null,
-    mined: 0,
-    flying: false
+  const Career = {
+    phase: 'mine', // mine | board | flight | factory | truck | plane | done
+    mined: 0, minedRequired: 3,
+    boxed: 0, boxedRequired: 3,
+    step: 'get-iphone', // per-box: get-iphone | box-it | tape-it | carry-box | deliver
+    carrying: null, // THREE.Object3D in hand
+    currentEmptyBox: null,
   };
 
-  const oreNodes = [];
-  const oreGroup = new THREE.Group();
-  mainScene.add(oreGroup);
+  const Player = {
+    pos: new THREE.Vector3(-30, 1.7, 36),
+    yaw: 0, pitch: -0.08,
+    keys: Object.create(null),
+    speed: 6.5, sprint: 11,
+    mode: 'walk', // walk | truck | plane
+    interactTarget: null,
+    interactHoldProgress: 0,
+    mouseDown: false,
+    pointerLocked: false,
+    vehicle: null,
+  };
 
-  function buildOreNodes() {
-    for (let i = 0; i < 6; i++) {
-      const a = (i / 6) * Math.PI * 2;
-      const x = -30 + Math.cos(a) * 6.2;
-      const z = 25 + Math.sin(a) * 6.2;
-      const rock = new THREE.Mesh(
-        new THREE.DodecahedronGeometry(1.0, 0),
-        new THREE.MeshStandardMaterial({ color: 0x6a5a8a, roughness: 0.9, metalness: 0.15 })
-      );
-      rock.position.set(x, 0.85, z);
-      rock.rotation.set(Math.random(), Math.random(), Math.random());
-      rock.castShadow = true; rock.receiveShadow = true;
-      oreGroup.add(rock);
+  const raycaster = new THREE.Raycaster();
+  const centerNDC = new THREE.Vector2(0, 0);
 
-      const crystal = new THREE.Mesh(
-        new THREE.OctahedronGeometry(0.42, 0),
-        new THREE.MeshStandardMaterial({ color: 0x06D6A0, emissive: 0x06D6A0, emissiveIntensity: 1.4, metalness: 0.6, roughness: 0.2 })
-      );
-      crystal.position.set(x, 2.0, z);
-      oreGroup.add(crystal);
+  // Register interactable objects
+  const interactables = [];
+  function registerInteractable(obj, opts) {
+    obj.traverse(o => { o.userData.interactable = opts; });
+    obj.userData.interactable = opts;
+    interactables.push({ obj, ...opts });
+  }
 
-      const light = new THREE.PointLight(0x06D6A0, 0.7, 8);
-      light.position.set(x, 2.2, z);
-      oreGroup.add(light);
+  // iPhones on conveyor
+  registerInteractable(iPhone1, {
+    type: 'iphone',
+    label: 'Pick up iPhone (E)',
+    onInteract: () => pickUpItem(iPhone1, 'iPhone')
+  });
 
-      oreNodes.push({ rock, crystal, light, x, z, mined: false, shrink: 0 });
+  // Empty box on table
+  registerInteractable(emptyBox, {
+    type: 'emptybox',
+    label: 'Place iPhone in box (E)',
+    onInteract: () => placeInBox(emptyBox)
+  });
+
+  // Tape dispenser
+  registerInteractable(tapeDispenser, {
+    type: 'tape',
+    label: 'Hold E to tape the box',
+    holdable: true,
+    holdTime: 1.6,
+    onComplete: () => tapeBox()
+  });
+
+  // Truck cab
+  registerInteractable(truckCabMarker, {
+    type: 'truckcab',
+    label: 'Enter truck cab (E)',
+    onInteract: () => enterVehicle('truck')
+  });
+
+  // Plane cab
+  registerInteractable(planeCabMarker, {
+    type: 'planecab',
+    label: 'Enter cargo plane (E)',
+    onInteract: () => enterVehicle('plane')
+  });
+
+  /* ---------- Pick up / place logic ---------- */
+  function pickUpItem(item, label) {
+    if (Player.carrying) { toast('Hands full', 'Deliver the ' + (Career.carryingLabel || 'item') + ' first.', '✋'); return; }
+    Sound.pop();
+    Player.carrying = item;
+    Career.carryingLabel = label;
+    carryIndicator.textContent = '✋ Carrying: ' + label;
+    carryIndicator.classList.add('show');
+    // Hide from scene, add to camera
+    scene_removeFromParent(item);
+    fpCamera.add(item);
+    item.position.set(0.35, -0.35, -1.1);
+    item.rotation.set(0, 0, 0);
+    item.scale.setScalar(0.9);
+
+    // Advance career step
+    if (Career.phase === 'factory') {
+      if (Career.step === 'get-iphone') { Career.step = 'box-it'; updateCareerTask(); }
+      else if (Career.step === 'carry-box') { Career.step = 'deliver'; updateCareerTask(); }
     }
   }
-  buildOreNodes();
 
-  function resetOreNodes() {
-    oreNodes.forEach(n => {
-      n.mined = false;
-      n.shrink = 0;
-      n.rock.visible = true; n.crystal.visible = true; n.light.visible = true;
-      n.rock.scale.setScalar(1); n.crystal.scale.setScalar(1);
-    });
-    fp.mined = 0;
-    fpMinedEl.textContent = '0';
+  function scene_removeFromParent(obj) {
+    if (obj.parent) obj.parent.remove(obj);
   }
 
-  /* Boarding plane near the mining area */
-  const boardingPlane = makeCargoPlane(2);
-  boardingPlane.position.set(-22, 0.6, 14);
-  boardingPlane.rotation.y = Math.PI * 0.15;
-  mainScene.add(boardingPlane);
+  function placeInBox(box) {
+    if (!Player.carrying || Career.carryingLabel !== 'iPhone') {
+      toast('Need an iPhone', 'Pick up an iPhone from the conveyor first.', '📱');
+      return;
+    }
+    if (Career.step !== 'box-it') return;
+    Sound.success();
+    // Drop iPhone (it "disappears" into box)
+    scene_removeFromParent(Player.carrying);
+    Player.carrying = null;
+    carryIndicator.classList.remove('show');
+    // Show tape strip
+    box.userData.tape.visible = true;
+    box.userData.tape.material.color.setHex(0xfff0d0);
+    box.userData.hasIphone = true;
+    box.userData.taped = false;
+    Career.currentEmptyBox = box;
+    Career.step = 'tape-it';
+    updateCareerTask();
+    addXP(5, 'iPhone placed in box');
+  }
 
-  /* Flight curve */
-  const flightCurve = new THREE.CatmullRomCurve3([
+  function tapeBox() {
+    if (!Career.currentEmptyBox) return;
+    Sound.success();
+    Career.currentEmptyBox.userData.taped = true;
+    Career.currentEmptyBox.userData.tape.material.color.setHex(0xFFD166);
+    Career.step = 'carry-box';
+    updateCareerTask();
+    addXP(10, 'Box sealed with tape!');
+    // Remove the tape dispenser interactable briefly? No, keep it but rely on step
+    // Pick up the sealed box automatically? No - let player do it
+  }
+
+  /* ---------- Truck cargo slot ---------- */
+  const truckCargoSlots = [];
+  for (let i = 0; i < 3; i++) {
+    const slot = new THREE.Vector3(0, 0, 0);
+    truckCargoSlots.push(slot);
+  }
+  function loadIntoVehicle(box, vehicleType) {
+    Sound.success();
+    scene_removeFromParent(box);
+    Player.carrying = null;
+    carryIndicator.classList.remove('show');
+    if (vehicleType === 'truck') {
+      // Add visible box to truck trailer
+      const visualBox = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.5, 0.5), new THREE.MeshStandardMaterial({ color: 0xb07040, roughness: 0.7 }));
+      visualBox.position.set((truckLoadedBoxes.length - 1) * 0.65, 0.3, -1.3);
+      visualBox.castShadow = true;
+      truck.add(visualBox);
+      truckLoadedBoxes.push(visualBox);
+    }
+    Career.boxed++;
+    fpBoxedEl.textContent = Career.boxed;
+    addXP(15, 'Box delivered to ' + vehicleType + '!');
+    // Reset for next box
+    if (Career.boxed >= Career.boxedRequired) {
+      if (vehicleType === 'truck') {
+        Career.phase = 'drive';
+        Career.step = 'drive';
+        updateCareerTask();
+        toast('Truck loaded!', 'Walk to the cab marker (yellow circle) and press E to drive.', '🚚');
+      } else if (vehicleType === 'plane') {
+        Career.phase = 'done';
+        Career.step = 'done';
+        updateCareerTask();
+        award('factory');
+        addXP(80, 'FULL DELIVERY COMPLETE — you did it all!');
+        Confetti.burst(250);
+      }
+    } else {
+      // Reset workstation objects for next box
+      setTimeout(resetWorkstationForNextBox, 400);
+    }
+  }
+
+  function resetWorkstationForNextBox() {
+    // Restore iPhone
+    iPhone1.visible = true;
+    iPhone1.position.set(STATION.iphone.x, STATION.iphone.y + 0.25, STATION.iphone.z);
+    iPhone1.rotation.set(0, 0, 0);
+    iPhone1.scale.setScalar(1);
+    if (!iPhone1.parent) mainScene.add(iPhone1);
+
+    // Restore empty box
+    emptyBox.visible = true;
+    emptyBox.userData.tape.visible = false;
+    emptyBox.userData.tape.material.color.setHex(0xfff0d0);
+    emptyBox.userData.hasIphone = false;
+    emptyBox.userData.taped = false;
+    emptyBox.position.set(STATION.box.x, STATION.box.y + 0.3, STATION.box.z);
+    emptyBox.rotation.set(0, 0, 0);
+    emptyBox.scale.setScalar(1);
+    if (!emptyBox.parent) mainScene.add(emptyBox);
+
+    Career.currentEmptyBox = null;
+    Career.step = 'get-iphone';
+    updateCareerTask();
+  }
+
+  /* ---------- Update career task HUD ---------- */
+  function updateCareerTask() {
+    const phaseNames = { mine: 'MINING', board: 'BOARDING', flight: 'IN FLIGHT', factory: 'FACTORY FLOOR', truck: 'DRIVING', plane: 'FLYING', drive: 'DRIVING', done: 'COMPLETE!' };
+    careerPhaseEl.textContent = phaseNames[Career.phase] || Career.phase.toUpperCase();
+
+    let task = '';
+    let progress = 0;
+    switch (Career.phase) {
+      case 'mine':
+        task = `⛏️ Mine crystals: ${Career.mined}/${Career.minedRequired}. Walk to a glowing crystal and hold E.`;
+        progress = Career.mined / Career.minedRequired;
+        break;
+      case 'board':
+        task = `✈️ Walk to the cargo plane and press E to board.`;
+        progress = 1;
+        break;
+      case 'flight':
+        task = `✈️ In flight to factory...`;
+        progress = 0.5;
+        break;
+      case 'factory':
+        switch (Career.step) {
+          case 'get-iphone': task = `1/4 Pick up an iPhone from the LEFT conveyor (E) · Box ${Career.boxed + 1}/3`; break;
+          case 'box-it': task = `2/4 Place the iPhone in the empty box (E) · Box ${Career.boxed + 1}/3`; break;
+          case 'tape-it': task = `3/4 Hold E at the tape dispenser · Box ${Career.boxed + 1}/3`; break;
+          case 'carry-box': task = `4/4 Pick up the SEALED box (E) · Box ${Career.boxed + 1}/3`; break;
+          case 'deliver': task = `📦 Carry the box to the truck and press E to load · Box ${Career.boxed + 1}/3`; break;
+        }
+        progress = (Career.boxed + (['get-iphone','box-it','tape-it','carry-box','deliver'].indexOf(Career.step)) / 5) / 3;
+        break;
+      case 'drive':
+        task = `🚚 Walk to the truck cab (yellow circle) and press E to drive!`;
+        break;
+      case 'truck':
+        task = `🚚 Drive to any glowing delivery beacon!`;
+        break;
+      case 'plane':
+        task = `✈️ Fly to any glowing delivery beacon!`;
+        break;
+      case 'done':
+        task = `🎉 Delivery complete! You did the whole supply chain!`;
+        progress = 1;
+        break;
+    }
+    careerTaskEl.textContent = task;
+    careerProgressFill.style.width = (progress * 100) + '%';
+    fpMinedEl.textContent = Career.mined;
+    fpBoxedEl.textContent = Career.boxed;
+  }
+
+  /* ---------- Pointer lock / mouse / keys ---------- */
+  document.addEventListener('pointerlockchange', () => {
+    Player.pointerLocked = (document.pointerLockElement === canvas);
+  });
+  canvas.addEventListener('mousedown', () => {
+    if (mode !== 'fp' || Player.mode !== 'walk') return;
+    if (!Player.pointerLocked) { if (canvas.requestPointerLock) canvas.requestPointerLock(); return; }
+    Player.mouseDown = true;
+  });
+  document.addEventListener('mouseup', () => { Player.mouseDown = false; });
+  document.addEventListener('mousemove', (e) => {
+    if (mode !== 'fp' || !Player.pointerLocked) return;
+    Player.yaw -= e.movementX * 0.0022;
+    Player.pitch -= e.movementY * 0.0022;
+    Player.pitch = clamp(Player.pitch, -1.3, 1.3);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (mode === 'fp') Player.keys[e.code] = true;
+  });
+  document.addEventListener('keyup', (e) => {
+    if (mode === 'fp') Player.keys[e.code] = false;
+  });
+
+  /* ---------- Interaction detection ---------- */
+  function updateInteraction(dt) {
+    if (Player.mode !== 'walk') { Player.interactTarget = null; return; }
+    if (Player.carrying) {
+      // Only deliver targets are valid while carrying
+      fpCrosshair.classList.remove('active');
+      return;
+    }
+
+    raycaster.setFromCamera(centerNDC, fpCamera);
+    raycaster.far = 3.2;
+    const meshes = interactables.map(i => i.obj);
+    const hits = raycaster.intersectObjects(meshes, true);
+    let target = null;
+    if (hits.length > 0) {
+      let obj = hits[0].object;
+      while (obj && !obj.userData.interactable) obj = obj.parent;
+      if (obj) target = obj.userData.interactable;
+    }
+
+    // Filter by career step
+    if (target) {
+      const t = target.type;
+      if (Career.phase === 'mine') target = null;
+      else if (Career.phase === 'board') { if (t !== 'planecab') target = null; } // handled differently
+      else if (Career.phase === 'factory') {
+        if (Career.step === 'get-iphone' && t !== 'iphone') target = null;
+        else if (Career.step === 'box-it' && t !== 'emptybox') target = null;
+        else if (Career.step === 'tape-it' && t !== 'tape') target = null;
+        else if (Career.step === 'carry-box' && t !== 'emptybox') target = null;
+        else if (Career.step === 'deliver' && t !== 'truckcab') target = null;
+      } else if (Career.phase === 'drive') { if (t !== 'truckcab') target = null; }
+      else if (Career.phase === 'fly') { if (t !== 'planecab') target = null; }
+      else { target = null; }
+    }
+
+    Player.interactTarget = target;
+
+    if (target) {
+      fpCrosshair.classList.add('active');
+      // label
+      let lbl = target.label;
+      if (target.type === 'emptybox' && Career.step === 'carry-box' && emptyBox.userData.taped) {
+        lbl = 'Pick up sealed box (E)';
+      }
+      fpPromptEl.textContent = lbl;
+      fpPromptEl.classList.remove('holding');
+      if (target.holdable) {
+        if (Player.keys['KeyE']) {
+          Player.interactHoldProgress += dt / target.holdTime;
+          fpProgressEl.classList.add('show');
+          fpProgressFill.style.width = Math.min(Player.interactHoldProgress, 1) * 100 + '%';
+          fpPromptEl.classList.add('holding');
+          fpCrosshair.classList.add('working');
+          if (Player.interactHoldProgress >= 1) {
+            target.onComplete();
+            Player.interactHoldProgress = 0;
+            fpProgressEl.classList.remove('show');
+            fpProgressFill.style.width = '0%';
+            fpCrosshair.classList.remove('working');
+          }
+        } else {
+          Player.interactHoldProgress = 0;
+          fpProgressEl.classList.remove('show');
+          fpProgressFill.style.width = '0%';
+          fpCrosshair.classList.remove('working');
+        }
+      } else {
+        // Instant interact — use a debounced E
+        if (Player.keys['KeyE'] && !Player._eHeld) {
+          Player._eHeld = true;
+          target.onInteract && target.onInteract();
+        } else if (!Player.keys['KeyE']) {
+          Player._eHeld = false;
+        }
+      }
+    } else {
+      fpCrosshair.classList.remove('active');
+      fpCrosshair.classList.remove('working');
+      fpProgressEl.classList.remove('show');
+      fpProgressFill.style.width = '0%';
+      Player.interactHoldProgress = 0;
+      // Default prompt depends on phase
+      if (Career.phase === 'mine') {
+        if (Career.mined >= Career.minedRequired) fpPromptEl.textContent = 'All crystals mined! Walk to the cargo plane ✈️ and press E';
+        else fpPromptEl.textContent = 'Walk to a glowing crystal · Hold E to mine';
+      } else if (Career.phase === 'board') {
+        fpPromptEl.textContent = 'Walk to the cargo plane ✈️ and press E to board';
+      } else if (Career.phase === 'factory') {
+        fpPromptEl.textContent = 'Follow the highlighted workstations';
+      } else if (Career.phase === 'drive') {
+        fpPromptEl.textContent = 'Walk to the truck cab (yellow circle) and press E';
+      } else {
+        fpPromptEl.textContent = 'WASD to move · Click to look';
+      }
+      fpPromptEl.classList.remove('holding');
+    }
+  }
+
+  /* ---------- Mining nearby check (non-raycast, proximity) ---------- */
+  function checkMiningNearby(dt) {
+    if (Career.phase !== 'mine') return;
+    let nearest = null, nd = 3.0;
+    oreNodes.forEach(n => {
+      if (n.mined) return;
+      const d = Math.hypot(n.x - Player.pos.x, n.z - Player.pos.z);
+      if (d < nd) { nd = d; nearest = n; }
+    });
+    if (nearest) {
+      if (Player.keys['KeyE'] || Player.mouseDown) {
+        Player.interactHoldProgress += dt / 1.2;
+        fpProgressEl.classList.add('show');
+        fpProgressFill.style.width = Math.min(Player.interactHoldProgress, 1) * 100 + '%';
+        fpCrosshair.classList.add('working');
+        fpPromptEl.textContent = 'Mining... hold E';
+        if (Player.interactHoldProgress >= 1) {
+          nearest.mined = true;
+          nearest.shrink = 0.001;
+          Career.mined++;
+          updateCareerTask();
+          Sound.success();
+          addXP(10, 'Mined a resource!');
+          Player.interactHoldProgress = 0;
+          fpProgressEl.classList.remove('show');
+          fpProgressFill.style.width = '0%';
+          fpCrosshair.classList.remove('working');
+          if (Career.mined >= Career.minedRequired) {
+            Career.phase = 'board';
+            updateCareerTask();
+            toast('All mined!', 'Now walk to the cargo plane and press E to board.', '✈️');
+          }
+        }
+      } else {
+        Player.interactHoldProgress = 0;
+        fpProgressEl.classList.remove('show');
+        fpProgressFill.style.width = '0%';
+        fpCrosshair.classList.remove('working');
+        fpPromptEl.textContent = 'Hold E to mine this crystal';
+      }
+    }
+  }
+
+  /* ---------- Board plane (from career phase) ---------- */
+  function checkBoardPlane() {
+    if (Career.phase !== 'board') return;
+    const d = boardingPlane.position.distanceTo(Player.pos);
+    if (d < 6 && Player.keys['KeyE'] && !Player._eHeld) {
+      Player._eHeld = true;
+      startAutoFlight();
+    } else if (!Player.keys['KeyE']) {
+      Player._eHeld = false;
+    }
+  }
+
+  /* ---------- Auto-flight to factory ---------- */
+  let autoFlightT = 0;
+  const AUTO_FLIGHT_DUR = 6.5;
+  function startAutoFlight() {
+    Career.phase = 'flight';
+    autoFlightT = 0;
+    flightOverlay.classList.add('show');
+    fpHud.classList.remove('show');
+    if (document.exitPointerLock) document.exitPointerLock();
+    updateCareerTask();
+    Sound.pop();
+  }
+  const autoFlightCurve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(-22, 3, 14),
     new THREE.Vector3(-34, 28, 8),
     new THREE.Vector3(-18, 42, -18),
-    new THREE.Vector3(4, 24, -34),
-    new THREE.Vector3(10, 1.2, -32)
+    new THREE.Vector3(4, 24, -28),
+    new THREE.Vector3(6, 6, -6)
   ]);
-  let flightT = 0;
-  const FLIGHT_DUR = 7.5;
+  const autoFlightCam = new THREE.PerspectiveCamera(60, 1, 0.1, 800);
+  function updateAutoFlight(dt) {
+    autoFlightT += dt;
+    const p = Math.min(autoFlightT / AUTO_FLIGHT_DUR, 1);
+    const pos = autoFlightCurve.getPoint(p);
+    const ahead = autoFlightCurve.getPoint(Math.min(p + 0.02, 1));
+    boardingPlane.position.copy(pos);
+    boardingPlane.lookAt(ahead);
+    autoFlightCam.position.set(pos.x + 1.2, pos.y + 1.4, pos.z);
+    autoFlightCam.lookAt(pos.x + (ahead.x - pos.x) * 5, pos.y + 0.3, pos.z + (ahead.z - pos.z) * 5);
+    autoFlightCam.aspect = section.clientWidth / section.clientHeight;
+    autoFlightCam.updateProjectionMatrix();
+    if (p >= 1) endAutoFlight();
+  }
+  function endAutoFlight() {
+    flightOverlay.classList.remove('show');
+    boardingPlane.position.set(-22, 0.6, 14);
+    boardingPlane.rotation.set(0, Math.PI * 0.15, 0);
+    award('factory');
+    addXP(40, 'Landed at the Alezify factory!');
+    // Place player at factory entrance
+    Player.pos.set(0, 1.7, 16);
+    Player.yaw = 0; Player.pitch = -0.1;
+    Career.phase = 'factory';
+    Career.step = 'get-iphone';
+    fpHud.classList.add('show');
+    updateCareerTask();
+    if (canvas.requestPointerLock) canvas.requestPointerLock();
+    toast('Welcome to Alezify!', 'Box 3 iPhones: get iPhone → place in box → tape → carry to truck.', '🏭');
+    Sound.fanfare();
+  }
 
-  /* Pointer lock */
-  let pointerLocked = false;
-  document.addEventListener('pointerlockchange', () => {
-    pointerLocked = (document.pointerLockElement === canvas);
-    if (!pointerLocked && mode === 'fp' && !fp.flying) {
-      fpPromptEl.textContent = 'Click the scene to look around · WASD to move';
-    }
-  });
-  canvas.addEventListener('mousedown', () => {
-    if (mode !== 'fp' || fp.flying) return;
-    if (!pointerLocked) {
-      if (canvas.requestPointerLock) canvas.requestPointerLock();
+  /* ---------- Vehicle control ---------- */
+  function enterVehicle(type) {
+    if (Player.carrying) {
+      // Delivering box to vehicle — load it
+      if (type === 'truck' && Career.carryingLabel === 'Sealed Box') {
+        loadIntoVehicle(Player.carrying, 'truck');
+        return;
+      }
+      toast('Deliver first', 'Put the box in the truck first.', '📦');
       return;
     }
-    fp.mouseDown = true;
-  });
-  document.addEventListener('mouseup', () => { fp.mouseDown = false; });
-  document.addEventListener('mousemove', (e) => {
-    if (mode !== 'fp' || !pointerLocked || fp.flying) return;
-    fp.yaw -= e.movementX * 0.0022;
-    fp.pitch -= e.movementY * 0.0022;
-    fp.pitch = clamp(fp.pitch, -1.2, 1.2);
-  });
-  document.addEventListener('keydown', (e) => {
-    if (mode === 'fp') fp.keys[e.code] = true;
-  });
-  document.addEventListener('keyup', (e) => {
-    if (mode === 'fp') fp.keys[e.code] = false;
-  });
+    if (type === 'truck' && Career.phase === 'drive') {
+      Player.mode = 'truck';
+      Sound.click();
+      vehicleHud.classList.add('show');
+      vhHintEl.textContent = 'W/S = throttle · A/D = steer · E = exit truck';
+      if (document.exitPointerLock) document.exitPointerLock();
+      toast('Truck driving!', 'Drive to any glowing delivery beacon.', '🚚');
+    } else if (type === 'plane') {
+      Player.mode = 'plane';
+      Sound.click();
+      vehicleHud.classList.add('show');
+      vhSpeedEl.textContent = '0';
+      vhHintEl.textContent = 'W = throttle · S = brake · ↑/↓ = climb/descend · A/D = steer';
+      if (document.exitPointerLock) document.exitPointerLock();
+      toast('Cargo plane!', 'Fly to the destination beacon.', '✈️');
+    } else if (type === 'truck') {
+      toast('Not ready', 'Load 3 boxes into the truck first.', '📦');
+    }
+  }
 
-  function updateFP(dt) {
-    if (fp.flying) { updateFlight(dt); return; }
+  // Vehicle state
+  const TruckState = { speed: 0, heading: -Math.PI / 2, pos: STATION.truck.clone(), maxSpeed: 20 };
+  const PlaneState = { speed: 0, heading: -Math.PI / 3, pos: new THREE.Vector3(18, 0.6, 20), pitch: 0, roll: 0, maxSpeed: 35, altitude: 0.6 };
 
-    const k = fp.keys;
+  function updateTruckVehicle(dt) {
+    if (!Player.keys) return;
+    const k = Player.keys;
+    // Throttle
+    if (k['KeyW']) TruckState.speed = Math.min(TruckState.speed + 20 * dt, TruckState.maxSpeed);
+    else if (k['KeyS']) TruckState.speed = Math.max(TruckState.speed - 25 * dt, -8);
+    else TruckState.speed *= 0.92;
+    // Steer
+    const steerRate = 1.4;
+    if (k['KeyA']) TruckState.heading += steerRate * dt * Math.min(Math.abs(TruckState.speed) / 8, 1);
+    if (k['KeyD']) TruckState.heading -= steerRate * dt * Math.min(Math.abs(TruckState.speed) / 8, 1);
+    // Move
+    TruckState.pos.x += Math.sin(TruckState.heading) * TruckState.speed * dt;
+    TruckState.pos.z += Math.cos(TruckState.heading) * TruckState.speed * dt;
+    truck.position.copy(TruckState.pos);
+    truck.rotation.y = TruckState.heading;
+    // Camera inside cab
+    const cabLocal = new THREE.Vector3(0, 2.05, 1.9);
+    cabLocal.applyAxisAngle(new THREE.Vector3(0, 1, 0), TruckState.heading);
+    fpCamera.position.copy(TruckState.pos).add(cabLocal);
+    fpCamera.rotation.set(0, TruckState.heading + Math.PI, 0);
+    fpCamera.aspect = section.clientWidth / section.clientHeight;
+    fpCamera.updateProjectionMatrix();
+    // Speed HUD
+    vhSpeedEl.textContent = Math.round(Math.abs(TruckState.speed) * 3.6);
+    // Exit
+    if (k['KeyE'] && !Player._eHeld) {
+      Player._eHeld = true;
+      Player.mode = 'walk';
+      vehicleHud.classList.remove('show');
+      Player.pos.copy(TruckState.pos).add(new THREE.Vector3(-2, 0, 0));
+      if (canvas.requestPointerLock) canvas.requestPointerLock();
+    } else if (!k['KeyE']) {
+      Player._eHeld = false;
+    }
+    // Check delivery
+    [deliveryA, deliveryB, deliveryC].forEach(b => {
+      const d = Math.hypot(b.x - TruckState.pos.x, b.z - TruckState.pos.z);
+      if (d < 5) {
+        truckDelivered(b);
+      }
+    });
+  }
+
+  let delivered = false;
+  function truckDelivered(beacon) {
+    if (delivered) return;
+    delivered = true;
+    Sound.fanfare();
+    Confetti.burst(200);
+    addXP(60, 'Delivery complete to ' + beacon.label + '!');
+    toast('DELIVERED!', 'You drove the truck to ' + beacon.label + '!', '🚚');
+    // Return to walk mode
+    Player.mode = 'walk';
+    vehicleHud.classList.remove('show');
+    Player.pos.set(beacon.x - 3, 1.7, beacon.z);
+    Career.phase = 'done';
+    updateCareerTask();
+    award('factory');
+    if (canvas.requestPointerLock) canvas.requestPointerLock();
+    toast('Now try the plane!', 'Walk to the cargo plane at (18, 20) and press E to fly.', '✈️');
+  }
+
+  function updatePlaneVehicle(dt) {
+    if (!Player.keys) return;
+    const k = Player.keys;
+    if (k['KeyW']) PlaneState.speed = Math.min(PlaneState.speed + 18 * dt, PlaneState.maxSpeed);
+    else if (k['KeyS']) PlaneState.speed = Math.max(PlaneState.speed - 25 * dt, 0);
+    else PlaneState.speed *= 0.97;
+    // Pitch/roll (arrow up/down = pitch, A/D = roll)
+    if (k['ArrowUp']) PlaneState.pitch = clamp(PlaneState.pitch + 1.0 * dt, -0.6, 0.6);
+    else if (k['ArrowDown']) PlaneState.pitch = clamp(PlaneState.pitch - 1.0 * dt, -0.6, 0.6);
+    else PlaneState.pitch *= 0.95;
+    if (k['KeyA']) PlaneState.heading += 1.2 * dt;
+    if (k['KeyD']) PlaneState.heading -= 1.2 * dt;
+    // Altitude from pitch
+    PlaneState.altitude += PlaneState.pitch * PlaneState.speed * dt * 0.6;
+    PlaneState.altitude = Math.max(0.6, PlaneState.altitude);
+    // Move
+    PlaneState.pos.x += Math.sin(PlaneState.heading) * PlaneState.speed * dt;
+    PlaneState.pos.z += Math.cos(PlaneState.heading) * PlaneState.speed * dt;
+    PlaneState.pos.y = PlaneState.altitude;
+    flyPlane.position.copy(PlaneState.pos);
+    flyPlane.rotation.y = PlaneState.heading;
+    flyPlane.rotation.x = PlaneState.pitch;
+    flyPlane.rotation.z = -PlaneState.pitch * 0.5;
+    // Camera behind/above cockpit
+    fpCamera.position.set(
+      PlaneState.pos.x - Math.sin(PlaneState.heading) * 4,
+      PlaneState.pos.y + 2.5,
+      PlaneState.pos.z - Math.cos(PlaneState.heading) * 4
+    );
+    fpCamera.lookAt(
+      PlaneState.pos.x + Math.sin(PlaneState.heading) * 20,
+      PlaneState.pos.y + 1 + PlaneState.pitch * 10,
+      PlaneState.pos.z + Math.cos(PlaneState.heading) * 20
+    );
+    fpCamera.aspect = section.clientWidth / section.clientHeight;
+    fpCamera.updateProjectionMatrix();
+    vhSpeedEl.textContent = Math.round(PlaneState.speed * 3.6);
+    // Exit
+    if (k['KeyE'] && !Player._eHeld) {
+      Player._eHeld = true;
+      if (PlaneState.altitude < 3) {
+        Player.mode = 'walk';
+        vehicleHud.classList.remove('show');
+        Player.pos.set(PlaneState.pos.x - 4, 1.7, PlaneState.pos.z);
+        if (canvas.requestPointerLock) canvas.requestPointerLock();
+      } else {
+        toast('Too high!', 'Descend to land before exiting.', '⚠️');
+      }
+    } else if (!k['KeyE']) {
+      Player._eHeld = false;
+    }
+    // Delivery check
+    if (PlaneState.speed > 5) {
+      [deliveryA, deliveryB, deliveryC].forEach(b => {
+        const d = Math.hypot(b.x - PlaneState.pos.x, b.z - PlaneState.pos.z);
+        if (d < 8 && PlaneState.altitude < 10) {
+          planeDelivered(b);
+        }
+      });
+    }
+  }
+
+  function planeDelivered(beacon) {
+    Sound.fanfare();
+    Confetti.burst(280);
+    addXP(100, 'Air delivery complete to ' + beacon.label + '!');
+    toast('AIRBORNE DELIVERY!', 'You flew the cargo plane to ' + beacon.label + '!', '✈️');
+    Player.mode = 'walk';
+    vehicleHud.classList.remove('show');
+    Player.pos.set(beacon.x - 4, 1.7, beacon.z);
+    Career.phase = 'done';
+    updateCareerTask();
+    award('factory');
+    if (canvas.requestPointerLock) canvas.requestPointerLock();
+  }
+
+  /* ---------- Walk mode ---------- */
+  function updateWalk(dt) {
+    const k = Player.keys;
     let fwd = 0, side = 0;
     if (k['KeyW'] || k['ArrowUp']) fwd += 1;
     if (k['KeyS'] || k['ArrowDown']) fwd -= 1;
     if (k['KeyA'] || k['ArrowLeft']) side -= 1;
     if (k['KeyD'] || k['ArrowRight']) side += 1;
-    const sprint = (k['ShiftLeft'] || k['ShiftRight']) ? 1.8 : 1;
-
+    const spd = (k['ShiftLeft'] || k['ShiftRight']) ? Player.sprint : Player.speed;
     if (fwd || side) {
       const len = Math.hypot(fwd, side);
-      const sinY = Math.sin(fp.yaw), cosY = Math.cos(fp.yaw);
+      const sinY = Math.sin(Player.yaw), cosY = Math.cos(Player.yaw);
       const dx = (-sinY * fwd + cosY * side) / len;
       const dz = (-cosY * fwd - sinY * side) / len;
-      fp.pos.x = clamp(fp.pos.x + dx * fp.speed * sprint * dt, -60, 60);
-      fp.pos.z = clamp(fp.pos.z + dz * fp.speed * sprint * dt, -45, 72);
+      Player.pos.x = clamp(Player.pos.x + dx * spd * dt, -80, 90);
+      Player.pos.z = clamp(Player.pos.z + dz * spd * dt, -60, 90);
     }
+    fpCamera.position.set(Player.pos.x, Player.pos.y + Math.sin(performance.now() * 0.008) * 0.03, Player.pos.z);
+    fpCamera.rotation.set(Player.pitch, Player.yaw, 0, 'YXZ');
+    fpCamera.aspect = section.clientWidth / section.clientHeight;
+    fpCamera.updateProjectionMatrix();
 
-    fpCamera.position.set(fp.pos.x, fp.pos.y + Math.sin(performance.now() * 0.008) * 0.03, fp.pos.z);
-    fpCamera.rotation.set(fp.pitch, fp.yaw, 0, 'YXZ');
-
-    /* Shrink mined ore */
+    // Shrink mined ore
     oreNodes.forEach(n => {
       if (n.shrink > 0 && n.shrink < 1) {
         n.shrink = Math.min(n.shrink + dt * 2.2, 1);
         const s = Math.max(1 - n.shrink, 0.001);
-        n.rock.scale.setScalar(s);
-        n.crystal.scale.setScalar(s);
+        n.rock.scale.setScalar(s); n.crystal.scale.setScalar(s);
         n.light.intensity = 0.7 * (1 - n.shrink);
-        if (n.shrink >= 1) {
-          n.rock.visible = false; n.crystal.visible = false; n.light.visible = false;
-        }
+        if (n.shrink >= 1) { n.rock.visible = false; n.crystal.visible = false; n.light.visible = false; }
       }
     });
 
-    /* Nearest ore */
-    let nearest = null, nd = 3.6;
-    oreNodes.forEach(n => {
-      if (n.mined) return;
-      const d = Math.hypot(n.x - fp.pos.x, n.z - fp.pos.z);
-      if (d < nd) { nd = d; nearest = n; }
-    });
-
-    const nearPlane = boardingPlane.position.distanceTo(fp.pos) < 7;
-
-    /* Mining */
-    const holding = fp.keys['KeyE'] || fp.mouseDown;
-    if (nearest && holding) {
-      if (!fp.mining || fp.mining.node !== nearest) fp.mining = { node: nearest, t: 0 };
-      fp.mining.t += dt;
-      fpProgressEl.classList.add('show');
-      fpProgressFill.style.width = Math.min(fp.mining.t / 1.2 * 100, 100) + '%';
-      if (fp.mining.t >= 1.2) {
-        nearest.mined = true;
-        nearest.shrink = 0.001;
-        fp.mining = null;
-        fp.mined++;
-        fpMinedEl.textContent = fp.mined;
-        Sound.success();
-        addXP(10, 'Mined a resource!');
-        fpProgressEl.classList.remove('show');
-        fpProgressFill.style.width = '0%';
-      }
-    } else {
-      fp.mining = null;
-      fpProgressEl.classList.remove('show');
-      fpProgressFill.style.width = '0%';
+    // Carry position
+    if (Player.carrying) {
+      Player.carrying.position.lerp(new THREE.Vector3(0.4, -0.35, -1.2), dt * 15);
+      Player.carrying.rotation.set(0, Player.yaw, 0);
     }
 
-    /* Prompt text */
-    if (fp.mined >= 6 && nearPlane) {
-      fpPromptEl.textContent = 'Press E to board the cargo plane ✈️';
-      if (fp.keys['KeyE']) startFlight();
-    } else if (fp.mined >= 6) {
-      fpPromptEl.textContent = 'All resources gathered! Head to the cargo plane ✈️';
-    } else if (nearest) {
-      fpPromptEl.textContent = 'Hold E (or click) to mine ⛏️';
-    } else if (pointerLocked) {
-      fpPromptEl.textContent = 'WASD to move · Shift to sprint · walk to a glowing crystal';
-    } else {
-      fpPromptEl.textContent = 'Click the scene to look around · WASD to move';
-    }
+    // Interaction
+    checkMiningNearby(dt);
+    updateInteraction(dt);
+    checkBoardPlane();
   }
 
-  function startFlight() {
-    fp.flying = true;
-    flightT = 0;
-    if (document.exitPointerLock) document.exitPointerLock();
-    fpProgressEl.classList.remove('show');
-    flightOverlay.classList.add('show');
-    fpHud.classList.remove('show');
-    Sound.pop();
-  }
-
-  function updateFlight(dt) {
-    flightT += dt;
-    const p = Math.min(flightT / FLIGHT_DUR, 1);
-    const pos = flightCurve.getPoint(p);
-    const ahead = flightCurve.getPoint(Math.min(p + 0.02, 1));
-
-    boardingPlane.position.copy(pos);
-    boardingPlane.lookAt(ahead);
-
-    flightCamera.position.set(pos.x, pos.y + 1.4, pos.z);
-    const dir = new THREE.Vector3().subVectors(ahead, pos).normalize();
-    const sideV = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 1, 0)).normalize();
-    flightCamera.lookAt(
-      pos.x + sideV.x * 12 + dir.x * 4,
-      pos.y + 0.2,
-      pos.z + sideV.z * 12 + dir.z * 4
-    );
-
-    if (p >= 1) endFlight();
-  }
-
-  function endFlight() {
-    fp.flying = false;
-    flightOverlay.classList.remove('show');
-    boardingPlane.position.set(-22, 0.6, 14);
-    boardingPlane.rotation.set(0, Math.PI * 0.15, 0);
-    award('factory');
-    addXP(30, 'Landed at the Alezify factory!');
-    setMode('cinematic');
-    gotoPhase(2);
-    toast('Welcome to Alezify', 'You landed at the factory — the robots are assembling your order.', '✈️');
-  }
-
-  /* ============================================================
-     MODES
-     ============================================================ */
+  /* ---------- Mode switching ---------- */
   let mode = 'cinematic';
-
-  const orbit = (THREE.OrbitControls)
-    ? new THREE.OrbitControls(mainCamera, renderer.domElement)
-    : null;
+  const orbit = (THREE.OrbitControls) ? new THREE.OrbitControls(mainCamera, renderer.domElement) : null;
   if (orbit) {
-    orbit.enabled = false;
-    orbit.target.set(0, 3, 0);
-    orbit.maxPolarAngle = Math.PI / 2.05;
-    orbit.minDistance = 8;
-    orbit.maxDistance = 140;
-    orbit.enableDamping = true;
-    orbit.dampingFactor = 0.08;
-  }
-
-  function enterFP() {
-    fp.pos.set(-30, 1.7, 36);
-    fp.yaw = 0;
-    fp.pitch = -0.08;
-    fp.flying = false;
-    fp.mouseDown = false;
-    resetOreNodes();
-    fpHud.classList.add('show');
-    fpPromptEl.textContent = 'Click the scene to look around · WASD to move';
-    if (canvas.requestPointerLock) canvas.requestPointerLock();
-    toast('First-person mode', 'Mine 6 resources, then board the cargo plane.', '🕹️');
+    orbit.enabled = false; orbit.target.set(0, 3, -14);
+    orbit.maxPolarAngle = Math.PI / 2.05; orbit.minDistance = 8; orbit.maxDistance = 160;
+    orbit.enableDamping = true; orbit.dampingFactor = 0.08;
   }
 
   function setMode(m) {
     if (m === mode) return;
+    if (mode === 'fp' && document.exitPointerLock) { try { document.exitPointerLock(); } catch (e) {} }
     if (mode === 'explore' && orbit) orbit.enabled = false;
-    if (mode === 'fp' && document.exitPointerLock) {
-      try { document.exitPointerLock(); } catch (e) {}
-    }
-    fpHud.classList.toggle('show', m === 'fp');
-    if (m !== 'fp') {
-      flightOverlay.classList.remove('show');
-      fp.flying = false;
-    }
-
     mode = m;
     $$('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+    fpHud.classList.toggle('show', m === 'fp');
+    vehicleHud.classList.toggle('show', m === 'fp' && Player.mode !== 'walk');
 
     if (m === 'cinematic') {
       autoRun = true;
       document.getElementById('lb-top').classList.add('show');
       document.getElementById('lb-bottom').classList.add('show');
     } else if (m === 'fp') {
-      enterFP();
+      // Start career from beginning
+      resetCareer();
+      if (canvas.requestPointerLock) canvas.requestPointerLock();
+      toast('Career Mode', 'Mine 3 crystals to begin your factory shift!', '🕹️');
     } else if (m === 'broadcast') {
-      broadcastT = 0;
       mapOverlay.classList.add('show');
       brandEl.classList.add('show');
     } else if (m === 'explore') {
       if (orbit) {
         orbit.enabled = true;
         mainCamera.position.set(46, 34, 56);
-        orbit.target.set(0, 3, 0);
+        orbit.target.set(0, 3, -14);
         orbit.update();
       }
       mapOverlay.classList.remove('show');
     }
   }
 
-  function gotoPhase(i) {
-    phaseIndex = i;
-    phaseTime = 0;
-    if (i === 0) globalTime = 0;
-    onPhaseEnter(i);
-    updateTimeline();
+  function resetCareer() {
+    Career.phase = 'mine';
+    Career.mined = 0;
+    Career.boxed = 0;
+    Career.step = 'get-iphone';
+    Career.carryingLabel = null;
+    Career.currentEmptyBox = null;
+    if (Player.carrying) { scene_removeFromParent(Player.carrying); Player.carrying = null; }
+    carryIndicator.classList.remove('show');
+    // Reset ore nodes
+    oreNodes.forEach(n => {
+      n.mined = false; n.shrink = 0;
+      n.rock.visible = true; n.crystal.visible = true; n.light.visible = true;
+      n.rock.scale.setScalar(1); n.crystal.scale.setScalar(1);
+      n.light.intensity = 0.7;
+    });
+    // Reset workstation
+    resetWorkstationForNextBox();
+    // Reset player
+    Player.pos.set(-30, 1.7, 36);
+    Player.yaw = 0; Player.pitch = -0.08;
+    Player.mode = 'walk';
+    Player.interactTarget = null;
+    Player.interactHoldProgress = 0;
+    delivered = false;
+    // Reset truck cargo
+    truckLoadedBoxes.forEach(b => truck.remove(b));
+    truckLoadedBoxes = [];
+    // Reset vehicles
+    TruckState.speed = 0;
+    TruckState.heading = -Math.PI / 2;
+    TruckState.pos.copy(STATION.truck);
+    truck.position.copy(STATION.truck);
+    truck.rotation.y = TruckState.heading;
+    PlaneState.speed = 0;
+    PlaneState.altitude = 0.6;
+    PlaneState.pos.set(18, 0.6, 20);
+    PlaneState.heading = -Math.PI / 3;
+    flyPlane.position.copy(PlaneState.pos);
+    flyPlane.rotation.set(0, PlaneState.heading, 0);
+    // Reset boarding plane
+    boardingPlane.position.set(-22, 0.6, 14);
+    boardingPlane.rotation.set(0, Math.PI * 0.15, 0);
+    updateCareerTask();
+    vehicleHud.classList.remove('show');
   }
 
-  /* ---------- UI wiring ---------- */
+  /* UI wiring */
   $$('.mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      Sound.click();
-      setMode(btn.dataset.mode);
-    });
+    btn.addEventListener('click', () => { Sound.click(); setMode(btn.dataset.mode); });
   });
   document.getElementById('btn-replay').addEventListener('click', () => {
     Sound.click();
-    if (mode !== 'cinematic') setMode('cinematic');
-    gotoPhase(0);
+    if (mode === 'cinematic') { phaseIndex = 0; phaseTime = 0; globalTime = 0; updateTimeline(); }
+    else if (mode === 'fp') { resetCareer(); }
   });
   document.getElementById('btn-skip').addEventListener('click', () => {
     Sound.click();
-    if (mode !== 'cinematic') setMode('cinematic');
-    phaseTime = 0;
-    phaseIndex = (phaseIndex + 1) % PHASES.length;
-    if (phaseIndex === 0) globalTime = 0;
-    onPhaseEnter(phaseIndex);
-    updateTimeline();
+    if (mode === 'cinematic') {
+      phaseTime = 0;
+      phaseIndex = (phaseIndex + 1) % PHASES.length;
+      if (phaseIndex === 0) globalTime = 0;
+      updateTimeline();
+    }
   });
-
-  /* Expose for command palette */
   window.FactorySetMode = setMode;
 
   /* ---------- Main loop ---------- */
@@ -3064,8 +2933,7 @@ function resetAllProgress() {
 
     if (mode === 'cinematic') {
       if (autoRun) {
-        phaseTime += dt;
-        globalTime += dt;
+        phaseTime += dt; globalTime += dt;
         if (phaseTime >= PHASES[phaseIndex].dur) {
           phaseTime = 0;
           phaseIndex = (phaseIndex + 1) % PHASES.length;
@@ -3073,130 +2941,76 @@ function resetAllProgress() {
             globalTime = 0;
             if (!cinematicCompleted) {
               cinematicCompleted = true;
-              addXP(50, 'Watched the full supply chain cinematic!');
-              award('factory');
+              addXP(30, 'Watched the full supply chain cinematic!');
             }
           }
-          onPhaseEnter(phaseIndex);
         }
       }
       if (phaseIndex === 0) animatePhase1(phaseTime);
-      else if (phaseIndex === 1) animateTransition(phaseTime);
+      else if (phaseIndex === 1) { /* transition */ }
       else if (phaseIndex === 2) animatePhase2(phaseTime);
       else if (phaseIndex === 3) animatePhase3(phaseTime);
-      else if (phaseIndex === 4) animatePhase4(phaseTime);
-
       mainCamera.aspect = section.clientWidth / section.clientHeight;
       mainCamera.updateProjectionMatrix();
-
-      if (phaseIndex === 1) {
-        const p = phaseTime / PHASES[1].dur;
-        mainCamera.position.set(
-          THREE.MathUtils.lerp(8, 0, p),
-          THREE.MathUtils.lerp(32, 18, p),
-          THREE.MathUtils.lerp(42, 30, p)
-        );
-        mainCamera.lookAt(
-          THREE.MathUtils.lerp(2, 0, p), 2,
-          THREE.MathUtils.lerp(-6, -2, p)
-        );
-      } else if (phaseIndex === 2) {
-        const p = Math.min(phaseTime / PHASES[2].dur, 1);
-        mainCamera.position.copy(camCurve2.getPoint(p));
-        mainCamera.lookAt(lookCurve2.getPoint(p));
-      } else if (phaseIndex === 3) {
-        const p = Math.min(phaseTime / PHASES[3].dur, 1);
-        mainCamera.position.copy(camCurve3.getPoint(p));
-        mainCamera.lookAt(lookCurve3.getPoint(p));
-      } else if (phaseIndex === 4) {
-        const p = Math.min(phaseTime / PHASES[4].dur, 1);
-        mainCamera.position.copy(camCurve4.getPoint(p));
-        mainCamera.lookAt(lookCurve4.getPoint(p));
-      }
+      updateTimeline();
     } else if (mode === 'fp') {
-      updateFP(dt);
-      fpCamera.aspect = section.clientWidth / section.clientHeight;
-      fpCamera.updateProjectionMatrix();
-      flightCamera.aspect = section.clientWidth / section.clientHeight;
-      flightCamera.updateProjectionMatrix();
-    } else if (mode === 'broadcast') {
-      broadcastT = (broadcastT + dt * 0.028) % 1;
-      mainCamera.position.copy(broadcastCurve.getPoint(broadcastT));
-      mainCamera.lookAt(broadcastLook);
-      mainCamera.aspect = section.clientWidth / section.clientHeight;
-      mainCamera.updateProjectionMatrix();
+      if (Career.phase === 'flight') {
+        updateAutoFlight(dt);
+      } else if (Player.mode === 'truck') {
+        updateTruckVehicle(dt);
+      } else if (Player.mode === 'plane') {
+        updatePlaneVehicle(dt);
+      } else {
+        updateWalk(dt);
+      }
     } else if (mode === 'explore' && orbit) {
       orbit.update();
     }
 
     render();
-    updateTimeline();
   }
 
   function render() {
     const w = section.clientWidth, h = section.clientHeight;
-    if (w !== W || h !== H) { W = w; H = h; resize(); }
-    if (W < 2 || H < 2) return;
-
+    if (w < 2 || h < 2) return;
     renderer.setScissorTest(false);
-    renderer.setViewport(0, 0, W, H);
-    renderer.setScissor(0, 0, W, H);
+    renderer.setViewport(0, 0, w, h);
+    renderer.setScissor(0, 0, w, h);
     renderer.clear();
 
     if (mode === 'cinematic' && phaseIndex === 0) {
       renderer.setScissorTest(true);
       renderSplitScreen(0);
-    } else if (mode === 'cinematic' && phaseIndex === 1) {
-      renderer.setScissorTest(true);
-      renderer.setViewport(0, 0, W, H);
-      renderer.setScissor(0, 0, W, H);
-      renderer.render(mainScene, mainCamera);
-      const t = phaseTime / PHASES[1].dur;
-      const collapse = Math.max(0, Math.min((t - 0.25) / 0.55, 1));
-      if (collapse < 1) renderSplitScreen(collapse);
-    } else {
-      renderer.setScissorTest(false);
-      const cam = (mode === 'fp')
-        ? (fp.flying ? flightCamera : fpCamera)
-        : mainCamera;
+    } else if (mode === 'fp') {
+      const cam = (Career.phase === 'flight') ? autoFlightCam : fpCamera;
       renderer.render(mainScene, cam);
+    } else {
+      renderer.render(mainScene, mainCamera);
     }
   }
 
-  function resize() {
+  window.addEventListener('resize', () => {
     const w = section.clientWidth, h = section.clientHeight;
     if (w < 2 || h < 2) return;
-    W = w; H = h;
     renderer.setSize(w, h);
     mainCamera.aspect = w / h; mainCamera.updateProjectionMatrix();
     fpCamera.aspect = w / h; fpCamera.updateProjectionMatrix();
-    flightCamera.aspect = w / h; flightCamera.updateProjectionMatrix();
-  }
-  window.addEventListener('resize', resize);
-  if (window.ResizeObserver) {
-    try { new ResizeObserver(resize).observe(section); } catch (e) {}
-  }
+    autoFlightCam.aspect = w / h; autoFlightCam.updateProjectionMatrix();
+  });
 
-  /* Pause rendering when section is off-screen */
   if (window.IntersectionObserver) {
     try {
       new IntersectionObserver((entries) => {
         entries.forEach(e => { cinematicActive = e.isIntersecting; });
       }, { threshold: 0.04 }).observe(section);
     } catch (e) { cinematicActive = true; }
-  } else {
-    cinematicActive = true;
-  }
+  } else { cinematicActive = true; }
 
-  /* Kick off */
-  onPhaseEnter(0);
-  updateTimeline();
+  // Kick off
+  updateCareerTask();
   animate();
 })();
 
-/* ============================================================
-   INIT
-   ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   $('#xp-val').textContent = XP;
   $('#quiz-val').textContent = store.get('quiz_best', 0) || '–';
@@ -3205,13 +3019,11 @@ document.addEventListener('DOMContentLoaded', () => {
   lockReflectionIfDone();
   checkExplorer();
   syncGuideCards();
-
   const draft = store.get('reflection_draft', '');
   if (draft && !$('#reflection-text').disabled) {
     $('#reflection-text').value = draft;
     updateWordCount();
   }
-
   document.body.addEventListener('pointerdown', () => Sound.init(), { once: true });
 });
 </script>
